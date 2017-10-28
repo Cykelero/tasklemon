@@ -31,7 +31,9 @@ injectedModuleNames.forEach((injectedModuleName, index) => {
 });
 preparedScriptContent += ';';
 
+preparedScriptContent += 'const _tasklemon_main = async function() {';
 preparedScriptContent += fs.readFileSync(scriptPath);
+preparedScriptContent += '\n};_tasklemon_main();';
 
 fs.writeFileSync(preparedScriptPath, preparedScriptContent);
 
