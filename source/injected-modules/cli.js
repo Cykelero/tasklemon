@@ -57,6 +57,20 @@ cli.askMany = async function(askArguments) {
 	return result;
 };
 
+cli.tellWhile = async function(promptText, awaitable) {
+	process.stdout.write(promptText);
+	
+	const awaitableResult = await awaitable;
+	
+	process.stdout.cursorTo(0);
+	for (var i = 0; i < promptText.length; i++) {
+		process.stdout.write(' ');
+	}
+	process.stdout.cursorTo(0);
+	
+	return awaitableResult;
+};
+
 cli.typeDefinitionSymbol = Symbol('tasklemon type definition');
 
 // Setup type definitions
