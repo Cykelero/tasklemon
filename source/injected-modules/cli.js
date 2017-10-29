@@ -13,6 +13,7 @@ cli.ask = function(promptText, type, skippable) {
 			interface.close();
 			
 			if (answer === '') {
+				// No answer
 				if (!skippable) {
 					cli.tell(`Please enter a value.`);
 					resolve(cli.ask(promptText, type, skippable));
@@ -20,24 +21,30 @@ cli.ask = function(promptText, type, skippable) {
 					resolve(null);
 				}
 			} else if (!type) {
+				// Return answer as-is
 				resolve(answer);
 			} else {
-				let typeDefinition = type[cli.typeDefinitionSymbol] || type;
+				// Execute type definitions
+				const typeDefinitionList = Array.isArray(type) ? type : [type];
 				
 				Promise.resolve()
-				.then(() => typeDefinition(answer))
-				.then(function(value) {
-					resolve(value);
-				}, function(errorText) {
-					cli.tell(`Value ${errorText}.`);
-					resolve(cli.ask(promptText, type, skippable));
-				});
+					.then(async function() {
+						let currentValue = answer;
+						for (typeDefinition of typeDefinitionList) {
+							typeDefinition = typeDefinition[cli.typeDefinitionSymbol] || typeDefinition;
+							currentValue = await typeDefinition(currentValue);
+						}
+						resolve(currentValue);
+					})
+					.catch(function(errorText) {
+						cli.tell(`Value ${errorText}.`);
+						resolve(cli.ask(promptText, type, skippable));
+					});
 			}
 		});
 	});
 };
 
-cli.typeDefinitionSymbol = Symbol();
 cli.askMany = async function(askArguments) {
 	let result = {};
 	
@@ -49,6 +56,7 @@ cli.askMany = async function(askArguments) {
 	return result;
 };
 
+cli.typeDefinitionSymbol = Symbol('tasklemon type definition');
 
 // Setup type definitions
 Boolean[cli.typeDefinitionSymbol] = function(value) {
