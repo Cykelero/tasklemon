@@ -4,7 +4,7 @@
  "description": "Painlessly automate in JavaScript",
  "main": "source/tasklemon.js",
  "bin": {
-  "tasklemon": "source/tasklemon.js"
+  "lemon": "source/tasklemon.js"
  },
  "repository": {
   "type": "git",
