@@ -18,5 +18,8 @@
  "homepage": "https://github.com/cykelero/tasklemon#readme",
  "engines": {
   "node": ">=8.7.0"
+ },
+ "dependencies": {
+  "moment": "^2.19.1"
  }
 }

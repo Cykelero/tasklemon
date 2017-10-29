@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 let cli = module.exports;
 
 cli.tell = function(text) {
@@ -134,6 +136,27 @@ Array[cli.typeDefinitionSymbol] = function(value) {
 	}
 	
 	return castValue;
+};
+
+moment[cli.typeDefinitionSymbol] = function(value) {
+	const trimmedValue = value.trim();
+	let castValue = moment(value, moment.ISO_8601);
+
+	// Try adding a century
+	if (!castValue.isValid() && trimmedValue.length >= 6) {
+		if (/^\d\d/.exec(trimmedValue)) {
+			const century = Number(trimmedValue.slice(0, 2)) > 68 ? '19' : '20';
+			castValue = moment(century + trimmedValue, moment.ISO_8601);
+		}
+	}
+	
+	if (!castValue.isValid()) throw 'is not a valid date';
+	
+	return castValue;
+};
+
+Date[cli.typeDefinitionSymbol] = function(value) {
+	return moment[cli.typeDefinitionSymbol](value).toDate();
 };
 
 RegExp[cli.typeDefinitionSymbol] = function(value) {
