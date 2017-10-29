@@ -1,22 +1,22 @@
 {
-  "name": "tasklemon",
-  "version": "1.0.0",
-  "description": "Painlessly automate in JavaScript",
-  "main": "source/tasklemon.js",
-  "bin": {
-	  "tasklemon": "source/tasklemon.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cykelero/tasklemon.git"
-  },
-  "author": "Nathan Manceaux-Panot",
-  "license": "MIT",
-  "scripts": {
-	"install": "mkdir -p package-cache"
-  },
-  "homepage": "https://github.com/cykelero/tasklemon#readme",
-  "engines": {
-	  "node": ">=8.7.0"
-  }
+ "name": "tasklemon",
+ "version": "1.0.0",
+ "description": "Painlessly automate in JavaScript",
+ "main": "source/tasklemon.js",
+ "bin": {
+  "tasklemon": "source/tasklemon.js"
+ },
+ "repository": {
+  "type": "git",
+  "url": "git+https://github.com/cykelero/tasklemon.git"
+ },
+ "author": "Nathan Manceaux-Panot",
+ "license": "MIT",
+ "scripts": {
+  "install": "mkdir -p package-cache"
+ },
+ "homepage": "https://github.com/cykelero/tasklemon#readme",
+ "engines": {
+  "node": ">=8.7.0"
+ }
 }
