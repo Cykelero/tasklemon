@@ -4,7 +4,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const injectedModuleNames = ['cli', 'moment'];
+const injectedModuleNames = ['cli', 'net', 'moment'];
 const baseInjectedModulePath = path.join(__dirname, 'injected-modules');
 
 const workingDirectory = process.cwd();
