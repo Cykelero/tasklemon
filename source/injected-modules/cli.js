@@ -38,6 +38,17 @@ cli.ask = function(promptText, type, skippable) {
 };
 
 cli.typeDefinitionSymbol = Symbol();
+cli.askMany = async function(askArguments) {
+	let result = {};
+	
+	const askKeys = Object.keys(askArguments);
+	for (let askKey of askKeys) {
+		result[askKey] = await cli.ask.apply(cli, askArguments[askKey]);
+	};
+	
+	return result;
+};
+
 
 // Setup type definitions
 Boolean[cli.typeDefinitionSymbol] = function(value) {
