@@ -5,8 +5,7 @@ cli.tell = function(text) {
 };
 
 cli.ask = function(promptText, type, skippable) {
-	const readline = require('readline');
-	const interface = readline.createInterface({input: process.stdin, output: process.stdout});
+	const interface = require('readline').createInterface({input: process.stdin, output: process.stdout});
 	
 	return new Promise(function(resolve, reject) {
 		interface.question(`${promptText} `, function(answer) {
