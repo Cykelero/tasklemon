@@ -4,28 +4,35 @@ format.number = function() {
 	return format.number.float.apply(this, arguments);
 };
 
-format.number.integer = function(value) {
-	return format.number.float(value, 0);
+format.number.integer = function(value, unit) {
+	return format.number.float(value, unit, 0);
 };
 
-format.number.float = function(value, decimalPlaces = 2) {
-	const [, integerPart, , fractionalPart] = /(\d+)(\.(\d+))?/.exec(value);
-
-	let formattedIntegerPart;
-	let formattedFractionalPart;
+format.number.float = function(value, unit, decimalPlaces = 2) {
+	let result = '';
+	
+	let [, integerPart, , fractionalPart] = /(\d+)(\.(\d+))?/.exec(value);
 
 	// Build comma-separated integer part
 	const extraZeroCount = 3 - integerPart.length % 3;
-	formattedIntegerPart = '0'.repeat(extraZeroCount) + integerPart;
-	formattedIntegerPart = formattedIntegerPart.replace(/\d\d\d/g, ',$&').slice(1 + extraZeroCount);
+	integerPart = '0'.repeat(extraZeroCount) + integerPart;
+	integerPart = integerPart.replace(/\d\d\d/g, ',$&').slice(1 + extraZeroCount);
+	
+	result += integerPart;
 	
 	// Pad and truncate fractional part
-	formattedFractionalPart = (fractionalPart || '').substr(0, decimalPlaces).padEnd(decimalPlaces, '0');
+	if (decimalPlaces > 0) {
+		result += '.';
+		result += (fractionalPart || '').substr(0, decimalPlaces).padEnd(decimalPlaces, '0');
+	}
+	
+	// Add and pluralize unit
+	if (unit) {
+		if (!Array.isArray(unit)) unit = [unit, unit + 's'];
+		result += ' ';
+		result += (value === 1 ? unit[0] : unit[1]);
+	}
 	
 	// Return
-	if (decimalPlaces > 0) {
-		return `${formattedIntegerPart}.${formattedFractionalPart}`;
-	} else {
-		return formattedIntegerPart;
-	}
+	return result;
 };
