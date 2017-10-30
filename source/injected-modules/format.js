@@ -1,3 +1,4 @@
+const moment = require('moment');
 let format = module.exports;
 
 format.number = function() {
@@ -35,4 +36,36 @@ format.number.float = function(value, unit, decimalPlaces = 2) {
 	
 	// Return
 	return result;
+};
+
+format.date = function() {
+	return format.date.short.apply(this, arguments);
+};
+
+format.date.short = function(value, noTime) {
+	let format = 'YY-MM-DD';
+	if (!noTime) format += ' HH:mm:ss';
+	return moment(value).format(format);
+};
+
+format.date.long = function(value, noTime) {
+	let format = 'dddd, MMMM Do, YYYY';
+	if (!noTime) format += ', HH:mm:ss';
+	return moment(value).format(format);
+};
+
+format.date.relative = function(value) {
+	return moment(value).fromNow();
+};
+
+format.duration = function() {
+	return format.duration.absolute.apply(this, arguments);
+};
+
+format.duration.absolute = function(value) {
+	return moment().add(value, 'ms').fromNow(true);
+};
+
+format.duration.between = function(value1, value2) {
+	return moment(value1).to(value2, true);
 };
