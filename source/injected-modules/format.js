@@ -1,5 +1,12 @@
 const moment = require('moment');
-let format = module.exports;
+
+let format = module.exports = function(value) {
+	if (typeof(value) === 'number') {
+		return format.number(value);
+	} else {
+		return format.date(value);
+	}
+};
 
 format.number = function() {
 	return format.number.float.apply(this, arguments);
