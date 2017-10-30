@@ -1,6 +1,14 @@
 let format = module.exports;
 
-format.number = function(value, decimalPlaces = 2) {
+format.number = function() {
+	return format.number.float.apply(this, arguments);
+};
+
+format.number.integer = function(value) {
+	return format.number.float(value, 0);
+};
+
+format.number.float = function(value, decimalPlaces = 2) {
 	const [, integerPart, , fractionalPart] = /(\d+)(\.(\d+))?/.exec(value);
 
 	let formattedIntegerPart = '';
