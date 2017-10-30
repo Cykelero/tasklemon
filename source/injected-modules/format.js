@@ -11,30 +11,16 @@ format.number.integer = function(value) {
 format.number.float = function(value, decimalPlaces = 2) {
 	const [, integerPart, , fractionalPart] = /(\d+)(\.(\d+))?/.exec(value);
 
-	let formattedIntegerPart = '';
-	let formattedFractionalPart = '';
+	let formattedIntegerPart;
+	let formattedFractionalPart;
 
 	// Build comma-separated integer part
-	let currentIndex = integerPart.length - 3;
-	
-	while (currentIndex >= 0) {
-		// Add 3-digit group
-		if (formattedIntegerPart.length) formattedIntegerPart = ',' + formattedIntegerPart;
-		formattedIntegerPart = integerPart.substr(currentIndex, 3) + formattedIntegerPart;
-		currentIndex -= 3;
-	}
-	
-	if (currentIndex > -3) {
-		// Add last digit group
-		if (formattedIntegerPart.length) formattedIntegerPart = ',' + formattedIntegerPart;
-		formattedIntegerPart = integerPart.substr(0, currentIndex + 3) + formattedIntegerPart;
-	}
+	const extraZeroCount = 3 - integerPart.length % 3;
+	formattedIntegerPart = '0'.repeat(extraZeroCount) + integerPart;
+	formattedIntegerPart = formattedIntegerPart.replace(/\d\d\d/g, ',$&').slice(1 + extraZeroCount);
 	
 	// Pad and truncate fractional part
-	if (decimalPlaces > 0) {
-		formattedFractionalPart = (fractionalPart || '').substr(0, decimalPlaces);
-		while (formattedFractionalPart.length < decimalPlaces) formattedFractionalPart += '0';
-	}
+	formattedFractionalPart = (fractionalPart || '').substr(0, decimalPlaces).padEnd(decimalPlaces, '0');
 	
 	// Return
 	if (decimalPlaces > 0) {
