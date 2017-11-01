@@ -13,13 +13,15 @@
  "author": "Nathan Manceaux-Panot",
  "license": "MIT",
  "scripts": {
-  "install": "mkdir -p package-cache"
+  "install": "mkdir -p package-cache",
+  "test": "jasmine"
  },
  "homepage": "https://github.com/cykelero/tasklemon#readme",
  "engines": {
   "node": ">=8.7.0"
  },
  "dependencies": {
+  "jasmine": "^2.8.0",
   "jsdom": "^11.3.0",
   "moment": "^2.19.1",
   "node-fetch": "^1.7.3"
