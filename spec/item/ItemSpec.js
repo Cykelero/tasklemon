@@ -3,6 +3,7 @@ File = require('../../source/File');
 Folder = require('../../source/Folder');
 
 const fs = require('fs');
+const path = require('path');
 
 describe('Item', function() {
 	let testEnv;
@@ -48,6 +49,18 @@ describe('Item', function() {
 			
 			let folderItem = Item.itemForPath(testEnv.pathFor('folder'));
 			expect(await folderItem.exists).toBeFalsy();
+		});
+	});
+	
+	describe('#path', function() {
+		it('should provide the path of a folder', function() {
+			let folderItem = Item.itemForPath(testEnv.createFolder('folder'));
+			expect(folderItem.path).toBe(path.join(testEnv.path, 'folder') + path.sep);
+		});
+		
+		it('should provide the path of a file', function() {
+			let fileItem = Item.itemForPath(testEnv.createFile('file'));
+			expect(fileItem.path).toBe(path.join(testEnv.path, 'file'));
 		});
 	});
 });

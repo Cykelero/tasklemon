@@ -8,14 +8,13 @@ module.exports = class Item {
 		this.name = name;
 	}
 	
-	get completePath() {
-		return path.join(this.parentPath, this.name);
-	}
+	get path() { }
 	
 	get exists() { }
 	
+	
 	get _stats() {
-		return util.promisify(fs.lstat)(this.completePath);
+		return util.promisify(fs.lstat)(this.path);
 	}
 	
 	static itemForPath(itemPath) {
