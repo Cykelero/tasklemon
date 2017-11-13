@@ -5,7 +5,7 @@ const path = require('path');
 beforeEach(function() {
 	this.getTestEnv = function() {
 		return {
-			path: fs.mkdtempSync(os.tmpdir() + path.sep),
+			path: fs.realpathSync(fs.mkdtempSync(os.tmpdir() + path.sep)),
 			createFile: function(filePath) {
 				const completeFilePath = this.pathFor(filePath);
 				fs.closeSync(fs.openSync(completeFilePath, 'w'));

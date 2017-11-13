@@ -2,7 +2,7 @@ Item = require('../../source/Item');
 File = require('../../source/File');
 Folder = require('../../source/Folder');
 
-fs = require('fs');
+const fs = require('fs');
 
 describe('Item', function() {
 	let testEnv;
