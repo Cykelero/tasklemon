@@ -4,14 +4,17 @@ const util = require('util');
 
 module.exports = class Item {
 	constructor(parentPath, name) {
-		this.parentPath = parentPath;
-		this.name = name;
+		this._parentPath = parentPath;
+		this._name = name;
 	}
 	
 	get path() { }
 	
-	get exists() { }
+	get name() {
+		return this._name;
+	}
 	
+	get exists() { }
 	
 	get _stats() {
 		return util.promisify(fs.lstat)(this.path);

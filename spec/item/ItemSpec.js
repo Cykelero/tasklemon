@@ -63,4 +63,16 @@ describe('Item', function() {
 			expect(fileItem.path).toBe(path.join(testEnv.path, 'file'));
 		});
 	});
+	
+	describe('#name', function() {
+		it('should provide the name of a folder', function() {
+			let folderItem = Item.itemForPath(testEnv.createFolder('folder'));
+			expect(folderItem.name).toBe('folder');
+		});
+		
+		it('should provide the name of a file', function() {
+			let fileItem = Item.itemForPath(testEnv.createFile('file'));
+			expect(fileItem.name).toBe('file');
+		});
+	});
 });
