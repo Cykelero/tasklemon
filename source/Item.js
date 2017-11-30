@@ -8,13 +8,14 @@ module.exports = class Item {
 		this._name = name;
 	}
 	
+	get exists() { }
+	
 	get path() { }
 	
 	get name() {
 		return this._name;
 	}
 	
-	get exists() { }
 	
 	get _stats() {
 		return util.promisify(fs.lstat)(this.path);

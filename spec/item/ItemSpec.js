@@ -1,9 +1,9 @@
-Item = require('../../source/Item');
-File = require('../../source/File');
-Folder = require('../../source/Folder');
-
 const fs = require('fs');
 const path = require('path');
+
+const Item = require('../../source/Item');
+const File = require('../../source/File');
+const Folder = require('../../source/Folder');
 
 describe('Item', function() {
 	let testEnv;
@@ -54,13 +54,15 @@ describe('Item', function() {
 	
 	describe('#path', function() {
 		it('should provide the path of a folder', function() {
-			let folderItem = Item.itemForPath(testEnv.createFolder('folder'));
-			expect(folderItem.path).toBe(path.join(testEnv.path, 'folder') + path.sep);
+			const folderPath = testEnv.createFolder('folder');
+			let folderItem = Item.itemForPath(folderPath);
+			expect(folderItem.path).toBe(folderPath);
 		});
 		
 		it('should provide the path of a file', function() {
-			let fileItem = Item.itemForPath(testEnv.createFile('file'));
-			expect(fileItem.path).toBe(path.join(testEnv.path, 'file'));
+			const filePath = testEnv.createFile('file');
+			let fileItem = Item.itemForPath(filePath);
+			expect(fileItem.path).toBe(filePath);
 		});
 	});
 	
