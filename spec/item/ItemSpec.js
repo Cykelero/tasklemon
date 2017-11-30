@@ -90,4 +90,46 @@ describe('Item', function() {
 			expect(fileItem.name).toBe('file');
 		});
 	});
+	
+	describe('#size', function() {
+		it('should provide the size of a file', async function() {
+			const filePath = testEnv.createFile('file');
+			let fileItem = Item.itemForPath(filePath);
+			
+			expect(await fileItem.size).toBe(0);
+			
+			const fileSize = 1024 * 1024;
+			fs.writeFileSync(filePath, Buffer.alloc(fileSize));
+			
+			expect(await fileItem.size).toBe(fileSize);
+		});
+
+		it('should provide the size of a folder', async function() {
+			const folderPath = testEnv.createFolder('folder');
+			let folderItem = Item.itemForPath(folderPath);
+			
+			expect(await folderItem.size).toBeGreaterThanOrEqual(0); // I don't understand folder size
+			
+			const fileSize = 1024 * 1024;
+			fs.writeFileSync(path.join(folderPath, 'file'), Buffer.alloc(fileSize));
+			
+			expect(await folderItem.size).toBeGreaterThanOrEqual(fileSize);
+		});
+	});
+	
+	describe('#parent', function() {
+		it('should provide the parent of a folder', function() {
+			const parentPath = testEnv.createFolder('parent');
+			let parentItem = Item.itemForPath(parentPath);
+			let childItem = Item.itemForPath(testEnv.createFolder('parent/child'));
+			
+			expect(childItem.parent.name).toBe('parent');
+		});
+
+		it('should be null for the root', function() {
+			let rootItem = Item.itemForPath('/');
+			
+			expect(rootItem.parent).toBe(null);
+		});
+	});
 });

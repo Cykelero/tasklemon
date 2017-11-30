@@ -16,6 +16,16 @@ module.exports = class Item {
 		return this._name;
 	}
 	
+	get size() { }
+	
+	get parent() {
+		if (this.name === '') {
+			// Root
+			return null;
+		} else {
+			return Item.itemForPath(this._parentPath);
+		}
+	}
 	
 	get _stats() {
 		return util.promisify(fs.lstat)(this.path);
