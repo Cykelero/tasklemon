@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const execSync = require('child_process').execSync;
 
 const Item = require('../../source/Item');
 const File = require('../../source/File');
@@ -63,6 +64,18 @@ describe('Item', function() {
 			const filePath = testEnv.createFile('file');
 			let fileItem = Item.itemForPath(filePath);
 			expect(fileItem.path).toBe(filePath);
+		});
+
+		it('should return the actual path of a symlink target', function() {
+			const linkTargetPath = testEnv.createFolder('link-target');
+			const linkTargetChildPath = testEnv.createFile('link-target/child');
+
+			const linkContainerPath = testEnv.createFolder('link-container');
+			execSync(`ln -s "${linkTargetPath}" link`, {cwd: linkContainerPath});
+			
+			let linkTargetChildItem = Item.itemForPath(linkTargetChildPath);
+			
+			expect(linkTargetChildItem.path).toBe(linkTargetChildPath);
 		});
 	});
 	
