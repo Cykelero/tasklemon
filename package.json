@@ -15,7 +15,7 @@
  "scripts": {
   "install": "mkdir -p package-cache",
   "test": "jasmine",
-  "watch:test": "chokidar 'source/**/*.js' 'spec/**/*.js' -c 'jasmine'"
+  "watch:test": "jasmine; chokidar 'source/**/*.js' 'spec/**/*.js' -c 'jasmine'"
  },
  "homepage": "https://github.com/cykelero/tasklemon#readme",
  "engines": {
