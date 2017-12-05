@@ -4,10 +4,7 @@ const Item = require('./Item');
 
 module.exports = class File extends Item {
 	get exists() {
-		return this._stats
-			.then(stats => {
-				return stats.isFile();
-			}, () => false);
+		return this._stats.then(stats => stats.isFile(), () => false);
 	}
 	
 	get path() {
@@ -15,9 +12,6 @@ module.exports = class File extends Item {
 	}
 
 	get size() {
-		return this._stats
-			.then(stats => {
-				return stats.size;
-			}, () => false);
+		return this._stats.then(stats => stats.size);
 	}
 }
