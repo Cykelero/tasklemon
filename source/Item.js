@@ -2,6 +2,8 @@ const path = require('path');
 const fs = require('fs');
 const util = require('util');
 
+const moment = require('moment');
+
 module.exports = class Item {
 	constructor(parentPath, name) {
 		this._parentPath = parentPath;
@@ -25,6 +27,14 @@ module.exports = class Item {
 		} else {
 			return Item.itemForPath(this._parentPath);
 		}
+	}
+	
+	get dateCreated() {
+		return this._stats.then(stats => moment(stats.birthtime));
+	}
+	
+	get dateModified() {
+		return this._stats.then(stats => moment(stats.mtime));
 	}
 	
 	get _stats() {

@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const execSync = require('child_process').execSync;
 
+const moment = require('moment');
+
 const Item = require('../../source/Item');
 const File = require('../../source/File');
 const Folder = require('../../source/Folder');
@@ -130,6 +132,35 @@ describe('Item', function() {
 			let rootItem = Item.itemForPath('/');
 			
 			expect(rootItem.parent).toBe(null);
+		});
+	});
+	
+	describe('#dateCreated', function() {
+		it('should provide the created date of a folder', async function() {
+			const folderItem = Item.itemForPath(testEnv.createFolder('folder'));
+			
+			expect((await folderItem.dateCreated).unix()).toBe(moment().unix());
+		});
+
+		it('should provide the created date of a file', async function() {
+			const fileItem = Item.itemForPath(testEnv.createFile('file'));
+			
+			expect((await fileItem.dateCreated).unix()).toBe(moment().unix());
+		});
+	});
+
+	
+	describe('#dateModified', function() {
+		it('should provide the created date of a folder', async function() {
+			const folderItem = Item.itemForPath(testEnv.createFolder('folder'));
+			
+			expect((await folderItem.dateModified).unix()).toBe(moment().unix());
+		});
+
+		it('should provide the created date of a file', async function() {
+			const fileItem = Item.itemForPath(testEnv.createFile('file'));
+			
+			expect((await fileItem.dateModified).unix()).toBe(moment().unix());
 		});
 	});
 });
