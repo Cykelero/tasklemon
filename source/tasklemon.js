@@ -8,8 +8,8 @@ const injectedModuleNames = ['root', 'home', 'here', 'cli', 'format', 'net', 'mo
 const baseInjectedModulePath = path.join(__dirname, 'injected-modules');
 
 const workingDirectory = process.cwd();
-const scriptName = process.argv[2];
-const scriptPath = path.join(workingDirectory, scriptName);
+const scriptPath = process.argv[2];
+const scriptName = path.basename(scriptPath);
 
 let preparedScriptPath;
 
