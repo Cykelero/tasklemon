@@ -1,12 +1,16 @@
 const fs = require('fs');
 const path = require('path');
-const execSync = require('child_process').execSync;
+const childProcess = require('child_process');
 
 const moment = require('moment');
 
 const Item = require('../../source/Item');
 const File = require('../../source/File');
 const Folder = require('../../source/Folder');
+
+function execSync() {
+	return childProcess.execSync.apply(this, arguments).toString();
+}
 
 describe('Item', function() {
 	let testEnv;
@@ -148,7 +152,6 @@ describe('Item', function() {
 			expect((await fileItem.dateCreated).unix()).toBe(moment().unix());
 		});
 	});
-
 	
 	describe('#dateModified', function() {
 		it('should provide the created date of a folder', async function() {
@@ -161,6 +164,42 @@ describe('Item', function() {
 			const fileItem = Item.itemForPath(testEnv.createFile('file'));
 			
 			expect((await fileItem.dateModified).unix()).toBe(moment().unix());
+		});
+	});
+	
+	describe('#user', function() {
+		it('should provide the owner name of a folder', async function() {
+			const currentUserName = execSync(`id -nu`).trim();
+			
+			const folderItem = Item.itemForPath(testEnv.createFolder('folder'));
+			
+			expect(await folderItem.user).toBe(currentUserName);
+		});
+
+		it('should provide the owner name of a file', async function() {
+			const currentUserName = execSync(`id -nu`).trim();
+			
+			const fileItem = Item.itemForPath(testEnv.createFile('file'));
+			
+			expect(await fileItem.user).toBe(currentUserName);
+		});
+	});
+	
+	describe('#group', function() {
+		it('should provide the owner name of a folder', async function() {
+			const currentUserGroupName = execSync(`id -gn`).trim();
+			
+			const folderItem = Item.itemForPath(testEnv.createFolder('folder'));
+			
+			expect(await folderItem.group).toBe(currentUserGroupName);
+		});
+
+		it('should provide the owner name of a file', async function() {
+			const currentUserGroupName = execSync(`id -gn`).trim();
+			
+			const fileItem = Item.itemForPath(testEnv.createFile('file'));
+			
+			expect(await fileItem.group).toBe(currentUserGroupName);
 		});
 	});
 });

@@ -1,6 +1,10 @@
 const path = require('path');
 const fs = require('fs');
 const util = require('util');
+const childProcess = require('child_process');
+
+const lstat = util.promisify(fs.lstat);
+const exec = util.promisify(childProcess.exec);
 
 const moment = require('moment');
 
@@ -37,8 +41,18 @@ module.exports = class Item {
 		return this._stats.then(stats => moment(stats.mtime));
 	}
 	
+	get user() {
+		return exec(`ls -ld "${this.path}"`)
+			.then(output => output.stdout.replace(/\s+/g, ' ').split(' ')[2]);
+	}
+	
+	get group() {
+		return exec(`ls -ld "${this.path}"`)
+			.then(output => output.stdout.replace(/\s+/g, ' ').split(' ')[3]);
+	}
+	
 	get _stats() {
-		return util.promisify(fs.lstat)(this.path);
+		return lstat(this.path);
 	}
 	
 	static itemForPath(itemPath) {
