@@ -51,9 +51,34 @@ module.exports = class Item {
 			.then(output => output.stdout.replace(/\s+/g, ' ').split(' ')[3]);
 	}
 	
+	async make(forgiving) {
+		// Fail or abort if item exists
+		if (await this.exists) {
+			if (!forgiving) {
+				if (this.name) {
+					throw new Error(`Can't make “${this.name}”: already exists in “${this.parent.path}”`);
+				} else {
+					throw new Error(`Can't make “/”: already exists`);
+				}
+			} else {
+				return this;
+			}
+		}
+		
+		// If forgiving, create parents if necessary
+		if (forgiving && this.name !== '') {
+			await this.parent.make(true);
+		}
+		
+		// Create item
+		return this._make(forgiving).then(() => this);
+	}
+	
 	get _stats() {
 		return lstat(this.path);
 	}
+	
+	async _make() { }
 	
 	static itemForPath(inputPath) {
 		let result;

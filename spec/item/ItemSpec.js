@@ -215,4 +215,93 @@ describe('Item', function() {
 			expect(await fileItem.group).toBe(currentUserGroupName);
 		});
 	});
+	
+	describe('#make()', function() {
+		it('should create an empty file', async function() {
+			const fileItem = Item.itemForPath(testEnv.pathFor('file'));
+			await fileItem.make();
+			
+			expect(await fileItem.exists).toBe(true);
+		});
+	
+		it('should create an empty folder', async function() {
+			const folderItem = Item.itemForPath(testEnv.pathFor('folder/'));
+			await folderItem.make();
+			
+			expect(await folderItem.exists).toBe(true);
+		});
+
+		it('should fail if an item of a different type already exists', function(done) {
+			const fileItem = Item.itemForPath(testEnv.pathFor('file'));
+			
+			testEnv.createFolder('file/');
+			
+			fileItem.make().then(fail, done);
+		});
+
+		describe('{forgiving: false}', function() {
+			it('should fail if the parent doesn\'t exist', function(done) {
+				const fileItem = Item.itemForPath(testEnv.pathFor('nonexistent-parent/file'));
+				
+				fileItem.make()
+					.then(fail, async function() {
+						expect(await fileItem.exists).toBe(false);
+						done();
+					});
+			});
+
+			it('should fail if an item of the same type already exists', async function(done) {
+				const fileItem = Item.itemForPath(testEnv.pathFor('file'));
+				
+				await fileItem.make();
+				
+				fileItem.make().then(fail, done);
+			});
+		});
+	
+		describe('{forgiving: true}', function() {
+			it('should create the parent hierarchy if it doesn\'t exist', async function() {
+				const parent1Item = Item.itemForPath(testEnv.pathFor('parent1/'));
+				const parent2Item = Item.itemForPath(testEnv.pathFor('parent1/parent2/'));
+				const fileItem = Item.itemForPath(testEnv.pathFor('parent1/parent2/file'));
+				
+				await fileItem.make(true);
+
+				expect(await parent1Item.exists).toBe(true);
+				expect(await parent2Item.exists).toBe(true);
+				expect(await fileItem.exists).toBe(true);
+			});
+
+			it('should do nothing if the file already exists', async function() {
+				const filePath = testEnv.pathFor('file');
+				const fileItem = Item.itemForPath(filePath);
+				const fileTextContent = 'Some text content.';
+				
+				await fileItem.make();
+				fs.appendFileSync(filePath, fileTextContent);
+				
+				await fileItem.make(true);
+
+				expect(fs.readFileSync(filePath, "utf8")).toBe(fileTextContent);
+			});
+
+			it('should do nothing if the folder already exists', async function() {
+				const folderItem = Item.itemForPath(testEnv.pathFor('folder/'));
+				const childItem = Item.itemForPath(testEnv.pathFor('folder/child/'));
+				
+				await folderItem.make();
+				await childItem.make();
+				
+				await folderItem.make(true);
+
+				expect(await childItem.exists).toBe(true);
+			});
+		});
+	
+		it('should return this', async function() {
+			const itemItem = Item.itemForPath(testEnv.pathFor('item'));
+		
+			expect(await itemItem.make()).toBe(itemItem);
+		});
+	});
 });

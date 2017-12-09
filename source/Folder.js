@@ -1,5 +1,8 @@
+const fs = require('fs');
 const path = require('path');
 const util = require('util');
+
+const mkdir = util.promisify(fs.mkdir);
 const getFolderSize = util.promisify(require('get-folder-size'));
 
 const Item = require('./Item');
@@ -15,5 +18,9 @@ module.exports = class Folder extends Item {
 	
 	get size() {
 		return getFolderSize(this.path);
+	}
+	
+	async _make(forgiving) {
+		return mkdir(this.path);
 	}
 }
