@@ -47,7 +47,7 @@ describe('Item', function() {
 			expect(await folderItem.exists).toBeFalsy();
 		});
 
-		it('should be false for an item of the wrong type', async function() {
+		it('should be false for an item of a different type', async function() {
 			testEnv.createFile('file');
 			testEnv.createFolder('folder');
 			
@@ -60,16 +60,16 @@ describe('Item', function() {
 	});
 	
 	describe('#path', function() {
-		it('should provide the path of a folder', function() {
-			const folderPath = testEnv.createFolder('folder');
-			let folderItem = Item.itemForPath(folderPath);
-			expect(folderItem.path).toBe(folderPath);
-		});
-		
 		it('should provide the path of a file', function() {
 			const filePath = testEnv.createFile('file');
 			let fileItem = Item.itemForPath(filePath);
 			expect(fileItem.path).toBe(filePath);
+		});
+		
+		it('should provide the path of a folder', function() {
+			const folderPath = testEnv.createFolder('folder');
+			let folderItem = Item.itemForPath(folderPath);
+			expect(folderItem.path).toBe(folderPath);
 		});
 		
 		it('should provide the path of a non-existent item', function() {
@@ -98,12 +98,7 @@ describe('Item', function() {
 	});
 	
 	describe('#name', function() {
-		it('should provide the name of a folder', function() {
-			let folderItem = Item.itemForPath(testEnv.createFolder('folder'));
-			expect(folderItem.name).toBe('folder');
-		});
-		
-		it('should provide the name of a file', function() {
+		it('should provide the name of an item', function() {
 			let fileItem = Item.itemForPath(testEnv.createFile('file'));
 			expect(fileItem.name).toBe('file');
 		});
@@ -136,10 +131,10 @@ describe('Item', function() {
 	});
 	
 	describe('#parent', function() {
-		it('should provide the parent of a folder', function() {
+		it('should provide the parent of an item', function() {
 			const parentPath = testEnv.createFolder('parent');
 			let parentItem = Item.itemForPath(parentPath);
-			let childItem = Item.itemForPath(testEnv.createFolder('parent/child'));
+			let childItem = Item.itemForPath(testEnv.createFile('parent/child'));
 			
 			expect(childItem.parent.name).toBe('parent');
 			expect(childItem.parent instanceof Folder).toBe(true);
@@ -153,13 +148,7 @@ describe('Item', function() {
 	});
 	
 	describe('#dateCreated', function() {
-		it('should provide the created date of a folder', async function() {
-			const folderItem = Item.itemForPath(testEnv.createFolder('folder'));
-			
-			expect((await folderItem.dateCreated).unix()).toBe(moment().unix());
-		});
-
-		it('should provide the created date of a file', async function() {
+		it('should provide the creation date of an item', async function() {
 			const fileItem = Item.itemForPath(testEnv.createFile('file'));
 			
 			expect((await fileItem.dateCreated).unix()).toBe(moment().unix());
@@ -167,13 +156,7 @@ describe('Item', function() {
 	});
 	
 	describe('#dateModified', function() {
-		it('should provide the created date of a folder', async function() {
-			const folderItem = Item.itemForPath(testEnv.createFolder('folder'));
-			
-			expect((await folderItem.dateModified).unix()).toBe(moment().unix());
-		});
-
-		it('should provide the created date of a file', async function() {
+		it('should provide the modification date of an item', async function() {
 			const fileItem = Item.itemForPath(testEnv.createFile('file'));
 			
 			expect((await fileItem.dateModified).unix()).toBe(moment().unix());
@@ -181,15 +164,7 @@ describe('Item', function() {
 	});
 	
 	describe('#user', function() {
-		it('should provide the owner name of a folder', async function() {
-			const currentUserName = execSync(`id -nu`).trim();
-			
-			const folderItem = Item.itemForPath(testEnv.createFolder('folder'));
-			
-			expect(await folderItem.user).toBe(currentUserName);
-		});
-
-		it('should provide the owner name of a file', async function() {
+		it('should provide the owner name of an item', async function() {
 			const currentUserName = execSync(`id -nu`).trim();
 			
 			const fileItem = Item.itemForPath(testEnv.createFile('file'));
@@ -199,15 +174,7 @@ describe('Item', function() {
 	});
 	
 	describe('#group', function() {
-		it('should provide the owner name of a folder', async function() {
-			const currentUserGroupName = execSync(`id -gn`).trim();
-			
-			const folderItem = Item.itemForPath(testEnv.createFolder('folder'));
-			
-			expect(await folderItem.group).toBe(currentUserGroupName);
-		});
-
-		it('should provide the owner name of a file', async function() {
+		it('should provide the owner name of an item', async function() {
 			const currentUserGroupName = execSync(`id -gn`).trim();
 			
 			const fileItem = Item.itemForPath(testEnv.createFile('file'));
