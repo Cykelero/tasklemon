@@ -71,6 +71,18 @@ describe('Item', function() {
 			let fileItem = Item.itemForPath(filePath);
 			expect(fileItem.path).toBe(filePath);
 		});
+		
+		it('should provide the path of a non-existent item', function() {
+			const filePath = testEnv.pathFor('file');
+			let fileItem = Item.itemForPath(filePath);
+			expect(fileItem.path).toBe(filePath);
+		});
+		
+		it('should provide the path of an item with a non-existent parennt', function() {
+			const filePath = testEnv.pathFor('nonexistent-parent/file');
+			let fileItem = Item.itemForPath(filePath);
+			expect(fileItem.path).toBe(filePath);
+		});
 
 		it('should return the actual path of a symlink target', function() {
 			const linkTargetPath = testEnv.createFolder('link-target');
@@ -130,6 +142,7 @@ describe('Item', function() {
 			let childItem = Item.itemForPath(testEnv.createFolder('parent/child'));
 			
 			expect(childItem.parent.name).toBe('parent');
+			expect(childItem.parent instanceof Folder).toBe(true);
 		});
 
 		it('should be null for the root', function() {

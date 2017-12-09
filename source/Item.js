@@ -55,24 +55,45 @@ module.exports = class Item {
 		return lstat(this.path);
 	}
 	
-	static itemForPath(itemPath) {
-		// Resolve path
-		const parentPath = fs.realpathSync(path.dirname(itemPath));
-		const name = path.basename(itemPath);
-		const isFolder = (itemPath.slice(-1) === '/');
+	static itemForPath(inputPath) {
+		let result;
+		let parentPath;
+		let isFolder;
+		let completePath;
+		let name;
 		
-		const completePath = path.join(parentPath, name) + (isFolder ? '/' : '');
+		// Resolve parent path
+		let parentPathExistent = path.dirname(inputPath);
+		let parentPathNonexistent = '';
+		let resolvedParentPathExistent = null;
 		
-		// Find or create item
-		let item = knownItems[completePath];
-		
-		if (!item) {
-			const itemClass = isFolder ? require('./Folder') : require('./File');
-			item = new itemClass(parentPath, name);
-			knownItems[completePath] = item;
+		while (!resolvedParentPathExistent) {
+			try {
+				resolvedParentPathExistent = fs.realpathSync(parentPathExistent);
+			} catch (e) {
+				const lastPathPiece = path.basename(parentPathExistent);
+				parentPathExistent = parentPathExistent.slice(0, -lastPathPiece.length - 1);
+				parentPathNonexistent = `/${lastPathPiece}${parentPathNonexistent}`;
+			}
 		}
 		
-		return item;
+		parentPath = `${resolvedParentPathExistent}${parentPathNonexistent}/`;
+		
+		// Parse path
+		isFolder = (inputPath.slice(-1) === '/');
+		name = path.basename(inputPath);
+		completePath = path.join(parentPath, name) + (isFolder ? '/' : '');
+		
+		// Find or create item
+		result = knownItems[completePath];
+		
+		if (!result) {
+			const itemClass = isFolder ? require('./Folder') : require('./File');
+			result = new itemClass(parentPath, name);
+			knownItems[completePath] = result;
+		}
+		
+		return result;
 	}
 }
 
