@@ -1,10 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const util = require('util');
 const childProcess = require('child_process');
-
-const lstat = util.promisify(fs.lstat);
-const exec = util.promisify(childProcess.exec);
 
 const moment = require('moment');
 
@@ -25,37 +21,32 @@ module.exports = class Item {
 	get size() { }
 	
 	get parent() {
-		if (this.name === '') {
-			// Root
-			return null;
-		} else {
-			return Item.itemForPath(this._parentPath);
-		}
+		return this._isRoot	? null : Item.itemForPath(this._parentPath);
 	}
 	
 	get dateCreated() {
-		return this._stats.then(stats => moment(stats.birthtime));
+		return moment(this._stats.birthtime);
 	}
 	
 	get dateModified() {
-		return this._stats.then(stats => moment(stats.mtime));
+		return moment(this._stats.mtime);
 	}
 	
 	get user() {
-		return exec(`ls -ld "${this.path}"`)
-			.then(output => output.stdout.replace(/\s+/g, ' ').split(' ')[2]);
+		return childProcess.execSync(`ls -ld "${this.path}"`)
+			.toString().replace(/\s+/g, ' ').split(' ')[2];
 	}
 	
 	get group() {
-		return exec(`ls -ld "${this.path}"`)
-			.then(output => output.stdout.replace(/\s+/g, ' ').split(' ')[3]);
+		return childProcess.execSync(`ls -ld "${this.path}"`)
+			.toString().replace(/\s+/g, ' ').split(' ')[3];
 	}
 	
-	async make(forgiving) {
+	make(forgiving) {
 		// Fail or abort if item exists
-		if (await this.exists) {
+		if (this.exists) {
 			if (!forgiving) {
-				if (this.name) {
+				if (!this._isRoot) {
 					throw new Error(`Can't make “${this.name}”: already exists in “${this.parent.path}”`);
 				} else {
 					throw new Error(`Can't make “/”: already exists`);
@@ -66,19 +57,23 @@ module.exports = class Item {
 		}
 		
 		// If forgiving, create parents if necessary
-		if (forgiving && this.name !== '') {
-			await this.parent.make(true);
-		}
+		if (forgiving) this.parent.make(true);
 		
 		// Create item
-		return this._make(forgiving).then(() => this);
+		this._make(forgiving);
+		
+		return this;
+	}
+	
+	get _isRoot() {
+		return this.name === '';
 	}
 	
 	get _stats() {
-		return lstat(this.path);
+		return fs.lstatSync(this.path);
 	}
 	
-	async _make() { }
+	_make() { }
 	
 	static itemForPath(inputPath) {
 		let result;

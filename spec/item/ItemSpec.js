@@ -31,31 +31,31 @@ describe('Item', function() {
 	});
 	
 	describe('#exists', function() {
-		it('should be true for an existing item', async function() {
+		it('should be true for an existing item', function() {
 			let fileItem = Item.itemForPath(testEnv.createFile('file'));
-			expect(await fileItem.exists).toBeTruthy();
+			expect(fileItem.exists).toBeTruthy();
 			
 			let folderItem = Item.itemForPath(testEnv.createFolder('folder'));
-			expect(await folderItem.exists).toBeTruthy();
+			expect(folderItem.exists).toBeTruthy();
 		});
 
-		it('should be false for a non-existent item', async function() {
+		it('should be false for a non-existent item', function() {
 			let fileItem = Item.itemForPath(testEnv.pathFor('file'));
-			expect(await fileItem.exists).toBeFalsy();
+			expect(fileItem.exists).toBeFalsy();
 			
 			let folderItem = Item.itemForPath(testEnv.pathFor('folder/'));
-			expect(await folderItem.exists).toBeFalsy();
+			expect(folderItem.exists).toBeFalsy();
 		});
 
-		it('should be false for an item of a different type', async function() {
+		it('should be false for an item of a different type', function() {
 			testEnv.createFile('file');
 			testEnv.createFolder('folder');
 			
 			let fileItem = Item.itemForPath(testEnv.pathFor('file/'));
-			expect(await fileItem.exists).toBeFalsy();
+			expect(fileItem.exists).toBeFalsy();
 			
 			let folderItem = Item.itemForPath(testEnv.pathFor('folder'));
-			expect(await folderItem.exists).toBeFalsy();
+			expect(folderItem.exists).toBeFalsy();
 		});
 	});
 	
@@ -105,28 +105,28 @@ describe('Item', function() {
 	});
 	
 	describe('#size', function() {
-		it('should provide the size of a file', async function() {
+		it('should provide the size of a file', function() {
 			const filePath = testEnv.createFile('file');
 			let fileItem = Item.itemForPath(filePath);
 			
-			expect(await fileItem.size).toBe(0);
+			expect(fileItem.size).toBe(0);
 			
 			const fileSize = 1024 * 1024;
 			fs.writeFileSync(filePath, Buffer.alloc(fileSize));
 			
-			expect(await fileItem.size).toBe(fileSize);
+			expect(fileItem.size).toBe(fileSize);
 		});
 
-		it('should provide the size of a folder', async function() {
+		it('should provide the size of a folder', function() {
 			const folderPath = testEnv.createFolder('folder');
 			let folderItem = Item.itemForPath(folderPath);
 			
-			expect(await folderItem.size).toBeGreaterThanOrEqual(0); // I don't understand folder size
+			expect(folderItem.size).toBeGreaterThanOrEqual(0); // I don't understand folder size
 			
 			const fileSize = 1024 * 1024;
 			fs.writeFileSync(path.join(folderPath, 'file'), Buffer.alloc(fileSize));
 			
-			expect(await folderItem.size).toBeGreaterThanOrEqual(fileSize);
+			expect(folderItem.size).toBeGreaterThanOrEqual(fileSize);
 		});
 	});
 	
@@ -136,8 +136,8 @@ describe('Item', function() {
 			let parentItem = Item.itemForPath(parentPath);
 			let childItem = Item.itemForPath(testEnv.createFile('parent/child'));
 			
-			expect(childItem.parent.name).toBe('parent');
 			expect(childItem.parent instanceof Folder).toBe(true);
+			expect(childItem.parent.path).toBe(parentPath);
 		});
 
 		it('should be null for the root', function() {
@@ -148,127 +148,124 @@ describe('Item', function() {
 	});
 	
 	describe('#dateCreated', function() {
-		it('should provide the creation date of an item', async function() {
+		it('should provide the creation date of an item', function() {
 			const fileItem = Item.itemForPath(testEnv.createFile('file'));
 			
-			expect((await fileItem.dateCreated).unix()).toBe(moment().unix());
+			expect((fileItem.dateCreated).unix()).toBe(moment().unix());
 		});
 	});
 	
 	describe('#dateModified', function() {
-		it('should provide the modification date of an item', async function() {
+		it('should provide the modification date of an item', function() {
 			const fileItem = Item.itemForPath(testEnv.createFile('file'));
 			
-			expect((await fileItem.dateModified).unix()).toBe(moment().unix());
+			expect((fileItem.dateModified).unix()).toBe(moment().unix());
 		});
 	});
 	
 	describe('#user', function() {
-		it('should provide the owner name of an item', async function() {
+		it('should provide the owner name of an item', function() {
 			const currentUserName = execSync(`id -nu`).trim();
 			
 			const fileItem = Item.itemForPath(testEnv.createFile('file'));
 			
-			expect(await fileItem.user).toBe(currentUserName);
+			expect(fileItem.user).toBe(currentUserName);
 		});
 	});
 	
 	describe('#group', function() {
-		it('should provide the owner name of an item', async function() {
+		it('should provide the group name of an item', function() {
 			const currentUserGroupName = execSync(`id -gn`).trim();
 			
 			const fileItem = Item.itemForPath(testEnv.createFile('file'));
 			
-			expect(await fileItem.group).toBe(currentUserGroupName);
+			expect(fileItem.group).toBe(currentUserGroupName);
 		});
 	});
 	
 	describe('#make()', function() {
-		it('should create an empty file', async function() {
+		it('should create an empty file', function() {
 			const fileItem = Item.itemForPath(testEnv.pathFor('file'));
-			await fileItem.make();
+			fileItem.make();
 			
-			expect(await fileItem.exists).toBe(true);
+			expect(fileItem.exists).toBe(true);
 		});
 	
-		it('should create an empty folder', async function() {
+		it('should create an empty folder', function() {
 			const folderItem = Item.itemForPath(testEnv.pathFor('folder/'));
-			await folderItem.make();
+			folderItem.make();
 			
-			expect(await folderItem.exists).toBe(true);
+			expect(folderItem.exists).toBe(true);
 		});
 
-		it('should fail if an item of a different type already exists', function(done) {
+		it('should fail if an item of a different type already exists', function() {
 			const fileItem = Item.itemForPath(testEnv.pathFor('file'));
 			
 			testEnv.createFolder('file/');
 			
-			fileItem.make().then(fail, done);
+			expect(() => fileItem.make()).toThrow();
 		});
 
 		describe('{forgiving: false}', function() {
-			it('should fail if the parent doesn\'t exist', function(done) {
+			it('should fail if the parent doesn\'t exist', function() {
 				const fileItem = Item.itemForPath(testEnv.pathFor('nonexistent-parent/file'));
-				
-				fileItem.make()
-					.then(fail, async function() {
-						expect(await fileItem.exists).toBe(false);
-						done();
-					});
+			
+				expect(() => fileItem.make()).toThrow();
+				expect(fileItem.exists).toBe(false);
 			});
 
-			it('should fail if an item of the same type already exists', async function(done) {
+			it('should fail if an item of the same type already exists', function() {
 				const fileItem = Item.itemForPath(testEnv.pathFor('file'));
 				
-				await fileItem.make();
+				fileItem.make();
 				
-				fileItem.make().then(fail, done);
+				expect(() => fileItem.make()).toThrow();
 			});
 		});
 	
 		describe('{forgiving: true}', function() {
-			it('should create the parent hierarchy if it doesn\'t exist', async function() {
+			it('should create the parent hierarchy if it doesn\'t exist', function() {
 				const parent1Item = Item.itemForPath(testEnv.pathFor('parent1/'));
 				const parent2Item = Item.itemForPath(testEnv.pathFor('parent1/parent2/'));
 				const fileItem = Item.itemForPath(testEnv.pathFor('parent1/parent2/file'));
 				
-				await fileItem.make(true);
+				fileItem.make(true);
 
-				expect(await parent1Item.exists).toBe(true);
-				expect(await parent2Item.exists).toBe(true);
-				expect(await fileItem.exists).toBe(true);
+				expect(parent1Item.exists).toBe(true);
+				expect(parent2Item.exists).toBe(true);
+				expect(fileItem.exists).toBe(true);
 			});
 
-			it('should do nothing if the file already exists', async function() {
+			it('should do nothing if the file already exists', function() {
 				const filePath = testEnv.pathFor('file');
 				const fileItem = Item.itemForPath(filePath);
 				const fileTextContent = 'Some text content.';
 				
-				await fileItem.make();
+				fileItem.make();
 				fs.appendFileSync(filePath, fileTextContent);
 				
-				await fileItem.make(true);
+				fileItem.make(true);
 
 				expect(fs.readFileSync(filePath, "utf8")).toBe(fileTextContent);
 			});
 
-			it('should do nothing if the folder already exists', async function() {
+			it('should do nothing if the folder already exists', function() {
 				const folderItem = Item.itemForPath(testEnv.pathFor('folder/'));
 				const childItem = Item.itemForPath(testEnv.pathFor('folder/child/'));
 				
-				await folderItem.make();
-				await childItem.make();
+				folderItem.make();
+				childItem.make();
 				
-				await folderItem.make(true);
+				folderItem.make(true);
 
-				expect(await childItem.exists).toBe(true);
+				expect(childItem.exists).toBe(true);
 			});
 		});
 	
-		it('should return this', async function() {
+		it('should return this', function() {
 			const itemItem = Item.itemForPath(testEnv.pathFor('item'));
 		
-			expect(await itemItem.make()).toBe(itemItem);
+			expect(itemItem.make()).toBe(itemItem);
 		});
 	});
 });

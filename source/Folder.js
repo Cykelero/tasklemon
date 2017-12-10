@@ -1,15 +1,15 @@
 const fs = require('fs');
 const path = require('path');
-const util = require('util');
-
-const mkdir = util.promisify(fs.mkdir);
-const getFolderSize = util.promisify(require('get-folder-size'));
 
 const Item = require('./Item');
 
 module.exports = class Folder extends Item {
 	get exists() {
-		return this._stats.then(stats => !stats.isFile(), () => false);
+		try {
+			return !this._stats.isFile();
+		} catch (e) {
+			return false;
+		}
 	}
 	
 	get path() {
@@ -17,10 +17,24 @@ module.exports = class Folder extends Item {
 	}
 	
 	get size() {
+		function getFolderSize(folderPath) {
+			return fs.readdirSync(folderPath).reduce((accumulatedSize, childName) => {
+				const childPath = path.join(folderPath, childName);
+				const childStats = fs.statSync(childPath);
+				
+				if (childStats.isDirectory()) {
+					accumulatedSize += getFolderSize(childPath);
+				} else {
+					accumulatedSize += childStats.size;
+				}
+				
+				return accumulatedSize;
+			}, 0);
+		}
 		return getFolderSize(this.path);
 	}
 	
-	async _make(forgiving) {
-		return mkdir(this.path);
+	_make(forgiving) {
+		fs.mkdirSync(this.path);
 	}
 }
