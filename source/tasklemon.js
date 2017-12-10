@@ -11,11 +11,22 @@ const workingDirectory = process.cwd();
 const scriptPath = process.argv[2];
 const scriptName = path.basename(scriptPath);
 
+let sourceScriptContent;
 let preparedScriptPath;
 
 const scriptArguments = process.argv.slice(2);
 
 // Prepare execution stage
+// // Read script
+try {
+	sourceScriptContent = fs.readFileSync(scriptPath);
+} catch(error) {
+	const errorParts = /Error: (.+), /.exec(error.toString());
+	const formattedErrorDetails = errorParts ? errorParts[1] : error.code;
+	process.stdout.write(`Couldn't load “${scriptName}” because of error: “${formattedErrorDetails}”. \n`);
+	process.exit(1);
+}
+
 // // Create stage folder
 const stagePath = fs.mkdtempSync(os.tmpdir() + path.sep);
 preparedScriptPath = path.join(stagePath, scriptName);
@@ -32,7 +43,7 @@ injectedModuleNames.forEach((injectedModuleName, index) => {
 preparedScriptContent += ';';
 
 preparedScriptContent += 'const _tasklemon_main = async function() {';
-preparedScriptContent += fs.readFileSync(scriptPath);
+preparedScriptContent += sourceScriptContent;
 preparedScriptContent += '\n};_tasklemon_main();';
 
 fs.writeFileSync(preparedScriptPath, preparedScriptContent);
