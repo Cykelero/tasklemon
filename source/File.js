@@ -2,8 +2,9 @@ const fs = require('fs');
 const path = require('path');
 
 const Item = require('./Item');
+const TypeDefinition = require('./TypeDefinition');
 
-module.exports = class File extends Item {
+class File extends Item {
 	get exists() {
 		try {
 			return this._stats.isFile();
@@ -24,3 +25,13 @@ module.exports = class File extends Item {
 		fs.closeSync(fs.openSync(this.path, 'a'));
 	}
 }
+
+module.exports = File;
+
+File[TypeDefinition.symbol] = function(value) {
+	if (value.slice(-1) === '/') {
+		throw 'is not a file';
+	}
+	
+	return Item.itemForPath(value);
+};

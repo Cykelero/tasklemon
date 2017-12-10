@@ -2,8 +2,9 @@ const fs = require('fs');
 const path = require('path');
 
 const Item = require('./Item');
+const TypeDefinition = require('./TypeDefinition');
 
-module.exports = class Folder extends Item {
+class Folder extends Item {
 	get exists() {
 		try {
 			return !this._stats.isFile();
@@ -38,3 +39,11 @@ module.exports = class Folder extends Item {
 		fs.mkdirSync(this.path);
 	}
 }
+
+module.exports = Folder;
+
+Folder[TypeDefinition.symbol] = function(value) {
+	if (value.slice(-1) !== '/') value += '/';
+	
+	return Item.itemForPath(value);
+};

@@ -4,7 +4,11 @@ const childProcess = require('child_process');
 
 const moment = require('moment');
 
-module.exports = class Item {
+const TypeDefinition = require('./TypeDefinition');
+
+let knownItems = {};
+
+class Item {
 	constructor(parentPath, name) {
 		this._parentPath = parentPath;
 		this._name = name;
@@ -117,4 +121,6 @@ module.exports = class Item {
 	}
 }
 
-let knownItems = {};
+module.exports = Item;
+
+Item[TypeDefinition.symbol] = value => Item.itemForPath(value);
