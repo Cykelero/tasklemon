@@ -22,12 +22,12 @@
   "node": ">=8.7.0"
  },
  "dependencies": {
-  "chokidar-cli": "^1.2.0",
   "jsdom": "^11.3.0",
   "moment": "^2.19.1",
   "node-fetch": "^1.7.3"
  },
  "devDependencies": {
+  "chokidar-cli": "^1.2.0",
   "jasmine": "^2.8.0",
   "jasmine-spec-reporter": "^4.2.1"
  }
