@@ -2,6 +2,8 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
+const Item = require('../../source/Item');
+
 beforeEach(function() {
 	this.getTestEnv = function() {
 		return {
@@ -18,6 +20,9 @@ beforeEach(function() {
 			},
 			pathFor: function(itemPath) {
 				return path.join(this.path, itemPath);
+			},
+			itemFor: function(itemPath) {
+				return Item.itemForPath(this.pathFor(itemPath));
 			}
 		};
 	};

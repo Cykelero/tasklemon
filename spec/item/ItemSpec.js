@@ -40,10 +40,10 @@ describe('Item', function() {
 		});
 
 		it('should be false for a non-existent item', function() {
-			let fileItem = Item.itemForPath(testEnv.pathFor('file'));
+			let fileItem = testEnv.itemFor('file');
 			expect(fileItem.exists).toBeFalsy();
 			
-			let folderItem = Item.itemForPath(testEnv.pathFor('folder/'));
+			let folderItem = testEnv.itemFor('folder/');
 			expect(folderItem.exists).toBeFalsy();
 		});
 
@@ -51,10 +51,10 @@ describe('Item', function() {
 			testEnv.createFile('file');
 			testEnv.createFolder('folder');
 			
-			let fileItem = Item.itemForPath(testEnv.pathFor('file/'));
+			let fileItem = testEnv.itemFor('file/');
 			expect(fileItem.exists).toBeFalsy();
 			
-			let folderItem = Item.itemForPath(testEnv.pathFor('folder'));
+			let folderItem = testEnv.itemFor('folder');
 			expect(folderItem.exists).toBeFalsy();
 		});
 	});
@@ -185,21 +185,21 @@ describe('Item', function() {
 	
 	describe('#make()', function() {
 		it('should create an empty file', function() {
-			const fileItem = Item.itemForPath(testEnv.pathFor('file'));
+			const fileItem = testEnv.itemFor('file');
 			fileItem.make();
 			
 			expect(fileItem.exists).toBe(true);
 		});
 	
 		it('should create an empty folder', function() {
-			const folderItem = Item.itemForPath(testEnv.pathFor('folder/'));
+			const folderItem = testEnv.itemFor('folder/');
 			folderItem.make();
 			
 			expect(folderItem.exists).toBe(true);
 		});
 
 		it('should fail if an item of a different type already exists', function() {
-			const fileItem = Item.itemForPath(testEnv.pathFor('file'));
+			const fileItem = testEnv.itemFor('file');
 			
 			testEnv.createFolder('file/');
 			
@@ -208,14 +208,14 @@ describe('Item', function() {
 
 		describe('{forgiving: false}', function() {
 			it('should fail if the parent doesn\'t exist', function() {
-				const fileItem = Item.itemForPath(testEnv.pathFor('nonexistent-parent/file'));
+				const fileItem = testEnv.itemFor('nonexistent-parent/file');
 			
 				expect(() => fileItem.make()).toThrow();
 				expect(fileItem.exists).toBe(false);
 			});
 
 			it('should fail if an item of the same type already exists', function() {
-				const fileItem = Item.itemForPath(testEnv.pathFor('file'));
+				const fileItem = testEnv.itemFor('file');
 				
 				fileItem.make();
 				
@@ -225,9 +225,9 @@ describe('Item', function() {
 	
 		describe('{forgiving: true}', function() {
 			it('should create the parent hierarchy if it doesn\'t exist', function() {
-				const parent1Item = Item.itemForPath(testEnv.pathFor('parent1/'));
-				const parent2Item = Item.itemForPath(testEnv.pathFor('parent1/parent2/'));
-				const fileItem = Item.itemForPath(testEnv.pathFor('parent1/parent2/file'));
+				const parent1Item = testEnv.itemFor('parent1/');
+				const parent2Item = testEnv.itemFor('parent1/parent2/');
+				const fileItem = testEnv.itemFor('parent1/parent2/file');
 				
 				fileItem.make(true);
 
@@ -250,8 +250,8 @@ describe('Item', function() {
 			});
 
 			it('should do nothing if the folder already exists', function() {
-				const folderItem = Item.itemForPath(testEnv.pathFor('folder/'));
-				const childItem = Item.itemForPath(testEnv.pathFor('folder/child/'));
+				const folderItem = testEnv.itemFor('folder/');
+				const childItem = testEnv.itemFor('folder/child/');
 				
 				folderItem.make();
 				childItem.make();
