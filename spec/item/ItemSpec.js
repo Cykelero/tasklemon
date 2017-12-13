@@ -24,10 +24,6 @@ describe('Item', function() {
 			expect(Item.itemForPath('file') instanceof File).toBeTruthy();
 			expect(Item.itemForPath('folder/') instanceof Folder).toBeTruthy();
 		});
-
-		it('should provide canonical instances', function() {
-			expect(Item.itemForPath('file')).toBe(Item.itemForPath('file'));
-		});
 	});
 	
 	describe('#exists', function() {
@@ -263,9 +259,108 @@ describe('Item', function() {
 		});
 	
 		it('should return this', function() {
-			const itemItem = Item.itemForPath(testEnv.pathFor('item'));
+			const fileItem = testEnv.itemFor('file');
 		
-			expect(itemItem.make()).toBe(itemItem);
+			expect(fileItem.make()).toBe(fileItem);
+		});
+	});
+	
+	describe('#moveTo()', function() {
+		it('should move the item', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			const destinationItem = testEnv.itemFor('destination/').make();
+		
+			fileItem.moveTo(destinationItem);
+			
+			expect(testEnv.itemFor('file').exists).toBe(false);
+			expect(testEnv.itemFor('destination/file').exists).toBe(true);
+		});
+
+		it('should update the item', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			const destinationItem = testEnv.itemFor('destination/').make();
+		
+			fileItem.moveTo(destinationItem);
+			
+			expect(fileItem.path).toBe(testEnv.pathFor('destination/file'));
+		});
+
+		it('should update other instances of the item', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			const fileSecondItem = testEnv.itemFor('file');
+			const destinationItem = testEnv.itemFor('destination/').make();
+		
+			fileItem.moveTo(destinationItem);
+			
+			expect(fileSecondItem.path).toBe(testEnv.pathFor('destination/file'));
+		});
+
+		it('should move children of the item', function() {
+			const folderItem = testEnv.itemFor('folder/').make();
+			const childItem = testEnv.itemFor('folder/child').make();
+			const destinationItem = testEnv.itemFor('destination/').make();
+		
+			folderItem.moveTo(destinationItem);
+			
+			expect(testEnv.itemFor('folder/child').exists).toBe(false);
+			expect(testEnv.itemFor('destination/folder/child').exists).toBe(true);
+		});
+
+		it('should update instances of the item\'s children', function() {
+			const folderItem = testEnv.itemFor('folder/').make();
+			const childItem = testEnv.itemFor('folder/child').make();
+			const destinationItem = testEnv.itemFor('destination/').make();
+		
+			folderItem.moveTo(destinationItem);
+			
+			expect(childItem.path).toBe(testEnv.pathFor('destination/folder/child'));
+		});
+		
+		it('should fail if the destination is not a folder', function() {
+			const folderItem = testEnv.itemFor('folder/').make();
+			const destinationItem = testEnv.itemFor('destination').make();
+			
+			expect(() => folderItem.moveTo(destinationItem)).toThrow();
+			expect(testEnv.itemFor('folder/').exists).toBe(true);
+		});
+
+		it('should fail if there is already an item of the same name at the destination', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			const destinationItem = testEnv.itemFor('destination/').make();
+			const destinationChildItem = testEnv.itemFor('destination/file').make();
+			
+			expect(() => fileItem.moveTo(destinationItem)).toThrow();
+			expect(testEnv.itemFor('file').exists).toBe(true);
+		});
+
+		describe('{forgiving: false}', function() {
+			it('should fail if the destination doesn\'t exist', function() {
+				const fileItem = testEnv.itemFor('file').make();
+				const destinationItem = testEnv.itemFor('destination/');
+			
+				expect(() => fileItem.moveTo(destinationItem)).toThrow();
+				expect(testEnv.itemFor('file').exists).toBe(true);
+				expect(testEnv.itemFor('destination/file').exists).toBe(false);
+			});
+		});
+	
+		describe('{forgiving: true}', function() {
+			it('should create the destination hierarchy if it doesn\'t exist', function() {
+				const fileItem = testEnv.itemFor('file').make();
+				const destinationItem = testEnv.itemFor('destination/');
+		
+				fileItem.moveTo(destinationItem, true);
+
+				expect(testEnv.itemFor('file').exists).toBe(false);
+				expect(testEnv.itemFor('destination/file').exists).toBe(true);
+			});
+		});
+	
+		it('should return this', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			const destinationItem = testEnv.itemFor('destination/').make();
+		
+			expect(fileItem.moveTo(destinationItem)).toBe(fileItem);
 		});
 	});
 });

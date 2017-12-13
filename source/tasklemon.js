@@ -20,7 +20,7 @@ const scriptArguments = process.argv.slice(2);
 // // Read script
 try {
 	sourceScriptContent = fs.readFileSync(scriptPath);
-} catch(error) {
+} catch (error) {
 	const errorParts = /Error: (.+), /.exec(error.toString());
 	const formattedErrorDetails = errorParts ? errorParts[1] : error.code;
 	process.stdout.write(`Couldn't load “${scriptName}” because of error: “${formattedErrorDetails}”. \n`);

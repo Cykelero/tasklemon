@@ -6,8 +6,6 @@ const moment = require('moment');
 
 const TypeDefinition = require('./TypeDefinition');
 
-let knownItems = {};
-
 class Item {
 	constructor(parentPath, name) {
 		this._parentPath = parentPath;
@@ -61,10 +59,54 @@ class Item {
 		}
 		
 		// If forgiving, create parents if necessary
-		if (forgiving) this.parent.make(true);
+		if (forgiving) Item._makeParentHierarchy(this.path);
 		
 		// Create item
 		this._make(forgiving);
+		
+		return this;
+	}
+	
+	moveTo(destination, forgiving) {
+		const isFolder = this instanceof require('./Folder');
+		const targetPath = destination.path + this.name + (isFolder ? '/' : '');
+		
+		// Feasibility checks
+		if (!(destination instanceof require('./Folder'))) {
+			throw Error(`Can't move “${this.name}”: destination is not a folder`);
+		}
+		
+		if (fs.existsSync(targetPath)) {
+			throw Error(`Can't move “${this.name}”: target already exists`);
+		}
+		
+		// Create parents if necessary
+		if (forgiving) Item._makeParentHierarchy(targetPath);
+
+		// Move filesystem item (and possibly throw)
+		fs.renameSync(this.path, targetPath);
+		
+		// Update paths of all related items
+		const thisPath = this.path;
+		const pathLength = thisPath.length;
+		const knownItemPaths = Object.keys(Item._itemsByPath);
+		
+		knownItemPaths.forEach(itemPath => {
+			const isRelated = isFolder ?
+				itemPath.slice(0, pathLength) === thisPath :
+				itemPath === thisPath;
+			
+			if (isRelated) {
+				const newItemPath = targetPath + itemPath.slice(pathLength);
+				const newParentPath = path.dirname(newItemPath) + '/';
+				
+				for (let relatedItem of Item._itemsByPath[itemPath].values()) {
+					Item._deregisterItem(relatedItem);
+					relatedItem._parentPath = newParentPath;
+					Item._registerItem(relatedItem);
+				};
+			}
+		});
 		
 		return this;
 	}
@@ -81,12 +123,27 @@ class Item {
 	
 	static itemForPath(inputPath) {
 		let result;
-		let parentPath;
 		let isFolder;
 		let completePath;
 		let name;
+
+		const parentPath = Item._realParentPathForPath(inputPath);
 		
-		// Resolve parent path
+		// Parse path
+		isFolder = (inputPath.slice(-1) === '/');
+		name = path.basename(inputPath);
+		completePath = path.join(parentPath, name) + (isFolder ? '/' : '');
+		
+		// Find or create item
+		const itemClass = isFolder ? require('./Folder') : require('./File');
+		result = new itemClass(parentPath, name);
+		
+		Item._registerItem(result, parentPath);
+		
+		return result;
+	}
+	
+	static _realParentPathForPath(inputPath) {
 		let parentPathExistent = path.dirname(inputPath);
 		let parentPathNonexistent = '';
 		let resolvedParentPathExistent = null;
@@ -101,25 +158,31 @@ class Item {
 			}
 		}
 		
-		parentPath = `${resolvedParentPathExistent}${parentPathNonexistent}/`;
+		return `${resolvedParentPathExistent}${parentPathNonexistent}/`;
+	}
+	
+	static _registerItem(item) {
+		const itemPath = item.path;
+		if (!Item._itemsByPath[itemPath]) Item._itemsByPath[itemPath] = new Set();
 		
-		// Parse path
-		isFolder = (inputPath.slice(-1) === '/');
-		name = path.basename(inputPath);
-		completePath = path.join(parentPath, name) + (isFolder ? '/' : '');
-		
-		// Find or create item
-		result = knownItems[completePath];
-		
-		if (!result) {
-			const itemClass = isFolder ? require('./Folder') : require('./File');
-			result = new itemClass(parentPath, name);
-			knownItems[completePath] = result;
+		Item._itemsByPath[itemPath].add(item);
+	}
+	
+	static _deregisterItem(item) {
+		const itemPath = item.path;
+		Item._itemsByPath[itemPath].delete(item);
+	}
+	
+	static _makeParentHierarchy(itemPath) {
+		const parentPath = path.dirname(itemPath);
+		if (!fs.existsSync(parentPath)) {
+			this._makeParentHierarchy(parentPath);
+			fs.mkdirSync(parentPath);
 		}
-		
-		return result;
 	}
 }
+
+Item._itemsByPath = {};
 
 module.exports = Item;
 
