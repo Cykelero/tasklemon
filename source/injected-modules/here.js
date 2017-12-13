@@ -1,3 +1,3 @@
 const Item = require('../Item');
 
-module.exports = Item.itemForPath(process.cwd());
+module.exports = Item._itemForPath(process.cwd());

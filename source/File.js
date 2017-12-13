@@ -33,5 +33,5 @@ File[TypeDefinition.symbol] = function(value) {
 		throw 'is not a file';
 	}
 	
-	return Item.itemForPath(value);
+	return Item._itemForPath(value);
 };

@@ -2,4 +2,4 @@ const os = require('os');
 
 const Item = require('../Item');
 
-module.exports = Item.itemForPath(os.homedir());
+module.exports = Item._itemForPath(os.homedir());

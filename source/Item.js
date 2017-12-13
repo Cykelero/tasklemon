@@ -23,7 +23,7 @@ class Item {
 	get size() { }
 	
 	get parent() {
-		return this._isRoot	? null : Item.itemForPath(this._parentPath);
+		return this._isRoot ? null : Item._itemForPath(this._parentPath);
 	}
 	
 	get dateCreated() {
@@ -121,7 +121,7 @@ class Item {
 	
 	_make() { }
 	
-	static itemForPath(inputPath) {
+	static _itemForPath(inputPath) {
 		let result;
 		let isFolder;
 		let completePath;
@@ -186,4 +186,4 @@ Item._itemsByPath = {};
 
 module.exports = Item;
 
-Item[TypeDefinition.symbol] = value => Item.itemForPath(value);
+Item[TypeDefinition.symbol] = value => Item._itemForPath(value);

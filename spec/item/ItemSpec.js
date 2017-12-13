@@ -21,17 +21,17 @@ describe('Item', function() {
 	
 	describe('when instanciated', function() {
 		it('should correctly choose between File and Folder', function() {
-			expect(Item.itemForPath('file') instanceof File).toBeTruthy();
-			expect(Item.itemForPath('folder/') instanceof Folder).toBeTruthy();
+			expect(Item._itemForPath('file') instanceof File).toBeTruthy();
+			expect(Item._itemForPath('folder/') instanceof Folder).toBeTruthy();
 		});
 	});
 	
 	describe('#exists', function() {
 		it('should be true for an existing item', function() {
-			let fileItem = Item.itemForPath(testEnv.createFile('file'));
+			let fileItem = Item._itemForPath(testEnv.createFile('file'));
 			expect(fileItem.exists).toBeTruthy();
 			
-			let folderItem = Item.itemForPath(testEnv.createFolder('folder'));
+			let folderItem = Item._itemForPath(testEnv.createFolder('folder'));
 			expect(folderItem.exists).toBeTruthy();
 		});
 
@@ -58,25 +58,25 @@ describe('Item', function() {
 	describe('#path', function() {
 		it('should provide the path of a file', function() {
 			const filePath = testEnv.createFile('file');
-			let fileItem = Item.itemForPath(filePath);
+			let fileItem = Item._itemForPath(filePath);
 			expect(fileItem.path).toBe(filePath);
 		});
 		
 		it('should provide the path of a folder', function() {
 			const folderPath = testEnv.createFolder('folder');
-			let folderItem = Item.itemForPath(folderPath);
+			let folderItem = Item._itemForPath(folderPath);
 			expect(folderItem.path).toBe(folderPath);
 		});
 		
 		it('should provide the path of a non-existent item', function() {
 			const filePath = testEnv.pathFor('file');
-			let fileItem = Item.itemForPath(filePath);
+			let fileItem = Item._itemForPath(filePath);
 			expect(fileItem.path).toBe(filePath);
 		});
 		
 		it('should provide the path of an item with a non-existent parennt', function() {
 			const filePath = testEnv.pathFor('nonexistent-parent/file');
-			let fileItem = Item.itemForPath(filePath);
+			let fileItem = Item._itemForPath(filePath);
 			expect(fileItem.path).toBe(filePath);
 		});
 
@@ -87,7 +87,7 @@ describe('Item', function() {
 			const linkContainerPath = testEnv.createFolder('link-container');
 			execSync(`ln -s "${linkTargetPath}" link`, {cwd: linkContainerPath});
 			
-			let linkTargetChildItem = Item.itemForPath(linkTargetChildPath);
+			let linkTargetChildItem = Item._itemForPath(linkTargetChildPath);
 			
 			expect(linkTargetChildItem.path).toBe(linkTargetChildPath);
 		});
@@ -95,7 +95,7 @@ describe('Item', function() {
 	
 	describe('#name', function() {
 		it('should provide the name of an item', function() {
-			let fileItem = Item.itemForPath(testEnv.createFile('file'));
+			let fileItem = Item._itemForPath(testEnv.createFile('file'));
 			expect(fileItem.name).toBe('file');
 		});
 	});
@@ -103,7 +103,7 @@ describe('Item', function() {
 	describe('#size', function() {
 		it('should provide the size of a file', function() {
 			const filePath = testEnv.createFile('file');
-			let fileItem = Item.itemForPath(filePath);
+			let fileItem = Item._itemForPath(filePath);
 			
 			expect(fileItem.size).toBe(0);
 			
@@ -115,7 +115,7 @@ describe('Item', function() {
 
 		it('should provide the size of a folder', function() {
 			const folderPath = testEnv.createFolder('folder');
-			let folderItem = Item.itemForPath(folderPath);
+			let folderItem = Item._itemForPath(folderPath);
 			
 			expect(folderItem.size).toBeGreaterThanOrEqual(0); // I don't understand folder size
 			
@@ -129,15 +129,15 @@ describe('Item', function() {
 	describe('#parent', function() {
 		it('should provide the parent of an item', function() {
 			const parentPath = testEnv.createFolder('parent');
-			let parentItem = Item.itemForPath(parentPath);
-			let childItem = Item.itemForPath(testEnv.createFile('parent/child'));
+			let parentItem = Item._itemForPath(parentPath);
+			let childItem = Item._itemForPath(testEnv.createFile('parent/child'));
 			
 			expect(childItem.parent instanceof Folder).toBe(true);
 			expect(childItem.parent.path).toBe(parentPath);
 		});
 
 		it('should be null for the root', function() {
-			let rootItem = Item.itemForPath('/');
+			let rootItem = Item._itemForPath('/');
 			
 			expect(rootItem.parent).toBe(null);
 		});
@@ -145,7 +145,7 @@ describe('Item', function() {
 	
 	describe('#dateCreated', function() {
 		it('should provide the creation date of an item', function() {
-			const fileItem = Item.itemForPath(testEnv.createFile('file'));
+			const fileItem = Item._itemForPath(testEnv.createFile('file'));
 			
 			expect((fileItem.dateCreated).unix()).toBe(moment().unix());
 		});
@@ -153,7 +153,7 @@ describe('Item', function() {
 	
 	describe('#dateModified', function() {
 		it('should provide the modification date of an item', function() {
-			const fileItem = Item.itemForPath(testEnv.createFile('file'));
+			const fileItem = Item._itemForPath(testEnv.createFile('file'));
 			
 			expect((fileItem.dateModified).unix()).toBe(moment().unix());
 		});
@@ -163,7 +163,7 @@ describe('Item', function() {
 		it('should provide the owner name of an item', function() {
 			const currentUserName = execSync(`id -nu`).trim();
 			
-			const fileItem = Item.itemForPath(testEnv.createFile('file'));
+			const fileItem = Item._itemForPath(testEnv.createFile('file'));
 			
 			expect(fileItem.user).toBe(currentUserName);
 		});
@@ -173,7 +173,7 @@ describe('Item', function() {
 		it('should provide the group name of an item', function() {
 			const currentUserGroupName = execSync(`id -gn`).trim();
 			
-			const fileItem = Item.itemForPath(testEnv.createFile('file'));
+			const fileItem = Item._itemForPath(testEnv.createFile('file'));
 			
 			expect(fileItem.group).toBe(currentUserGroupName);
 		});
@@ -234,7 +234,7 @@ describe('Item', function() {
 
 			it('should do nothing if the file already exists', function() {
 				const filePath = testEnv.pathFor('file');
-				const fileItem = Item.itemForPath(filePath);
+				const fileItem = Item._itemForPath(filePath);
 				const fileTextContent = 'Some text content.';
 				
 				fileItem.make();

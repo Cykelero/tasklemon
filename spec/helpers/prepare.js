@@ -22,7 +22,7 @@ beforeEach(function() {
 				return path.join(this.path, itemPath);
 			},
 			itemFor: function(itemPath) {
-				return Item.itemForPath(this.pathFor(itemPath));
+				return Item._itemForPath(this.pathFor(itemPath));
 			}
 		};
 	};

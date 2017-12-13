@@ -45,5 +45,5 @@ module.exports = Folder;
 Folder[TypeDefinition.symbol] = function(value) {
 	if (value.slice(-1) !== '/') value += '/';
 	
-	return Item.itemForPath(value);
+	return Item._itemForPath(value);
 };
