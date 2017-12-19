@@ -133,6 +133,42 @@ class Item {
 		return Item._itemForPath(targetPath);
 	}
 	
+	duplicate(newName) {
+		const isFolder = this instanceof require('./Folder');
+		let targetPath;
+		
+		// Settle on name
+		if (!newName) {
+			const currentExtension = /((\.[^.]+)?)$/.exec(this.name)[1];
+			const currentBasename = this.name.slice(0, -currentExtension.length || undefined);
+			newName = `${currentBasename} copy${currentExtension}`;
+			
+			let nameSuffix = 2;
+			while (fs.existsSync(this._parentPath + newName)) {
+				newName = `${currentBasename} copy ${nameSuffix}${currentExtension}`;
+				nameSuffix++;
+			}
+			
+			if (isFolder) newName += '/';
+		}
+		
+		targetPath = this._parentPath + newName;
+		
+		// Feasibility checks
+		if ((newName.slice(-1) === '/') !== isFolder) {
+			throw Error(`Can't duplicate “${this.name}” to “${newName}”: newName is of the wrong type`);
+		}
+
+		if (fs.existsSync(targetPath)) {
+			throw Error(`Can't duplicate “${this.name}” to “${newName}”: item already exists`);
+		}
+
+		// Copy filesystem item (and possibly throw)
+		Item._recursivelyCopyItem(this.path, targetPath);
+		
+		return Item._itemForPath(targetPath);
+	}
+	
 	get _isRoot() {
 		return this.name === '';
 	}

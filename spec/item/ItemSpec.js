@@ -448,4 +448,96 @@ describe('Item', function() {
 			expect(copyResult.path).toBe(testEnv.pathFor('destination/file'));
 		});
 	});
+	
+	describe('#duplicate()', function() {
+		it('should duplicate the item', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			
+			fileItem.duplicate();
+			
+			expect(testEnv.itemFor('file copy').exists).toBe(true);
+		});
+
+		it('should copy children of the item', function() {
+			const folderItem = testEnv.itemFor('folder/').make();
+			const childItem = testEnv.itemFor('folder/child').make();
+			
+			folderItem.duplicate();
+			
+			expect(testEnv.itemFor('folder copy/child').exists).toBe(true);
+		});
+		
+		it('should automatically select a non-conflicting name', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			
+			fileItem.duplicate();
+			expect(testEnv.itemFor('file copy').exists).toBe(true);
+			
+			fileItem.duplicate();
+			expect(testEnv.itemFor('file copy 2').exists).toBe(true);
+			
+			fileItem.duplicate();
+			expect(testEnv.itemFor('file copy 3').exists).toBe(true);
+		});
+		
+		it('should preserve the file extension', function() {
+			const fileItem = testEnv.itemFor('file.txt').make();
+			
+			expect(fileItem.duplicate().name).toBe('file copy.txt');
+			
+			expect(fileItem.duplicate().name).toBe('file copy 2.txt');
+		});
+		
+		it('should not move the item', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			
+			fileItem.duplicate();
+			
+			expect(testEnv.itemFor('file').exists).toBe(true);
+		});
+		
+		it('should not update the item', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			
+			fileItem.duplicate();
+			
+			expect(fileItem.path).toBe(testEnv.pathFor('file'));
+		});
+		
+		describe('{newName}', function() {
+			it('should use the new name for the copy', function() {
+				const fileItem = testEnv.itemFor('file').make();
+			
+				fileItem.duplicate('duplicate-file');
+			
+				expect(testEnv.itemFor('duplicate-file').exists).toBe(true);
+			});
+			
+			it('should fail if the new name is of the wrong type', function() {
+				const fileItem = testEnv.itemFor('file').make();
+		
+				expect(() => fileItem.duplicate('file copy/')).toThrow();
+				
+				const folderItem = testEnv.itemFor('folder/').make();
+		
+				expect(() => folderItem.duplicate('folder copy')).toThrow();
+			});
+			
+			it('should fail if there is already an item with the new name', function() {
+				const fileItem = testEnv.itemFor('file').make();
+				testEnv.itemFor('duplicate-file').make();
+			
+				expect(() => fileItem.duplicate('duplicate-file')).toThrow();
+			});
+		});
+	
+		it('should return the copied item', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			
+			const duplicationResult = fileItem.duplicate();
+			
+			expect(duplicationResult).not.toBe(fileItem);
+			expect(duplicationResult.path).toBe(testEnv.pathFor('file copy'));
+		});
+	});
 });
