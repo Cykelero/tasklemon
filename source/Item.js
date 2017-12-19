@@ -111,6 +111,45 @@ class Item {
 		return this;
 	}
 	
+	copyTo(destination, forgiving) {
+		const isFolder = this instanceof require('./Folder');
+		const targetPath = destination.path + this.name + (isFolder ? '/' : '');
+		
+		// Feasibility checks
+		if (!(destination instanceof require('./Folder'))) {
+			throw Error(`Can't copy “${this.name}”: destination is not a folder`);
+		}
+		
+		if (fs.existsSync(targetPath)) {
+			throw Error(`Can't copy “${this.name}”: target already exists`);
+		}
+		
+		// Create parents if necessary
+		if (forgiving) Item._makeParentHierarchy(targetPath);
+
+		// Move filesystem item (and possibly throw)
+		function recursivelyCopyItem(itemPath, targetPath) {
+			const itemStats = fs.statSync(itemPath);
+			if (itemStats.isDirectory()) {
+				// Create folder
+				fs.mkdirSync(targetPath, {mode: itemStats.mode});
+				
+				// Copy children
+				return fs.readdirSync(itemPath).forEach(childName => {
+					const childPath = path.join(itemPath, childName);
+					const childTargetPath = path.join(targetPath, childName);
+					recursivelyCopyItem(childPath, childTargetPath);
+				});
+			} else {
+				fs.copyFileSync(itemPath, targetPath);
+			}
+		};
+
+		recursivelyCopyItem(this.path, targetPath);
+		
+		return Item._itemForPath(targetPath);
+	}
+	
 	get _isRoot() {
 		return this.name === '';
 	}

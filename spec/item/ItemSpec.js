@@ -363,4 +363,89 @@ describe('Item', function() {
 			expect(fileItem.moveTo(destinationItem)).toBe(fileItem);
 		});
 	});
+	
+	describe('#copyTo()', function() {
+		it('should copy the item', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			const destinationItem = testEnv.itemFor('destination/').make();
+			
+			fileItem.copyTo(destinationItem);
+			
+			expect(testEnv.itemFor('destination/file').exists).toBe(true);
+		});
+
+		it('should copy children of the item', function() {
+			const folderItem = testEnv.itemFor('folder/').make();
+			const childItem = testEnv.itemFor('folder/child').make();
+			const destinationItem = testEnv.itemFor('destination/').make();
+			
+			folderItem.copyTo(destinationItem);
+			
+			expect(testEnv.itemFor('destination/folder/child').exists).toBe(true);
+		});
+
+		it('should not move the item', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			const destinationItem = testEnv.itemFor('destination/').make();
+			
+			fileItem.copyTo(destinationItem);
+			
+			expect(testEnv.itemFor('file').exists).toBe(true);
+		});
+		
+		it('should not update the item', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			const destinationItem = testEnv.itemFor('destination/').make();
+			
+			fileItem.copyTo(destinationItem);
+			
+			expect(fileItem.path).toBe(testEnv.pathFor('file'));
+		});
+		
+		it('should fail if the destination is not a folder', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			const destinationItem = testEnv.itemFor('destination').make();
+			
+			expect(() => fileItem.copyTo(destinationItem)).toThrow();
+		});
+
+		it('should fail if there is already an item of the same name at the destination', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			const destinationItem = testEnv.itemFor('destination/').make();
+			const destinationChildItem = testEnv.itemFor('destination/file').make();
+			
+			expect(() => fileItem.copyTo(destinationItem)).toThrow();
+		});
+
+		describe('{forgiving: false}', function() {
+			it('should fail if the destination doesn\'t exist', function() {
+				const fileItem = testEnv.itemFor('file').make();
+				const destinationItem = testEnv.itemFor('destination/');
+			
+				expect(() => fileItem.copyTo(destinationItem)).toThrow();
+				expect(testEnv.itemFor('destination/file').exists).toBe(false);
+			});
+		});
+	
+		describe('{forgiving: true}', function() {
+			it('should create the destination hierarchy if it doesn\'t exist', function() {
+				const fileItem = testEnv.itemFor('file').make();
+				const destinationItem = testEnv.itemFor('destination/');
+		
+				fileItem.copyTo(destinationItem, true);
+
+				expect(testEnv.itemFor('destination/file').exists).toBe(true);
+			});
+		});
+	
+		it('should return the copied item', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			const destinationItem = testEnv.itemFor('destination/').make();
+			
+			const copyResult = fileItem.copyTo(destinationItem);
+			
+			expect(copyResult).not.toBe(fileItem);
+			expect(copyResult.path).toBe(testEnv.pathFor('destination/file'));
+		});
+	});
 });
