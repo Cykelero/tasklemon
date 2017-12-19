@@ -21,8 +21,8 @@ describe('Item', function() {
 	
 	describe('when instanciated', function() {
 		it('should correctly choose between File and Folder', function() {
-			expect(Item._itemForPath('file') instanceof File).toBeTruthy();
-			expect(Item._itemForPath('folder/') instanceof Folder).toBeTruthy();
+			expect(testEnv.itemFor('file') instanceof File).toBeTruthy();
+			expect(testEnv.itemFor('folder/') instanceof Folder).toBeTruthy();
 		});
 	});
 	
@@ -317,11 +317,11 @@ describe('Item', function() {
 		});
 		
 		it('should fail if the destination is not a folder', function() {
-			const folderItem = testEnv.itemFor('folder/').make();
+			const fileItem = testEnv.itemFor('file').make();
 			const destinationItem = testEnv.itemFor('destination').make();
 			
-			expect(() => folderItem.moveTo(destinationItem)).toThrow();
-			expect(testEnv.itemFor('folder/').exists).toBe(true);
+			expect(() => fileItem.moveTo(destinationItem)).toThrow();
+			expect(testEnv.itemFor('file').exists).toBe(true);
 		});
 
 		it('should fail if there is already an item of the same name at the destination', function() {
