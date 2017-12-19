@@ -127,25 +127,8 @@ class Item {
 		// Create parents if necessary
 		if (forgiving) Item._makeParentHierarchy(targetPath);
 
-		// Move filesystem item (and possibly throw)
-		function recursivelyCopyItem(itemPath, targetPath) {
-			const itemStats = fs.statSync(itemPath);
-			if (itemStats.isDirectory()) {
-				// Create folder
-				fs.mkdirSync(targetPath, {mode: itemStats.mode});
-				
-				// Copy children
-				return fs.readdirSync(itemPath).forEach(childName => {
-					const childPath = path.join(itemPath, childName);
-					const childTargetPath = path.join(targetPath, childName);
-					recursivelyCopyItem(childPath, childTargetPath);
-				});
-			} else {
-				fs.copyFileSync(itemPath, targetPath);
-			}
-		};
-
-		recursivelyCopyItem(this.path, targetPath);
+		// Copy filesystem item (and possibly throw)
+		Item._recursivelyCopyItem(this.path, targetPath);
 		
 		return Item._itemForPath(targetPath);
 	}
@@ -217,6 +200,23 @@ class Item {
 		if (!fs.existsSync(parentPath)) {
 			this._makeParentHierarchy(parentPath);
 			fs.mkdirSync(parentPath);
+		}
+	}
+	
+	static _recursivelyCopyItem(itemPath, targetPath) {
+		const itemStats = fs.statSync(itemPath);
+		if (itemStats.isDirectory()) {
+			// Create folder
+			fs.mkdirSync(targetPath, {mode: itemStats.mode});
+			
+			// Copy children
+			return fs.readdirSync(itemPath).forEach(childName => {
+				const childPath = path.join(itemPath, childName);
+				const childTargetPath = path.join(targetPath, childName);
+				Item._recursivelyCopyItem(childPath, childTargetPath);
+			});
+		} else {
+			fs.copyFileSync(itemPath, targetPath);
 		}
 	}
 }
