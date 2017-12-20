@@ -24,7 +24,9 @@
  "dependencies": {
   "jsdom": "^11.3.0",
   "moment": "^2.19.1",
-  "node-fetch": "^1.7.3"
+  "node-fetch": "^1.7.3",
+  "rimraf": "^2.6.2",
+  "trash": "^4.2.1"
  },
  "devDependencies": {
   "chokidar-cli": "^1.2.0",

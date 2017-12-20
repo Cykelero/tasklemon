@@ -540,4 +540,30 @@ describe('Item', function() {
 			expect(duplicationResult.path).toBe(testEnv.pathFor('file copy'));
 		});
 	});
+	
+	describe('#delete()', function() {
+		it('should delete the item', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			
+			fileItem.delete();
+			
+			expect(testEnv.itemFor('file').exists).toBe(false);
+		});
+		
+		describe('{immediately: true}', function() {
+			it('should delete the item', function() {
+				const fileItem = testEnv.itemFor('file').make();
+			
+				fileItem.delete(true);
+			
+				expect(testEnv.itemFor('file').exists).toBe(false);
+			});
+		});
+		
+		it('should return the deleted item', function() {
+			const fileItem = testEnv.itemFor('file').make();
+			
+			expect(fileItem.delete()).toBe(fileItem);
+		});
+	});
 });

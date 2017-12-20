@@ -1,8 +1,11 @@
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const childProcess = require('child_process');
 
 const moment = require('moment');
+const trash = require('trash');
+const rimraf = require('rimraf');
 
 const TypeDefinition = require('./TypeDefinition');
 
@@ -167,6 +170,20 @@ class Item {
 		Item._recursivelyCopyItem(this.path, targetPath);
 		
 		return Item._itemForPath(targetPath);
+	}
+	
+	delete(immediately) {
+		if (!immediately) {
+			const temporaryTrashPath = fs.mkdtempSync(os.tmpdir() + path.sep);
+			const targetTemporaryPath = path.join(temporaryTrashPath, this.name);
+			
+			fs.renameSync(this.path, targetTemporaryPath);
+			trash(targetTemporaryPath);
+		} else {
+			rimraf.sync(this.path);
+		}
+		
+		return this;
 	}
 	
 	get _isRoot() {
