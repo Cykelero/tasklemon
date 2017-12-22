@@ -15,15 +15,15 @@ class Item {
 		this._name = name;
 	}
 	
-	get exists() { }
+	get exists() {}
 	
-	get path() { }
+	get path() {}
 	
 	get name() {
 		return this._name;
 	}
 	
-	get size() { }
+	get size() {}
 	
 	get parent() {
 		return this._isRoot ? null : Item._itemForPath(this._parentPath);
@@ -194,7 +194,7 @@ class Item {
 		return fs.lstatSync(this.path);
 	}
 	
-	_make() { }
+	_make() {}
 	
 	static _itemForPath(inputPath) {
 		let result;
