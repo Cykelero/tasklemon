@@ -6,8 +6,12 @@ const Item = require('../../source/Item');
 
 beforeEach(function() {
 	this.getTestEnv = function() {
+		const environmentParentPath = fs.realpathSync(fs.mkdtempSync(os.tmpdir() + path.sep));
+		const environmentPath = path.join(environmentParentPath, 'tasklemon-test-env');
+		fs.mkdirSync(environmentPath);
+		
 		return {
-			path: fs.realpathSync(fs.mkdtempSync(os.tmpdir() + path.sep)),
+			path: environmentPath,
 			createFile: function(filePath) {
 				const completeFilePath = this.pathFor(filePath);
 				fs.closeSync(fs.openSync(completeFilePath, 'w'));
