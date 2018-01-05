@@ -11,6 +11,7 @@ const TypeDefinition = require('./TypeDefinition');
 const ItemUserPermissions = require('./ItemUserPermissions');
 const ItemGroupPermissions = require('./ItemGroupPermissions');
 const ItemOtherPermissions = require('./ItemOtherPermissions');
+const SetMethod = require('./SetMethod');
 
 class Item {
 	constructor(parentPath, name) {
@@ -278,6 +279,8 @@ class Item {
 		}
 	}
 }
+
+Item.prototype.set = SetMethod;
 
 Item._itemsByPath = {};
 

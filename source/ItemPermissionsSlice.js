@@ -1,6 +1,8 @@
 const fs = require('fs');
 
-module.exports = class ItemPermissionsSlice {
+const SetMethod = require('./SetMethod');
+
+class ItemPermissionsSlice {
 	constructor(item) {
 		this._item = item;
 	}
@@ -53,4 +55,8 @@ module.exports = class ItemPermissionsSlice {
 		
 		fs.lchmodSync(this._item.path, newEncodedPermissions);
 	}
-};
+}
+
+ItemPermissionsSlice.prototype.set = SetMethod;
+
+module.exports = ItemPermissionsSlice;
