@@ -159,26 +159,6 @@ describe('Item', function() {
 		});
 	});
 	
-	describe('#user', function() {
-		it('should provide the owner name of an item', function() {
-			const currentUserName = execSync(`id -nu`).trim();
-			
-			const fileItem = Item._itemForPath(testEnv.createFile('file'));
-			
-			expect(fileItem.user).toBe(currentUserName);
-		});
-	});
-	
-	describe('#group', function() {
-		it('should provide the group name of an item', function() {
-			const currentUserGroupName = execSync(`id -gn`).trim();
-			
-			const fileItem = Item._itemForPath(testEnv.createFile('file'));
-			
-			expect(fileItem.group).toBe(currentUserGroupName);
-		});
-	});
-	
 	describe('#make()', function() {
 		it('should create an empty file', function() {
 			const fileItem = testEnv.itemFor('file');

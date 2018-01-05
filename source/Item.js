@@ -8,6 +8,9 @@ const trash = require('trash');
 const rimraf = require('rimraf');
 
 const TypeDefinition = require('./TypeDefinition');
+const ItemUserPermissions = require('./ItemUserPermissions');
+const ItemGroupPermissions = require('./ItemGroupPermissions');
+const ItemOtherPermissions = require('./ItemOtherPermissions');
 
 class Item {
 	constructor(parentPath, name) {
@@ -38,13 +41,15 @@ class Item {
 	}
 	
 	get user() {
-		return childProcess.execSync(`ls -ld "${this.path}"`)
-			.toString().replace(/\s+/g, ' ').split(' ')[2];
+		return new ItemUserPermissions(this);
 	}
 	
 	get group() {
-		return childProcess.execSync(`ls -ld "${this.path}"`)
-			.toString().replace(/\s+/g, ' ').split(' ')[3];
+		return new ItemGroupPermissions(this);
+	}
+	
+	get other() {
+		return new ItemOtherPermissions(this);
 	}
 	
 	make(forgiving) {
