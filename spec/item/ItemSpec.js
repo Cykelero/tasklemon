@@ -31,7 +31,7 @@ describe('Item', function() {
 			let fileItem = Item._itemForPath(testEnv.createFile('file'));
 			expect(fileItem.exists).toBeTruthy();
 			
-			let folderItem = Item._itemForPath(testEnv.createFolder('folder'));
+			let folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
 			expect(folderItem.exists).toBeTruthy();
 		});
 
@@ -45,7 +45,7 @@ describe('Item', function() {
 
 		it('should be false for an item of a different type', function() {
 			testEnv.createFile('file');
-			testEnv.createFolder('folder');
+			testEnv.createFolder('folder/');
 			
 			let fileItem = testEnv.itemFor('file/');
 			expect(fileItem.exists).toBeFalsy();
@@ -63,7 +63,7 @@ describe('Item', function() {
 		});
 		
 		it('should provide the path of a folder', function() {
-			const folderPath = testEnv.createFolder('folder');
+			const folderPath = testEnv.createFolder('folder/');
 			let folderItem = Item._itemForPath(folderPath);
 			expect(folderItem.path).toBe(folderPath);
 		});
@@ -81,10 +81,10 @@ describe('Item', function() {
 		});
 
 		it('should return the actual path of a symlink target', function() {
-			const linkTargetPath = testEnv.createFolder('link-target');
+			const linkTargetPath = testEnv.createFolder('link-target/');
 			const linkTargetChildPath = testEnv.createFile('link-target/child');
 
-			const linkContainerPath = testEnv.createFolder('link-container');
+			const linkContainerPath = testEnv.createFolder('link-container/');
 			execSync(`ln -s "${linkTargetPath}" link`, {cwd: linkContainerPath});
 			
 			let linkTargetChildItem = Item._itemForPath(linkTargetChildPath);
@@ -114,7 +114,7 @@ describe('Item', function() {
 		});
 
 		it('should provide the size of a folder', function() {
-			const folderPath = testEnv.createFolder('folder');
+			const folderPath = testEnv.createFolder('folder/');
 			let folderItem = Item._itemForPath(folderPath);
 			
 			expect(folderItem.size).toBeGreaterThanOrEqual(0); // I don't understand folder size
@@ -128,7 +128,7 @@ describe('Item', function() {
 	
 	describe('#parent', function() {
 		it('should provide the parent of an item', function() {
-			const parentPath = testEnv.createFolder('parent');
+			const parentPath = testEnv.createFolder('parent/');
 			let parentItem = Item._itemForPath(parentPath);
 			let childItem = Item._itemForPath(testEnv.createFile('parent/child'));
 			
