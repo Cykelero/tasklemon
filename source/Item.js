@@ -46,6 +46,22 @@ class Item {
 		Item._registerItemPathChange(this, targetPath);
 	}
 	
+	get bareName() {
+		const lastDotIndex = this.name.lastIndexOf('.');
+		
+		if (lastDotIndex === -1) {
+			return this.name;
+		} else {
+			return this.name.slice(0, lastDotIndex);
+		}
+	}
+	
+	set bareName(value) {
+		const currentBareName = this.bareName;
+		
+		this.name = value + this.name.slice(currentBareName.length);
+	}
+	
 	get size() {}
 	
 	get parent() {

@@ -155,6 +155,26 @@ describe('Item', function() {
 		});
 	});
 	
+	describe('#bareName', function() {
+		it('should provide the name of the item without the extension', function() {
+			const fileItem = Item._itemForPath(testEnv.createFile('file.txt'));
+			expect(fileItem.bareName).toBe('file');
+
+			const file2Item = Item._itemForPath(testEnv.createFile('file.tar.gz'));
+			expect(file2Item.bareName).toBe('file.tar');
+		});
+	
+		describe('{newBareName}', function() {
+			it('should rename the item', function() {
+				const fileItem = Item._itemForPath(testEnv.createFile('file.txt'));
+				
+				fileItem.bareName = 'file2';
+				
+				expect(fileItem.name).toBe('file2.txt');
+			});
+		});
+	});
+	
 	describe('#size', function() {
 		it('should provide the size of a file', function() {
 			const filePath = testEnv.createFile('file');
