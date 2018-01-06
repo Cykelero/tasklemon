@@ -95,8 +95,63 @@ describe('Item', function() {
 	
 	describe('#name', function() {
 		it('should provide the name of the item', function() {
-			let fileItem = Item._itemForPath(testEnv.createFile('file'));
+			const fileItem = Item._itemForPath(testEnv.createFile('file'));
 			expect(fileItem.name).toBe('file');
+		});
+	
+		describe('{newName}', function() {
+			it('should rename the item', function() {
+				const fileItem = Item._itemForPath(testEnv.createFile('file'));
+				
+				fileItem.name = 'file2';
+				
+				expect(testEnv.itemFor('file').exists).toBe(false);
+				expect(testEnv.itemFor('file2').exists).toBe(true);
+			});
+
+			it('should update the item', function() {
+				const fileItem = Item._itemForPath(testEnv.createFile('file'));
+				
+				fileItem.name = 'file2';
+				
+				expect(fileItem.name).toBe('file2');
+			});
+
+			it('should update other instances of the item', function() {
+				const fileItem = Item._itemForPath(testEnv.createFile('file'));
+				const fileSecondItem = testEnv.itemFor('file');
+				
+				fileItem.name = 'file2';
+				
+				expect(fileSecondItem.name).toBe('file2');
+			});
+
+			it('should move children of the item', function() {
+				const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
+				const childItem = Item._itemForPath(testEnv.createFile('folder/child'));
+				
+				folderItem.name = 'folder2';
+				
+				expect(testEnv.itemFor('folder/child').exists).toBe(false);
+				expect(testEnv.itemFor('folder2/child').exists).toBe(true);
+			});
+
+			it('should update instances of the item\'s children', function() {
+				const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
+				const childItem = Item._itemForPath(testEnv.createFile('folder/child'));
+				
+				folderItem.name = 'folder2';
+				
+				expect(childItem.path).toBe(testEnv.pathFor('folder2/child'));
+			});
+
+			it('should fail if there is already an item of the same name', function() {
+				const fileItem = Item._itemForPath(testEnv.createFile('file'));
+				const file2Item = Item._itemForPath(testEnv.createFile('file2'));
+				
+				expect(() => fileItem.name = 'file2').toThrow();
+				expect(testEnv.itemFor('file').exists).toBe(true);
+			});
 		});
 	});
 	
@@ -141,13 +196,41 @@ describe('Item', function() {
 			
 			expect(rootItem.parent).toBe(null);
 		});
+		
+		it('{newParent} should allow moving the item', function() {
+			let fileItem = Item._itemForPath(testEnv.createFile('file'));
+			let folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
+			
+			fileItem.parent = folderItem;
+			expect(fileItem.parent.path).toBe(folderItem.path);
+		});
 	});
 	
 	describe('#dateCreated', function() {
 		it('should provide the creation date of the item', function() {
 			const fileItem = Item._itemForPath(testEnv.createFile('file'));
 			
-			expect((fileItem.dateCreated).unix()).toBe(moment().unix());
+			expect(fileItem.dateCreated.unix()).toBe(moment().unix());
+		});
+		
+		describe('{newDate} should allow changing the creation date of the item', function() {
+			it('to a former date', function() {
+				let fileItem = Item._itemForPath(testEnv.createFile('file'));
+			
+				const newDate = moment().subtract(1, 'day');
+				fileItem.dateCreated = newDate;
+				
+				expect(fileItem.dateCreated.unix()).toBe(newDate.unix());
+			});
+
+			it('to a later date', function() {
+				let fileItem = Item._itemForPath(testEnv.createFile('file'));
+			
+				const newDate = moment().add(1, 'day');
+				fileItem.dateCreated = newDate;
+				
+				expect(fileItem.dateCreated.unix()).toBe(newDate.unix());
+			});
 		});
 	});
 	
@@ -155,7 +238,27 @@ describe('Item', function() {
 		it('should provide the modification date of the item', function() {
 			const fileItem = Item._itemForPath(testEnv.createFile('file'));
 			
-			expect((fileItem.dateModified).unix()).toBe(moment().unix());
+			expect(fileItem.dateModified.unix()).toBe(moment().unix());
+		});
+		
+		describe('{newDate} should allow changing the modification date of the item', function() {
+			it('to a former date', function() {
+				let fileItem = Item._itemForPath(testEnv.createFile('file'));
+			
+				const newDate = moment().subtract(1, 'day');
+				fileItem.dateModified = newDate;
+				
+				expect(fileItem.dateModified.unix()).toBe(newDate.unix());
+			});
+
+			it('to a later date', function() {
+				let fileItem = Item._itemForPath(testEnv.createFile('file'));
+			
+				const newDate = moment().add(1, 'day');
+				fileItem.dateModified = newDate;
+				
+				expect(fileItem.dateModified.unix()).toBe(newDate.unix());
+			});
 		});
 	});
 	

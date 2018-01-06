@@ -27,18 +27,63 @@ class Item {
 		return this._name;
 	}
 	
+	set name(value) {
+		const targetPath = this._parentPath + value + (this._isFolder ? '/' : '');
+		
+		// Feasibility checks
+		if (value.indexOf('/') > -1) {
+			throw Error(`Can't rename “${this.name}”: “${value}” is not a valid name`);
+		}
+
+		if (fs.existsSync(targetPath)) {
+			throw Error(`Can't rename “${this.name}”: “${value}” already exists`);
+		}
+
+		// Rename filesystem item (and possibly throw)
+		fs.renameSync(this.path, targetPath);
+		
+		// Update paths of all related items
+		Item._registerItemPathChange(this, targetPath);
+	}
+	
 	get size() {}
 	
 	get parent() {
 		return this._isRoot ? null : Item._itemForPath(this._parentPath);
 	}
 	
+	set parent(value) {
+		this.moveTo(value);
+	}
+	
 	get dateCreated() {
 		return moment(this._stats.birthtime);
 	}
 	
+	set dateCreated(value) {
+		const momentDate = moment(value);
+		const formattedDate = momentDate.format('MM/DD/YY HH:mm:ss'); // ewwww
+		
+		try {
+			childProcess.execSync(`SetFile -d '${formattedDate}' ${this.path}`);
+		} catch (error) {
+			if (error.message.indexOf('error: invalid active developer path') > -1) {
+				throw Error(`Can't redate “${this.name}”: command line tools are not installed. Please run \`xcode-select --install\` (macOS only).`);
+			} else {
+				throw error;
+			}
+		}
+	}
+	
 	get dateModified() {
 		return moment(this._stats.mtime);
+	}
+	
+	set dateModified(value) {
+		const momentDate = moment(value);
+		const formattedDate = momentDate.format('YYYYMMDDHHmm.ss');
+		
+		childProcess.execSync(`touch -ht ${formattedDate} ${this.path}`);
 	}
 	
 	get user() {
@@ -95,26 +140,7 @@ class Item {
 		fs.renameSync(this.path, targetPath);
 		
 		// Update paths of all related items
-		const thisPath = this.path;
-		const pathLength = thisPath.length;
-		const knownItemPaths = Object.keys(Item._itemsByPath);
-		
-		knownItemPaths.forEach(itemPath => {
-			const isRelated = this._isFolder ?
-				itemPath.slice(0, pathLength) === thisPath :
-				itemPath === thisPath;
-			
-			if (isRelated) {
-				const newItemPath = targetPath + itemPath.slice(pathLength);
-				const newParentPath = path.dirname(newItemPath) + '/';
-				
-				for (let relatedItem of Item._itemsByPath[itemPath].values()) {
-					Item._deregisterItem(relatedItem);
-					relatedItem._parentPath = newParentPath;
-					Item._registerItem(relatedItem);
-				};
-			}
-		});
+		Item._registerItemPathChange(this, targetPath);
 		
 		return this;
 	}
@@ -253,6 +279,33 @@ class Item {
 	static _deregisterItem(item) {
 		const itemPath = item.path;
 		Item._itemsByPath[itemPath].delete(item);
+	}
+		
+	static _registerItemPathChange(item, newItemPath) {
+		const initialItemPath = item.path;
+		const initialItemPathLength = initialItemPath.length;
+		
+		const knownItemPaths = Object.keys(Item._itemsByPath);
+	
+		knownItemPaths.forEach(knownItemPath => {
+			const isRelated = item._isFolder ?
+				knownItemPath.slice(0, initialItemPathLength) === initialItemPath :
+				knownItemPath === initialItemPath;
+		
+			if (isRelated) {
+				const newRelatedItemPath = newItemPath + knownItemPath.slice(initialItemPathLength);
+				
+				const newRelatedItemParentPath = path.dirname(newRelatedItemPath) + '/';
+				const newRelatedItemName = newRelatedItemPath.slice(newRelatedItemParentPath.length);
+			
+				for (let relatedItem of Item._itemsByPath[knownItemPath].values()) {
+					Item._deregisterItem(relatedItem);
+					relatedItem._parentPath = newRelatedItemParentPath;
+					relatedItem._name = newRelatedItemName;
+					Item._registerItem(relatedItem);
+				};
+			}
+		});
 	}
 	
 	static _makeParentHierarchy(itemPath) {
