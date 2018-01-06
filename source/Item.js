@@ -77,8 +77,7 @@ class Item {
 	}
 	
 	moveTo(destination, forgiving) {
-		const isFolder = this instanceof require('./Folder');
-		const targetPath = destination.path + this.name + (isFolder ? '/' : '');
+		const targetPath = destination.path + this.name + (this._isFolder ? '/' : '');
 		
 		// Feasibility checks
 		if (!(destination instanceof require('./Folder'))) {
@@ -101,7 +100,7 @@ class Item {
 		const knownItemPaths = Object.keys(Item._itemsByPath);
 		
 		knownItemPaths.forEach(itemPath => {
-			const isRelated = isFolder ?
+			const isRelated = this._isFolder ?
 				itemPath.slice(0, pathLength) === thisPath :
 				itemPath === thisPath;
 			
@@ -121,8 +120,7 @@ class Item {
 	}
 	
 	copyTo(destination, forgiving) {
-		const isFolder = this instanceof require('./Folder');
-		const targetPath = destination.path + this.name + (isFolder ? '/' : '');
+		const targetPath = destination.path + this.name + (this._isFolder ? '/' : '');
 		
 		// Feasibility checks
 		if (!(destination instanceof require('./Folder'))) {
@@ -143,7 +141,6 @@ class Item {
 	}
 	
 	duplicate(newName) {
-		const isFolder = this instanceof require('./Folder');
 		let targetPath;
 		
 		// Settle on name
@@ -158,13 +155,13 @@ class Item {
 				nameSuffix++;
 			}
 			
-			if (isFolder) newName += '/';
+			if (this._isFolder) newName += '/';
 		}
 		
 		targetPath = this._parentPath + newName;
 		
 		// Feasibility checks
-		if ((newName.slice(-1) === '/') !== isFolder) {
+		if ((newName.slice(-1) === '/') !== this._isFolder) {
 			throw Error(`Can't duplicate “${this.name}” to “${newName}”: newName is of the wrong type`);
 		}
 
@@ -194,6 +191,10 @@ class Item {
 	
 	get _isRoot() {
 		return this.name === '';
+	}
+	
+	get _isFolder() {
+		return (this instanceof require('./Folder'));
 	}
 	
 	get _stats() {
