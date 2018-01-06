@@ -94,7 +94,7 @@ describe('Item', function() {
 	});
 	
 	describe('#name', function() {
-		it('should provide the name of an item', function() {
+		it('should provide the name of the item', function() {
 			let fileItem = Item._itemForPath(testEnv.createFile('file'));
 			expect(fileItem.name).toBe('file');
 		});
@@ -127,7 +127,7 @@ describe('Item', function() {
 	});
 	
 	describe('#parent', function() {
-		it('should provide the parent of an item', function() {
+		it('should provide the parent of the item', function() {
 			const parentPath = testEnv.createFolder('parent/');
 			let parentItem = Item._itemForPath(parentPath);
 			let childItem = Item._itemForPath(testEnv.createFile('parent/child'));
@@ -144,7 +144,7 @@ describe('Item', function() {
 	});
 	
 	describe('#dateCreated', function() {
-		it('should provide the creation date of an item', function() {
+		it('should provide the creation date of the item', function() {
 			const fileItem = Item._itemForPath(testEnv.createFile('file'));
 			
 			expect((fileItem.dateCreated).unix()).toBe(moment().unix());
@@ -152,7 +152,7 @@ describe('Item', function() {
 	});
 	
 	describe('#dateModified', function() {
-		it('should provide the modification date of an item', function() {
+		it('should provide the modification date of the item', function() {
 			const fileItem = Item._itemForPath(testEnv.createFile('file'));
 			
 			expect((fileItem.dateModified).unix()).toBe(moment().unix());
