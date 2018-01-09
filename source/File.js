@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const md5File = require('md5-file');
+
 const Item = require('./Item');
 const TypeDefinition = require('./TypeDefinition');
 
@@ -19,6 +21,10 @@ class File extends Item {
 
 	get size() {
 		return this._stats.size;
+	}
+	
+	get md5() {
+		return md5File.sync(this.path);
 	}
 	
 	_make(forgiving) {

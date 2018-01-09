@@ -23,6 +23,7 @@
  },
  "dependencies": {
   "jsdom": "^11.3.0",
+  "md5-file": "^3.2.3",
   "moment": "^2.19.1",
   "node-fetch": "^1.7.3",
   "rimraf": "^2.6.2",
