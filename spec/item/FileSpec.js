@@ -24,7 +24,7 @@ describe('Item', function() {
 			expect(fileItem.content).toBe('text-content');
 		});
 	
-		describe('{newContent}', function() {
+		describe('{value}', function() {
 			it('should change the content of the item', function() {
 				const fileItem = Item._itemForPath(testEnv.createFile('file'));
 				

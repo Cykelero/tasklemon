@@ -99,7 +99,7 @@ describe('Item', function() {
 			expect(fileItem.name).toBe('file');
 		});
 	
-		describe('{newName}', function() {
+		describe('{value}', function() {
 			it('should rename the item', function() {
 				const fileItem = Item._itemForPath(testEnv.createFile('file'));
 				
@@ -164,7 +164,7 @@ describe('Item', function() {
 			expect(file2Item.bareName).toBe('file.tar');
 		});
 	
-		describe('{newBareName}', function() {
+		describe('{value}', function() {
 			it('should rename the item', function() {
 				const fileItem = Item._itemForPath(testEnv.createFile('file.txt'));
 				
@@ -233,7 +233,7 @@ describe('Item', function() {
 			expect(fileItem.dateCreated.unix()).toBe(moment().unix());
 		});
 		
-		describe('{newDate} should allow changing the creation date of the item', function() {
+		describe('{value} should allow changing the creation date of the item', function() {
 			it('to a former date', function() {
 				let fileItem = Item._itemForPath(testEnv.createFile('file'));
 			
@@ -261,7 +261,7 @@ describe('Item', function() {
 			expect(fileItem.dateModified.unix()).toBe(moment().unix());
 		});
 		
-		describe('{newDate} should allow changing the modification date of the item', function() {
+		describe('{value} should allow changing the modification date of the item', function() {
 			it('to a former date', function() {
 				let fileItem = Item._itemForPath(testEnv.createFile('file'));
 			
@@ -345,7 +345,7 @@ describe('Item', function() {
 				
 				fileItem.make(true);
 
-				expect(fs.readFileSync(filePath, "utf8")).toBe(fileTextContent);
+				expect(fs.readFileSync(filePath, 'utf8')).toBe(fileTextContent);
 			});
 
 			it('should do nothing if the folder already exists', function() {
@@ -607,7 +607,7 @@ describe('Item', function() {
 			expect(fileItem.path).toBe(testEnv.pathFor('file'));
 		});
 		
-		describe('{newName}', function() {
+		describe('{copyName}', function() {
 			it('should use the new name for the copy', function() {
 				const fileItem = testEnv.itemFor('file').make();
 			
