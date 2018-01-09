@@ -23,6 +23,14 @@ class File extends Item {
 		return this._stats.size;
 	}
 	
+	get content() {
+		return fs.readFileSync(this.path, {encoding: 'utf8'});
+	}
+	
+	set content(value) {
+		fs.writeFileSync(this.path, typeof(value) === 'string' ? value : JSON.stringify(value));
+	}
+	
 	get md5() {
 		return md5File.sync(this.path);
 	}

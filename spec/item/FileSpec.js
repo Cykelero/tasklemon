@@ -15,6 +15,36 @@ describe('Item', function() {
 		testEnv = this.getTestEnv();
 	});
 	
+	describe('#content', function() {
+		it('should provide the content of the file as a string', function() {
+			const filePath = testEnv.createFile('file');
+			const fileItem = Item._itemForPath(filePath);
+			fs.writeFileSync(filePath, 'text-content');
+			
+			expect(fileItem.content).toBe('text-content');
+		});
+	
+		describe('{newContent}', function() {
+			it('should change the content of the item', function() {
+				const fileItem = Item._itemForPath(testEnv.createFile('file'));
+				
+				fileItem.content = 'text-content';
+				expect(fileItem.content).toBe('text-content');
+				
+				fileItem.content = 'new-text-content';
+				expect(fileItem.content).toBe('new-text-content');
+			});
+
+			it('should encode the provided value in JSON', function() {
+				const fileItem = Item._itemForPath(testEnv.createFile('file'));
+				
+				const savedObject = {key: 'value'};
+				fileItem.content = savedObject;
+				expect(JSON.parse(fileItem.content)).toEqual(jasmine.objectContaining(savedObject));
+			});
+		});
+	});
+	
 	describe('#md5', function() {
 		it('should provide the md5 hash of the file', function() {
 			const filePath = testEnv.createFile('file');
