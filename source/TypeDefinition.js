@@ -1,7 +1,30 @@
 const moment = require('moment');
 
 const symbol = Symbol('tasklemon type definition');
-module.exports = { symbol };
+module.exports = {
+	execute(type, value) {
+		const typeDefinitionList = Array.isArray(type) ? type : [type];
+
+		try {
+			let currentValue = value;
+			for (let typeDefinition of typeDefinitionList) {
+				typeDefinition = typeDefinition[symbol] || typeDefinition;
+				currentValue = typeDefinition(currentValue);
+			}
+			
+			return {
+				valid: true,
+				value: currentValue
+			};
+		} catch(errorText) {
+			return {
+				valid: false,
+				errorText
+			};
+		}
+	},
+	symbol
+};
 
 // Built-in type definitions
 Boolean[symbol] = function(value) {

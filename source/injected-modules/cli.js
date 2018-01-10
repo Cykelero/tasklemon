@@ -26,21 +26,14 @@ cli.ask = function(promptText, type, skippable) {
 				resolve(answer);
 			} else {
 				// Execute type definitions
-				const typeDefinitionList = Array.isArray(type) ? type : [type];
+				const castResult = TypeDefinition.execute(type, answer);
 				
-				Promise.resolve()
-					.then(async function() {
-						let currentValue = answer;
-						for (typeDefinition of typeDefinitionList) {
-							typeDefinition = typeDefinition[TypeDefinition.symbol] || typeDefinition;
-							currentValue = await typeDefinition(currentValue);
-						}
-						resolve(currentValue);
-					})
-					.catch(function(errorText) {
-						cli.tell(`Value ${errorText}.`);
-						resolve(cli.ask(promptText, type, skippable));
-					});
+				if (castResult.valid) {
+					resolve(castResult.value);
+				} else {
+					cli.tell(`Value ${castResult.errorText}.`);
+					resolve(cli.ask(promptText, type, skippable));
+				}
 			}
 		});
 	});
