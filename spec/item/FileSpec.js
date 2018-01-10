@@ -54,4 +54,16 @@ describe('Item', function() {
 			expect(fileItem.md5).toBe('901a84918e4d5121ceae18305d2cd938');
 		});
 	});
+	
+	describe('#getContentAs() {type}', function() {
+		it('should return the content of the file cast with the specified type definition', function() {
+			const fileItem = Item._itemForPath(testEnv.createFile('file'));
+			
+			fileItem.content = {key: 'value'};
+			expect(fileItem.getContentAs(Object)).toEqual(jasmine.objectContaining({key: 'value'}));
+			
+			fileItem.content = '1984';
+			expect(fileItem.getContentAs(Number)).toBe(1984);
+		});
+	});
 });

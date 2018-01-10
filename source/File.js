@@ -35,6 +35,11 @@ class File extends Item {
 		return md5File.sync(this.path);
 	}
 	
+	getContentAs(type) {
+		const castResult = TypeDefinition.execute(type, this.content);
+		return castResult.valid ? castResult.value : null;
+	}
+	
 	_make(forgiving) {
 		fs.closeSync(fs.openSync(this.path, 'a'));
 	}
