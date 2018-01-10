@@ -66,4 +66,46 @@ describe('Item', function() {
 			expect(fileItem.getContentAs(Number)).toBe(1984);
 		});
 	});
+	
+	describe('#appendLine() {content}', function() {
+		it('should append the provided content to the file', function() {
+			const fileItem = Item._itemForPath(testEnv.createFile('file'));
+			
+			fileItem.content = 'first-line';
+			fileItem.appendLine('second-line');
+			
+			expect(fileItem.content).toBe('first-line\nsecond-line');
+		});
+
+		it('should encode the provided value in JSON', function() {
+			const fileItem = Item._itemForPath(testEnv.createFile('file'));
+			const savedObject = {key: 'value'};
+			
+			fileItem.content = 'first-line';
+			fileItem.appendLine(savedObject);
+			
+			expect(fileItem.content).toBe('first-line\n' + JSON.stringify(savedObject));
+		});
+	});
+	
+	describe('#prependLine() {content}', function() {
+		it('should prepend the provided content to the file', function() {
+			const fileItem = Item._itemForPath(testEnv.createFile('file'));
+			
+			fileItem.content = 'second-line';
+			fileItem.prependLine('first-line');
+			
+			expect(fileItem.content).toBe('first-line\nsecond-line');
+		});
+
+		it('should encode the provided value in JSON', function() {
+			const fileItem = Item._itemForPath(testEnv.createFile('file'));
+			const savedObject = {key: 'value'};
+			
+			fileItem.content = 'second-line';
+			fileItem.prependLine(savedObject);
+			
+			expect(fileItem.content).toBe(JSON.stringify(savedObject) + '\nsecond-line');
+		});
+	});
 });

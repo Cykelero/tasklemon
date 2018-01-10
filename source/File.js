@@ -28,7 +28,7 @@ class File extends Item {
 	}
 	
 	set content(value) {
-		fs.writeFileSync(this.path, typeof(value) === 'string' ? value : JSON.stringify(value));
+		fs.writeFileSync(this.path, this._stringify(value));
 	}
 	
 	get md5() {
@@ -40,8 +40,23 @@ class File extends Item {
 		return castResult.valid ? castResult.value : null;
 	}
 	
+	appendLine(value) {
+		fs.appendFileSync(this.path, '\n' + this._stringify(value));
+	}
+	
+	prependLine(value) {
+		const existingContentBuffer = fs.readFileSync(this.path);
+		
+		fs.writeFileSync(this.path, this._stringify(value) + '\n');
+		fs.appendFileSync(this.path, existingContentBuffer);
+	}
+	
 	_make(forgiving) {
 		fs.closeSync(fs.openSync(this.path, 'a'));
+	}
+	
+	_stringify(value) {
+		return (typeof(value) === 'string') ? value : JSON.stringify(value);
 	}
 }
 
