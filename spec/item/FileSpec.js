@@ -108,4 +108,35 @@ describe('Item', function() {
 			expect(fileItem.content).toBe(JSON.stringify(savedObject) + '\nsecond-line');
 		});
 	});
+	
+	describe('#clear()', function() {
+		it('should clear the content of the file', function() {
+			const fileItem = Item._itemForPath(testEnv.createFile('file'));
+			
+			fileItem.content = 'second-line';
+			fileItem.clear();
+			
+			expect(fileItem.content).toBe('');
+		});
+		
+		describe('{forgiving: false}', function() {
+			it('should fail if the file does not exist', function() {
+				const fileItem = testEnv.itemFor('file');
+				
+				expect(() => fileItem.clear()).toThrow();
+				expect(fileItem.exists).toBe(false);
+			});
+		});
+		
+		describe('{forgiving: true}', function() {
+			it('should create the file if it does not exist', function() {
+				const fileItem = testEnv.itemFor('file');
+				
+				fileItem.clear(true);
+				
+				expect(fileItem.exists).toBe(true);
+				expect(fileItem.content).toBe('');
+			});
+		});
+	});
 });

@@ -51,6 +51,14 @@ class File extends Item {
 		fs.appendFileSync(this.path, existingContentBuffer);
 	}
 	
+	clear(forgiving) {
+		if (!forgiving && !this.exists) {
+			throw new Error(`Can't clear “${this.name}”: does not exist in “${this.parent.path}”`);
+		}
+		
+		fs.writeFileSync(this.path, '');
+	}
+	
 	_make(forgiving) {
 		fs.closeSync(fs.openSync(this.path, 'a'));
 	}
