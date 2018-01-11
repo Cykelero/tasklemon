@@ -8,7 +8,7 @@ function execSync() {
 	return childProcess.execSync.apply(this, arguments).toString();
 }
 
-describe('Item', function() {
+describe('File', function() {
 	let testEnv;
 	
 	beforeEach(function() {
