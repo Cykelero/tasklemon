@@ -27,6 +27,11 @@ try {
 	process.exit(1);
 }
 
+const scriptShebangParts = /^#!.+\n/.exec(sourceScriptContent);
+if (scriptShebangParts) {
+	sourceScriptContent = sourceScriptContent.slice(scriptShebangParts[0].length);
+}
+
 // // Create stage folder
 const stagePath = fs.mkdtempSync(os.tmpdir() + path.sep);
 preparedScriptPath = path.join(stagePath, scriptName);
