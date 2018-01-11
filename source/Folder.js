@@ -35,6 +35,19 @@ class Folder extends Item {
 		return getFolderSize(this.path);
 	}
 	
+	get children() {
+		return fs.readdirSync(this.path)
+			.map(childName => {
+				const childPath = path.join(this.path, childName);
+			
+				if (fs.statSync(childPath).isDirectory()) {
+					return Item._itemForPath(childPath + path.sep);
+				} else {
+					return Item._itemForPath(childPath);
+				}
+			});
+	}
+	
 	_make(forgiving) {
 		fs.mkdirSync(this.path);
 	}
