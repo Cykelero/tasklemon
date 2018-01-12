@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const rimraf = require('rimraf');
+
 const Item = require('./Item');
 const TypeDefinition = require('./TypeDefinition');
 
@@ -45,6 +47,26 @@ class Folder extends Item {
 				} else {
 					return Item._itemForPath(childPath);
 				}
+			});
+	}
+	
+	file(path) {
+		if (path.slice(-1) === '/') throw Error(`“${path}” is not a file path`);
+			
+		return Item._itemForPath(this.path + path);
+	}
+	
+	folder(path) {
+		if (path.slice(-1) !== '/') throw Error(`“${path}” is not a folder path`);
+			
+		return Item._itemForPath(this.path + path);
+	}
+	
+	empty() {
+		return fs.readdirSync(this.path)
+			.forEach(childName => {
+				const childPath = path.join(this.path, childName);
+				rimraf.sync(childPath);
 			});
 	}
 	
