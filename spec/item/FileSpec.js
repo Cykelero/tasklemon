@@ -1,12 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const childProcess = require('child_process');
 
 const Item = require('../../source/Item');
-
-function execSync() {
-	return childProcess.execSync.apply(this, arguments).toString();
-}
 
 describe('File', function() {
 	let testEnv;

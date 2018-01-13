@@ -1,16 +1,11 @@
 const fs = require('fs');
 const path = require('path');
-const childProcess = require('child_process');
 
 const moment = require('moment');
 
 const Item = require('../../source/Item');
 const File = require('../../source/File');
 const Folder = require('../../source/Folder');
-
-function execSync() {
-	return childProcess.execSync.apply(this, arguments).toString();
-}
 
 describe('Item', function() {
 	let testEnv;
@@ -85,7 +80,7 @@ describe('Item', function() {
 			const linkTargetChildPath = testEnv.createFile('link-target/child');
 
 			const linkContainerPath = testEnv.createFolder('link-container/');
-			execSync(`ln -s "${linkTargetPath}" link`, {cwd: linkContainerPath});
+			this.execSync(`ln -s "${linkTargetPath}" link`, {cwd: linkContainerPath});
 			
 			let linkTargetChildItem = Item._itemForPath(linkTargetChildPath);
 			
