@@ -29,6 +29,8 @@ class Item {
 	
 	set name(value) {
 		const targetPath = this._parentPath + value + (this._isFolder ? '/' : '');
+
+		this._throwIfNonexistent(`set name of`);
 		
 		// Feasibility checks
 		if (value.indexOf('/') > -1) {
@@ -57,6 +59,8 @@ class Item {
 	}
 	
 	set bareName(value) {
+		this._throwIfNonexistent(`set name of`);
+		
 		const currentBareName = this.bareName;
 		
 		this.name = value + this.name.slice(currentBareName.length);
@@ -69,14 +73,18 @@ class Item {
 	}
 	
 	set parent(value) {
+		this._throwIfNonexistent(`move`);
 		this.moveTo(value);
 	}
 	
 	get dateCreated() {
+		this._throwIfNonexistent(`get creation date of`);
 		return moment(this._stats.birthtime);
 	}
 	
 	set dateCreated(value) {
+		this._throwIfNonexistent(`set creation date of`);
+		
 		const momentDate = moment(value);
 		const formattedDate = momentDate.format('MM/DD/YY HH:mm:ss'); // ewwww
 		
@@ -92,10 +100,13 @@ class Item {
 	}
 	
 	get dateModified() {
+		this._throwIfNonexistent(`get modification date of`);
 		return moment(this._stats.mtime);
 	}
 	
 	set dateModified(value) {
+		this._throwIfNonexistent(`set modification date of`);
+		
 		const momentDate = moment(value);
 		const formattedDate = momentDate.format('YYYYMMDDHHmm.ss');
 		
@@ -103,14 +114,17 @@ class Item {
 	}
 	
 	get user() {
+		this._throwIfNonexistent(`get user permissions of`);
 		return new ItemUserPermissions(this);
 	}
 	
 	get group() {
+		this._throwIfNonexistent(`get group permissions of`);
 		return new ItemGroupPermissions(this);
 	}
 	
 	get other() {
+		this._throwIfNonexistent(`get other permissions of`);
 		return new ItemOtherPermissions(this);
 	}
 	
@@ -138,6 +152,8 @@ class Item {
 	}
 	
 	moveTo(destination, forgiving) {
+		this._throwIfNonexistent(`move`);
+		
 		const targetPath = destination.path + this.name + (this._isFolder ? '/' : '');
 		
 		// Feasibility checks
@@ -162,6 +178,8 @@ class Item {
 	}
 	
 	copyTo(destination, forgiving) {
+		this._throwIfNonexistent(`copy`);
+		
 		const targetPath = destination.path + this.name + (this._isFolder ? '/' : '');
 		
 		// Feasibility checks
@@ -183,6 +201,8 @@ class Item {
 	}
 	
 	duplicate(newName) {
+		this._throwIfNonexistent(`duplicate`);
+		
 		let targetPath;
 		
 		// Settle on name
@@ -218,6 +238,8 @@ class Item {
 	}
 	
 	delete(immediately) {
+		this._throwIfNonexistent(`delete`);
+		
 		if (!immediately) {
 			const temporaryTrashPath = fs.mkdtempSync(os.tmpdir() + path.sep);
 			const targetTemporaryPath = path.join(temporaryTrashPath, this.name);
@@ -241,6 +263,12 @@ class Item {
 	
 	get _stats() {
 		return fs.lstatSync(this.path);
+	}
+
+	_throwIfNonexistent(actionDescription) {
+		if (!this.exists) {
+			throw Error(`Can't ${actionDescription} “${this.name}”: item does not exist`);
+		}
 	}
 	
 	_make() {}

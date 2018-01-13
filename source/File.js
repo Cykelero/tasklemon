@@ -20,31 +20,39 @@ class File extends Item {
 	}
 
 	get size() {
+		this._throwIfNonexistent(`get size of`);
 		return this._stats.size;
 	}
 	
 	get content() {
+		this._throwIfNonexistent(`get content of`);
 		return fs.readFileSync(this.path, {encoding: 'utf8'});
 	}
 	
 	set content(value) {
+		this._throwIfNonexistent(`set content of`);
 		fs.writeFileSync(this.path, this._stringify(value));
 	}
 	
 	get md5() {
+		this._throwIfNonexistent(`get md5 hash of`);
 		return md5File.sync(this.path);
 	}
 	
 	getContentAs(type) {
+		this._throwIfNonexistent(`get content of`);
 		const castResult = TypeDefinition.execute(type, this.content);
 		return castResult.valid ? castResult.value : null;
 	}
 	
 	appendLine(value) {
+		this._throwIfNonexistent(`append line to`);
 		fs.appendFileSync(this.path, '\n' + this._stringify(value));
 	}
 	
 	prependLine(value) {
+		this._throwIfNonexistent(`prepend line to`);
+		
 		const existingContentBuffer = fs.readFileSync(this.path);
 		
 		fs.writeFileSync(this.path, this._stringify(value) + '\n');
@@ -52,9 +60,7 @@ class File extends Item {
 	}
 	
 	clear(forgiving) {
-		if (!forgiving && !this.exists) {
-			throw new Error(`Can't clear “${this.name}”: does not exist in “${this.parent.path}”`);
-		}
+		if (!forgiving) this._throwIfNonexistent(`clear content of`);
 		
 		fs.writeFileSync(this.path, '');
 	}

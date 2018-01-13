@@ -21,6 +21,8 @@ class Folder extends Item {
 	}
 	
 	get size() {
+		this._throwIfNonexistent(`get size of`);
+		
 		function getFolderSize(folderPath) {
 			return fs.readdirSync(folderPath).reduce((accumulatedSize, childName) => {
 				const childPath = path.join(folderPath, childName);
@@ -39,27 +41,34 @@ class Folder extends Item {
 	}
 	
 	get children() {
+		this._throwIfNonexistent(`get children of`);
 		return this._itemsForRawRelativePaths(fs.readdirSync(this.path));
 	}
 	
 	file(path) {
+		this._throwIfNonexistent(`get child file of`);
 		if (path.slice(-1) === '/') throw Error(`“${path}” is not a file path`);
 			
 		return Item._itemForPath(this.path + path);
 	}
 	
 	folder(path) {
+		this._throwIfNonexistent(`get child folder of`);
 		if (path.slice(-1) !== '/') throw Error(`“${path}” is not a folder path`);
 			
 		return Item._itemForPath(this.path + path);
 	}
 	
 	glob(pattern, options) {
+		this._throwIfNonexistent(`search children of`);
+		
 		const mergedOptions = Object.assign({cwd: this.path}, options);
 		return this._itemsForRawRelativePaths(glob.sync(pattern, mergedOptions));
 	}
 	
 	empty() {
+		this._throwIfNonexistent(`delete children of`);
+		
 		return fs.readdirSync(this.path)
 			.forEach(childName => {
 				const childPath = path.join(this.path, childName);
