@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const rimraf = require('rimraf');
+const glob = require('glob');
 
 const Item = require('./Item');
 const TypeDefinition = require('./TypeDefinition');
@@ -38,16 +39,7 @@ class Folder extends Item {
 	}
 	
 	get children() {
-		return fs.readdirSync(this.path)
-			.map(childName => {
-				const childPath = path.join(this.path, childName);
-			
-				if (fs.statSync(childPath).isDirectory()) {
-					return Item._itemForPath(childPath + path.sep);
-				} else {
-					return Item._itemForPath(childPath);
-				}
-			});
+		return this._itemsForRawRelativePaths(fs.readdirSync(this.path));
 	}
 	
 	file(path) {
@@ -62,6 +54,11 @@ class Folder extends Item {
 		return Item._itemForPath(this.path + path);
 	}
 	
+	glob(pattern, options) {
+		const mergedOptions = Object.assign({cwd: this.path}, options);
+		return this._itemsForRawRelativePaths(glob.sync(pattern, mergedOptions));
+	}
+	
 	empty() {
 		return fs.readdirSync(this.path)
 			.forEach(childName => {
@@ -72,6 +69,18 @@ class Folder extends Item {
 	
 	_make(forgiving) {
 		fs.mkdirSync(this.path);
+	}
+	
+	_itemsForRawRelativePaths(inputPaths) {
+		return inputPaths.map(inputPath => {
+			const childPath = path.join(this.path, inputPath);
+		
+			if (fs.statSync(childPath).isDirectory()) {
+				return Item._itemForPath(childPath + path.sep);
+			} else {
+				return Item._itemForPath(childPath);
+			}
+		});
 	}
 }
 

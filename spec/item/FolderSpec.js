@@ -67,6 +67,44 @@ describe('Folder', function() {
 		});
 	});
 	
+	describe('#glob()', function() {
+		describe('{pattern}', function() {
+			it('should return the children of the folder matching the pattern', function() {
+				const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
+				const matchingChildItem = Item._itemForPath(testEnv.createFile('folder/matching-child.txt'));
+				Item._itemForPath(testEnv.createFile('folder/ignored-child.md'));
+			
+				const returnedMatches = folderItem.glob('*.txt');
+			
+				expect(returnedMatches.length).toBe(1);
+				expect(returnedMatches[0].path).toBe(matchingChildItem.path);
+			});
+
+			it('should be able to find matches in subfolders', function() {
+				const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
+				Item._itemForPath(testEnv.createFolder('folder/subfolder/'));
+				const matchingChildItem = Item._itemForPath(testEnv.createFile('folder/subfolder/matching-child.txt'));
+			
+				const returnedMatches = folderItem.glob('**/*.txt');
+			
+				expect(returnedMatches.length).toBe(1);
+				expect(returnedMatches[0].path).toBe(matchingChildItem.path);
+			});
+		});
+
+		describe('{pattern, options}', function() {
+			it('should use the provided options when running the glob', function() {
+				const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
+				const matchingChildItem = Item._itemForPath(testEnv.createFile('folder/.matching-child.txt'));
+			
+				const returnedMatches = folderItem.glob('*.txt', {dot: true});
+			
+				expect(returnedMatches.length).toBe(1);
+				expect(returnedMatches[0].path).toBe(matchingChildItem.path);
+			});
+		});
+	});
+	
 	describe('empty()', function() {
 		it('should remove all items from the folder', function() {
 			const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));

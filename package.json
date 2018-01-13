@@ -22,6 +22,7 @@
   "node": ">=8.7.0"
  },
  "dependencies": {
+  "glob": "^7.1.2",
   "jsdom": "^11.3.0",
   "md5-file": "^3.2.3",
   "moment": "^2.19.1",
