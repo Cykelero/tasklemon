@@ -3,18 +3,42 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const childProcess = require('child_process');
 
 const injectedModuleNames = ['root', 'home', 'here', 'cli', 'format', 'net', 'moment', 'Item', 'File', 'Folder'];
 const baseInjectedModulePath = path.join(__dirname, 'injected-modules');
 
+let lemonArguments;
+let scriptArguments;
+
 const workingDirectory = process.cwd();
-const scriptPath = process.argv[2];
-const scriptName = path.basename(scriptPath);
+let scriptPath;
+let scriptName;
 
 let sourceScriptContent;
 let preparedScriptPath;
 
-const scriptArguments = process.argv.slice(2);
+// Parse arguments
+// // Lemon arguments
+lemonArguments = [];
+let currentArgumentIndex = 2; // skip node path and tasklemon path
+let currentArgument;
+while (currentArgument = process.argv[currentArgumentIndex]) {
+	if (!currentArgument) break;
+	if (currentArgument.slice(0, 1) !== '-') break;
+
+	lemonArguments.push(currentArgument);
+	currentArgumentIndex++;
+}
+
+// // Script path
+scriptPath = process.argv[currentArgumentIndex];
+scriptName = path.basename(scriptPath);
+
+currentArgumentIndex++;
+
+// // Script arguments
+scriptArguments = process.argv.slice(currentArgumentIndex);
 
 // Prepare execution stage
 // // Read script
@@ -54,4 +78,18 @@ preparedScriptContent += '\n};_tasklemon_main();';
 fs.writeFileSync(preparedScriptPath, preparedScriptContent);
 
 // Execute script
-require(preparedScriptPath);
+let nodeArguments = [];
+
+if (lemonArguments.includes('--inspect')) nodeArguments.push('--inspect');
+if (lemonArguments.includes('--inspect-brk')) nodeArguments.push('--inspect-brk');
+
+if (nodeArguments.length > 0) {
+	// Run as separate process
+	const inspectableProcess = childProcess.spawn('node', [...nodeArguments, __filename, scriptPath, ...scriptArguments]);
+	process.stdin.pipe(inspectableProcess.stdin);
+	inspectableProcess.stdout.pipe(process.stdout);
+	inspectableProcess.stderr.pipe(process.stderr);
+} else {
+	// Execute directly
+	require(preparedScriptPath);
+}
