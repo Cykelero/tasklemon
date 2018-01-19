@@ -61,8 +61,7 @@ class Folder extends Item {
 	glob(pattern, options) {
 		this._throwIfNonexistent(`search children of`);
 		
-		const mergedOptions = Object.assign({cwd: this.path}, options);
-		return this._itemsForRawRelativePaths(glob.sync(pattern, mergedOptions));
+		return this._itemsForRawRelativePaths(glob.sync(pattern, {cwd: this.path, ...options}));
 	}
 	
 	empty(immediately) {
