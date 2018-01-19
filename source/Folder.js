@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const rimraf = require('rimraf');
 const glob = require('glob');
 
 const Item = require('./Item');
@@ -66,13 +65,13 @@ class Folder extends Item {
 		return this._itemsForRawRelativePaths(glob.sync(pattern, mergedOptions));
 	}
 	
-	empty() {
+	empty(immediately) {
 		this._throwIfNonexistent(`delete children of`);
 		
 		return fs.readdirSync(this.path)
 			.forEach(childName => {
 				const childPath = path.join(this.path, childName);
-				rimraf.sync(childPath);
+				Item._deleteItem(childPath, immediately);
 			});
 	}
 	

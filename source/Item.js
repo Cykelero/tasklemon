@@ -240,15 +240,7 @@ class Item {
 	delete(immediately) {
 		this._throwIfNonexistent(`delete`);
 		
-		if (!immediately) {
-			const temporaryTrashPath = fs.mkdtempSync(os.tmpdir() + path.sep);
-			const targetTemporaryPath = path.join(temporaryTrashPath, this.name);
-			
-			fs.renameSync(this.path, targetTemporaryPath);
-			trash(targetTemporaryPath);
-		} else {
-			rimraf.sync(this.path);
-		}
+		Item._deleteItem(this.path, immediately);
 		
 		return this;
 	}
@@ -374,6 +366,18 @@ class Item {
 			});
 		} else {
 			fs.copyFileSync(itemPath, targetPath);
+		}
+	}
+	
+	static _deleteItem(itemPath, immediately) {
+		if (!immediately) {
+			const temporaryTrashPath = fs.mkdtempSync(os.tmpdir() + path.sep);
+			const targetTemporaryPath = path.join(temporaryTrashPath, path.basename(itemPath));
+
+			fs.renameSync(itemPath, targetTemporaryPath);
+			trash(targetTemporaryPath);
+		} else {
+			rimraf.sync(itemPath);
 		}
 	}
 }

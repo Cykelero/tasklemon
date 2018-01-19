@@ -110,6 +110,18 @@ describe('Folder', function() {
 			
 			expect(folderItem.children.length).toBe(0);
 		});
+		
+		describe('{immediately: true}', function() {
+			it('should remove all items from the folder', function() {
+				const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
+				const childFileItem = Item._itemForPath(testEnv.createFile('folder/childFile'));
+				const childFolderItem = Item._itemForPath(testEnv.createFolder('folder/childFolder/'));
+			
+				folderItem.empty(true);
+			
+				expect(folderItem.children.length).toBe(0);
+			});
+		});
 
 		it('should not remove the folder itself', function() {
 			const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
