@@ -123,7 +123,7 @@ describe('ItemPermissionsSlice', function() {
 	describe('(ItemUserPermissions)', function() {
 		describe('#id', function() {
 			it('should provide the owner id of an item', function() {
-				const currentUserId = Number(this.execSync(`id -u`).trim());
+				const currentUserId = Number(this.execFileSync('id', ['-u']).trim());
 			
 				const fileItem = Item._itemForPath(testEnv.createFile('file'));
 			
@@ -142,7 +142,7 @@ describe('ItemPermissionsSlice', function() {
 		
 		describe('#name', function() {
 			it('should provide the owner name of an item', function() {
-				const currentUserName = this.execSync(`id -nu`).trim();
+				const currentUserName = this.execFileSync('id', ['-nu']).trim();
 			
 				const fileItem = Item._itemForPath(testEnv.createFile('file'));
 			
@@ -163,7 +163,7 @@ describe('ItemPermissionsSlice', function() {
 	describe('(ItemGroupPermissions)', function() {
 		describe('#id', function() {
 			it('should provide the group id of an item', function() {
-				const currentUserGroupId = Number(this.execSync(`id -g`).trim());
+				const currentUserGroupId = Number(this.execFileSync('id', ['-g']).trim());
 			
 				const fileItem = Item._itemForPath(testEnv.createFile('file'));
 			
@@ -182,7 +182,7 @@ describe('ItemPermissionsSlice', function() {
 		
 		describe('#name', function() {
 			it('should provide the group name of an item', function() {
-				const currentUserGroupName = this.execSync(`id -gn`).trim();
+				const currentUserGroupName = this.execFileSync('id', ['-gn']).trim();
 			
 				const fileItem = Item._itemForPath(testEnv.createFile('file'));
 			

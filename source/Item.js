@@ -89,7 +89,7 @@ class Item {
 		const formattedDate = momentDate.format('MM/DD/YY HH:mm:ss'); // ewwww
 		
 		try {
-			childProcess.execSync(`SetFile -d '${formattedDate}' ${this.path}`);
+			childProcess.execFileSync('SetFile', ['-d', formattedDate, this.path]);
 		} catch (error) {
 			if (error.message.indexOf('error: invalid active developer path') > -1) {
 				throw Error(`Can't redate “${this.name}”: command line tools are not installed. Please run \`xcode-select --install\` (macOS only).`);
@@ -110,7 +110,7 @@ class Item {
 		const momentDate = moment(value);
 		const formattedDate = momentDate.format('YYYYMMDDHHmm.ss');
 		
-		childProcess.execSync(`touch -ht ${formattedDate} ${this.path}`);
+		childProcess.execFileSync('touch', ['-ht', formattedDate, this.path]);
 	}
 	
 	get user() {

@@ -80,7 +80,7 @@ describe('Item', function() {
 			const linkTargetChildPath = testEnv.createFile('link-target/child');
 
 			const linkContainerPath = testEnv.createFolder('link-container/');
-			this.execSync(`ln -s "${linkTargetPath}" link`, {cwd: linkContainerPath});
+			this.execFileSync('ln', ['-s', linkTargetPath, 'link'], {cwd: linkContainerPath});
 			
 			let linkTargetChildItem = Item._itemForPath(linkTargetChildPath);
 			

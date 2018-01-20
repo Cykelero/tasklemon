@@ -1,7 +1,7 @@
 const childProcess = require('child_process');
 
 beforeEach(function() {
-	this.execSync = function() {
-		return childProcess.execSync.apply(this, arguments).toString();
+	this.execFileSync = function() {
+		return childProcess.execFileSync.apply(this, arguments).toString();
 	};
 });

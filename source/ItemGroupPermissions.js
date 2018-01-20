@@ -14,12 +14,12 @@ module.exports = class ItemGroupPermissions extends ItemPermissionsSlice {
 	}
 	
 	get name() {
-		return childProcess.execSync(`ls -ld "${this._item.path}"`)
+		return childProcess.execFileSync('ls', ['-ld', this._item.path])
 			.toString().replace(/\s+/g, ' ').split(' ')[3];
 	}
 	
 	set name(value) {
-		childProcess.execSync(`chown :${value} "${this._item.path}"`);
+		childProcess.execFileSync('chown', [':' + value, this._item.path]);
 	}
 	
 	get _encodedSliceOffset() {
