@@ -24,7 +24,7 @@ let currentArgumentIndex = 2; // skip node path and tasklemon path
 let currentArgument;
 while (currentArgument = process.argv[currentArgumentIndex]) {
 	if (!currentArgument) break;
-	if (currentArgument.slice(0, 1) !== '-') break;
+	if (currentArgument[0] !== '-') break;
 
 	lemonArguments.push(currentArgument);
 	currentArgumentIndex++;
@@ -84,5 +84,6 @@ if (nodeArguments.length > 0) {
 	inspectableProcess.stderr.pipe(process.stderr);
 } else {
 	// Execute directly
+	require('./injected-modules/cli')._rawArguments = scriptArguments;
 	require(preparedScriptPath);
 }

@@ -2,6 +2,16 @@ const TypeDefinition = require('../TypeDefinition');
 
 let cli = module.exports;
 
+cli.args = null;
+
+cli._rawArguments = null;
+
+cli.accept = function(argumentDefinitions) {
+	const parsedArgumentDefinitions = parseArgumentDefinitions(argumentDefinitions);
+	checkArgumentDefinitionSyntax(parsedArgumentDefinitions);
+	cli.args = applyArgumentDefinitions(parsedArgumentDefinitions, cli._rawArguments);
+};
+
 cli.tell = function(text) {
 	process.stdout.write(text + '\n');
 };
@@ -60,3 +70,184 @@ cli.tellWhile = async function(promptText, awaitable) {
 	
 	return awaitableResult;
 };
+
+function parseArgumentDefinitions(argumentDefinitions) {
+	return Object.entries(argumentDefinitions)
+		.map(([name, definition]) => {
+			let syntax, type, description;
+			
+			if (typeof definition === 'string') {
+				syntax = definition;
+			} else {
+				[syntax, type, description] = definition;
+			}
+			
+			if (!type) type = Boolean;
+			if (!description) description = 'Also called “${name}”';
+			
+			const alternatives = syntax
+				.split(' ')
+				.map(alternative => alternative.trim())
+				.filter(alternative => alternative.length > 0);
+			
+			return {name, alternatives, type, description};
+		});	
+}
+
+function checkArgumentDefinitionSyntax(argumentDefinitions) {
+	let firstOccurences = {};
+	
+	argumentDefinitions.forEach(argumentDefinition => {
+		function throwForThisDefinition(reason) {
+			throw Error(`Syntax for \`${argumentDefinition.name}\` is invalid: ${reason}`);
+		}
+		
+		argumentDefinition.alternatives.forEach(alternative => {
+			// Check for redundant usage of a name
+			const priorUsageName = firstOccurences[alternative];
+			if (priorUsageName) {
+				throwForThisDefinition(`“${alternative}” is already used for \`${priorUsageName}\``);
+			}
+			
+			firstOccurences[alternative] = argumentDefinition.name;
+			
+			// Check for syntax-specific errors
+			const firstCharacter = alternative[0];
+			
+			if (alternative.slice(0, 2) === '--') {
+				// Named argument: Everything goes.
+			} else if (firstCharacter === '-') {
+				// Shorthand
+				if (alternative.length > 2) {
+					throwForThisDefinition('shorthand names must be a single character');
+				}
+			} else if (firstCharacter === '$') {
+				// Positional argument
+				if (alternative === '$+' && argumentDefinition.alternatives.length > 1) {
+					throwForThisDefinition('“$+” cannot have alternatives');
+				}
+			} else {
+				// Neither of these: invalid
+				throwForThisDefinition(`expected “$” or “-”, found “${firstCharacter}”`);
+			}
+		});
+	});
+}
+
+function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
+	let result = {};
+	let expandedArguments;
+	
+	function definitionFor(userString, failIfAbsent) {
+		const argumentDefinition = argumentDefinitions.find(ad => ad.alternatives.some(a => a === userString));
+			
+		if (failIfAbsent && !argumentDefinition) {
+			throw Error(`Argument error: “${userString}” unexpected`);
+		}
+		
+		return argumentDefinition;
+	}
+	
+	function castForDefinition({type}, value) {
+		const castResult = TypeDefinition.execute(type, value);
+		
+		if (!castResult.valid) {
+			throw Error(`Argument error: “${value}” ${castResult.errorText}`);
+		}
+		
+		return castResult.value;
+	}
+	
+	// Prepare result map
+	// // Default null values
+	argumentDefinitions.forEach(argumentDefinition => {
+		result[argumentDefinition.name] = (argumentDefinition.type === Boolean) ? false : null;
+	});
+	
+	// // Rest values
+	const restDefinition = definitionFor('$+', false);
+	if (restDefinition) {
+		result[restDefinition.name] = [];
+	} else {
+		result.rest = [];
+	}
+	
+	// Expand shorthands
+	expandedArguments = [];
+	rawArguments.forEach(rawArgument => {
+		if (rawArgument[0] === '-' && rawArgument[1] !== '-') {
+			rawArgument
+				.slice(1)
+				.split('')
+				.forEach(shorthandLetter => expandedArguments.push('-' + shorthandLetter));
+		} else {
+			expandedArguments.push(rawArgument);
+		}
+	});
+	
+	// Read arguments
+	let firstOccurences = {};
+	let nextPositionalIndex = 1;
+	let expectValueFor = null;
+
+	function rememberOccurence({name: argumentName}, userString) {
+		const priorUsageString = firstOccurences[argumentName];
+		if (priorUsageString) {
+			throw Error(`Argument error: “${userString}” already specified as “${priorUsageString}”`);
+		}
+		
+		firstOccurences[argumentName] = userString;
+	}
+	
+	expandedArguments.forEach(expandedArgument => {
+		// Consume argument as value?
+		if (expectValueFor) {
+			const castValue = castForDefinition(expectValueFor, expandedArgument);
+			result[expectValueFor.name] = castValue;
+			
+			expectValueFor = null;
+			return;
+		}
+		
+		// No: interpret argument as argument
+		if (expandedArgument[0] === '-') {
+			// Shorthand or named argument
+			const argumentDefinition = definitionFor(expandedArgument, true);
+			rememberOccurence(argumentDefinition, expandedArgument);
+			
+			if (argumentDefinition.type === Boolean) {
+				result[argumentDefinition.name] = true;
+			} else {
+				expectValueFor = argumentDefinition;
+			}
+		} else {
+			// Positional argument
+			const positionalIdentity = '$' + nextPositionalIndex;
+			
+			let argumentDefinition;
+			if (argumentDefinition = definitionFor(positionalIdentity, false)) {
+				// Indexed
+				rememberOccurence(argumentDefinition, positionalIdentity);
+				const castValue = castForDefinition(argumentDefinition, expandedArgument);
+				result[argumentDefinition.name] = castValue;
+			} else if (restDefinition) {
+				// Catch-all
+				const castValue = castForDefinition(restDefinition, expandedArgument);
+				result[restDefinition.name].push(castValue);
+			} else {
+				// Rest
+				result.rest.push(expandedArgument);
+			}
+			
+			nextPositionalIndex++;
+		}
+	});
+	
+	if (expectValueFor !== null) {
+		// Last argument didn't get its value
+		const userString = firstOccurences[expectValueFor.name];
+		throw Error(`Argument error: “${userString}” requires a value`);
+	}
+	
+	return result;
+}
