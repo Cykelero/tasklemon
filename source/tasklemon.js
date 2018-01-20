@@ -5,8 +5,7 @@ const os = require('os');
 const path = require('path');
 const childProcess = require('child_process');
 
-const injectedModuleNames = ['root', 'home', 'here', 'cli', 'format', 'net', 'moment', 'Item', 'File', 'Folder'];
-const baseInjectedModulePath = path.join(__dirname, 'injected-modules');
+const moduleInjectorPath = path.join(__dirname, 'injected-modules', 'injector');
 
 let lemonArguments;
 let scriptArguments;
@@ -63,17 +62,11 @@ preparedScriptPath = path.join(stagePath, scriptName);
 // // Generate script
 let preparedScriptContent = '';
 
-preparedScriptContent += 'const ';
-injectedModuleNames.forEach((injectedModuleName, index) => {
-	const injectedModulePath = path.join(baseInjectedModulePath, injectedModuleName);
-	if (index > 0) preparedScriptContent += ',';
-	preparedScriptContent += `${injectedModuleName} = require('${injectedModulePath}')`;
-});
-preparedScriptContent += ';';
+preparedScriptContent += `require('${moduleInjectorPath}')(global);`;
 
-preparedScriptContent += 'const _tasklemon_main = async function() {';
+preparedScriptContent += '(async function() {';
 preparedScriptContent += sourceScriptContent;
-preparedScriptContent += '\n};_tasklemon_main();';
+preparedScriptContent += '\n})();';
 
 fs.writeFileSync(preparedScriptPath, preparedScriptContent);
 
