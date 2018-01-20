@@ -21,9 +21,6 @@ cli.ask = function(promptText, type, skippable) {
 				} else {
 					resolve(null);
 				}
-			} else if (!type) {
-				// Return answer as-is
-				resolve(answer);
 			} else {
 				// Execute type definitions
 				const castResult = TypeDefinition.execute(type, answer);

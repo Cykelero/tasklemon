@@ -3,6 +3,13 @@ const moment = require('moment');
 const symbol = Symbol('tasklemon type definition');
 module.exports = {
 	execute(type, value) {
+		if (!type) {
+			return {
+				valid: true,
+				value
+			};
+		}
+		
 		const typeDefinitionList = Array.isArray(type) ? type : [type];
 
 		try {
