@@ -14,7 +14,7 @@ describe('Item', function() {
 		testEnv = this.getTestEnv();
 	});
 	
-	describe('when instanciated', function() {
+	describe('when instantiated', function() {
 		it('should correctly choose between File and Folder', function() {
 			expect(testEnv.itemFor('file') instanceof File).toBeTruthy();
 			expect(testEnv.itemFor('folder/') instanceof Folder).toBeTruthy();
