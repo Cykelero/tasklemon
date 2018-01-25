@@ -23,10 +23,10 @@ describe('Item', function() {
 	
 	describe('#exists', function() {
 		it('should be true for an existing item', function() {
-			let fileItem = Item._itemForPath(testEnv.createFile('file'));
+			let fileItem = this.itemForPath(testEnv.createFile('file'));
 			expect(fileItem.exists).toBeTruthy();
 			
-			let folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
+			let folderItem = this.itemForPath(testEnv.createFolder('folder/'));
 			expect(folderItem.exists).toBeTruthy();
 		});
 
@@ -53,25 +53,25 @@ describe('Item', function() {
 	describe('#path', function() {
 		it('should provide the path of a file', function() {
 			const filePath = testEnv.createFile('file');
-			let fileItem = Item._itemForPath(filePath);
+			let fileItem = this.itemForPath(filePath);
 			expect(fileItem.path).toBe(filePath);
 		});
 		
 		it('should provide the path of a folder', function() {
 			const folderPath = testEnv.createFolder('folder/');
-			let folderItem = Item._itemForPath(folderPath);
+			let folderItem = this.itemForPath(folderPath);
 			expect(folderItem.path).toBe(folderPath);
 		});
 		
 		it('should provide the path of a non-existent item', function() {
 			const filePath = testEnv.pathFor('file');
-			let fileItem = Item._itemForPath(filePath);
+			let fileItem = this.itemForPath(filePath);
 			expect(fileItem.path).toBe(filePath);
 		});
 		
 		it('should provide the path of an item with a non-existent parennt', function() {
 			const filePath = testEnv.pathFor('nonexistent-parent/file');
-			let fileItem = Item._itemForPath(filePath);
+			let fileItem = this.itemForPath(filePath);
 			expect(fileItem.path).toBe(filePath);
 		});
 
@@ -82,7 +82,7 @@ describe('Item', function() {
 			const linkContainerPath = testEnv.createFolder('link-container/');
 			this.execFileSync('ln', ['-s', linkTargetPath, 'link'], {cwd: linkContainerPath});
 			
-			let linkTargetChildItem = Item._itemForPath(linkTargetChildPath);
+			let linkTargetChildItem = this.itemForPath(linkTargetChildPath);
 			
 			expect(linkTargetChildItem.path).toBe(linkTargetChildPath);
 		});
@@ -90,13 +90,13 @@ describe('Item', function() {
 	
 	describe('#name', function() {
 		it('should provide the name of the item', function() {
-			const fileItem = Item._itemForPath(testEnv.createFile('file'));
+			const fileItem = this.itemForPath(testEnv.createFile('file'));
 			expect(fileItem.name).toBe('file');
 		});
 	
 		describe('{value}', function() {
 			it('should rename the item', function() {
-				const fileItem = Item._itemForPath(testEnv.createFile('file'));
+				const fileItem = this.itemForPath(testEnv.createFile('file'));
 				
 				fileItem.name = 'file2';
 				
@@ -105,7 +105,7 @@ describe('Item', function() {
 			});
 
 			it('should update the item', function() {
-				const fileItem = Item._itemForPath(testEnv.createFile('file'));
+				const fileItem = this.itemForPath(testEnv.createFile('file'));
 				
 				fileItem.name = 'file2';
 				
@@ -113,7 +113,7 @@ describe('Item', function() {
 			});
 
 			it('should update other instances of the item', function() {
-				const fileItem = Item._itemForPath(testEnv.createFile('file'));
+				const fileItem = this.itemForPath(testEnv.createFile('file'));
 				const fileSecondItem = testEnv.itemFor('file');
 				
 				fileItem.name = 'file2';
@@ -122,8 +122,8 @@ describe('Item', function() {
 			});
 
 			it('should move children of the item', function() {
-				const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
-				const childItem = Item._itemForPath(testEnv.createFile('folder/child'));
+				const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
+				const childItem = this.itemForPath(testEnv.createFile('folder/child'));
 				
 				folderItem.name = 'folder2';
 				
@@ -132,8 +132,8 @@ describe('Item', function() {
 			});
 
 			it('should update instances of the item\'s children', function() {
-				const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
-				const childItem = Item._itemForPath(testEnv.createFile('folder/child'));
+				const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
+				const childItem = this.itemForPath(testEnv.createFile('folder/child'));
 				
 				folderItem.name = 'folder2';
 				
@@ -141,8 +141,8 @@ describe('Item', function() {
 			});
 
 			it('should fail if there is already an item of the same name', function() {
-				const fileItem = Item._itemForPath(testEnv.createFile('file'));
-				const file2Item = Item._itemForPath(testEnv.createFile('file2'));
+				const fileItem = this.itemForPath(testEnv.createFile('file'));
+				const file2Item = this.itemForPath(testEnv.createFile('file2'));
 				
 				expect(() => fileItem.name = 'file2').toThrow();
 				expect(testEnv.itemFor('file').exists).toBe(true);
@@ -152,16 +152,16 @@ describe('Item', function() {
 	
 	describe('#bareName', function() {
 		it('should provide the name of the item without the extension', function() {
-			const fileItem = Item._itemForPath(testEnv.createFile('file.txt'));
+			const fileItem = this.itemForPath(testEnv.createFile('file.txt'));
 			expect(fileItem.bareName).toBe('file');
 
-			const file2Item = Item._itemForPath(testEnv.createFile('file.tar.gz'));
+			const file2Item = this.itemForPath(testEnv.createFile('file.tar.gz'));
 			expect(file2Item.bareName).toBe('file.tar');
 		});
 	
 		describe('{value}', function() {
 			it('should rename the item', function() {
-				const fileItem = Item._itemForPath(testEnv.createFile('file.txt'));
+				const fileItem = this.itemForPath(testEnv.createFile('file.txt'));
 				
 				fileItem.bareName = 'file2';
 				
@@ -173,7 +173,7 @@ describe('Item', function() {
 	describe('#size', function() {
 		it('should provide the size of a file', function() {
 			const filePath = testEnv.createFile('file');
-			let fileItem = Item._itemForPath(filePath);
+			let fileItem = this.itemForPath(filePath);
 			
 			expect(fileItem.size).toBe(0);
 			
@@ -185,7 +185,7 @@ describe('Item', function() {
 
 		it('should provide the size of a folder', function() {
 			const folderPath = testEnv.createFolder('folder/');
-			let folderItem = Item._itemForPath(folderPath);
+			let folderItem = this.itemForPath(folderPath);
 			
 			expect(folderItem.size).toBeGreaterThanOrEqual(0); // I don't understand folder size
 			
@@ -199,22 +199,22 @@ describe('Item', function() {
 	describe('#parent', function() {
 		it('should provide the parent of the item', function() {
 			const parentPath = testEnv.createFolder('parent/');
-			let parentItem = Item._itemForPath(parentPath);
-			let childItem = Item._itemForPath(testEnv.createFile('parent/child'));
+			let parentItem = this.itemForPath(parentPath);
+			let childItem = this.itemForPath(testEnv.createFile('parent/child'));
 			
 			expect(childItem.parent instanceof Folder).toBe(true);
 			expect(childItem.parent.path).toBe(parentPath);
 		});
 
 		it('should be null for the root', function() {
-			let rootItem = Item._itemForPath('/');
+			let rootItem = this.itemForPath('/');
 			
 			expect(rootItem.parent).toBe(null);
 		});
 		
 		it('{newParent} should allow moving the item', function() {
-			let fileItem = Item._itemForPath(testEnv.createFile('file'));
-			let folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
+			let fileItem = this.itemForPath(testEnv.createFile('file'));
+			let folderItem = this.itemForPath(testEnv.createFolder('folder/'));
 			
 			fileItem.parent = folderItem;
 			expect(fileItem.parent.path).toBe(folderItem.path);
@@ -223,14 +223,14 @@ describe('Item', function() {
 	
 	describe('#dateCreated', function() {
 		it('should provide the creation date of the item', function() {
-			const fileItem = Item._itemForPath(testEnv.createFile('file'));
+			const fileItem = this.itemForPath(testEnv.createFile('file'));
 			
 			expect(fileItem.dateCreated.unix()).toBe(moment().unix());
 		});
 		
 		describe('{value} should allow changing the creation date of the item', function() {
 			it('to a former date', function() {
-				let fileItem = Item._itemForPath(testEnv.createFile('file'));
+				let fileItem = this.itemForPath(testEnv.createFile('file'));
 			
 				const newDate = moment().subtract(1, 'day');
 				fileItem.dateCreated = newDate;
@@ -239,7 +239,7 @@ describe('Item', function() {
 			});
 
 			it('to a later date', function() {
-				let fileItem = Item._itemForPath(testEnv.createFile('file'));
+				let fileItem = this.itemForPath(testEnv.createFile('file'));
 			
 				const newDate = moment().add(1, 'day');
 				fileItem.dateCreated = newDate;
@@ -251,14 +251,14 @@ describe('Item', function() {
 	
 	describe('#dateModified', function() {
 		it('should provide the modification date of the item', function() {
-			const fileItem = Item._itemForPath(testEnv.createFile('file'));
+			const fileItem = this.itemForPath(testEnv.createFile('file'));
 			
 			expect(fileItem.dateModified.unix()).toBe(moment().unix());
 		});
 		
 		describe('{value} should allow changing the modification date of the item', function() {
 			it('to a former date', function() {
-				let fileItem = Item._itemForPath(testEnv.createFile('file'));
+				let fileItem = this.itemForPath(testEnv.createFile('file'));
 			
 				const newDate = moment().subtract(1, 'day');
 				fileItem.dateModified = newDate;
@@ -267,7 +267,7 @@ describe('Item', function() {
 			});
 
 			it('to a later date', function() {
-				let fileItem = Item._itemForPath(testEnv.createFile('file'));
+				let fileItem = this.itemForPath(testEnv.createFile('file'));
 			
 				const newDate = moment().add(1, 'day');
 				fileItem.dateModified = newDate;
@@ -332,7 +332,7 @@ describe('Item', function() {
 
 			it('should do nothing if the file already exists', function() {
 				const filePath = testEnv.pathFor('file');
-				const fileItem = Item._itemForPath(filePath);
+				const fileItem = this.itemForPath(filePath);
 				const fileTextContent = 'Some text content.';
 				
 				fileItem.make();

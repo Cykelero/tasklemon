@@ -13,7 +13,7 @@ describe('File', function() {
 	describe('#content', function() {
 		it('should provide the content of the file as a string', function() {
 			const filePath = testEnv.createFile('file');
-			const fileItem = Item._itemForPath(filePath);
+			const fileItem = this.itemForPath(filePath);
 			fs.writeFileSync(filePath, 'text-content');
 			
 			expect(fileItem.content).toBe('text-content');
@@ -21,7 +21,7 @@ describe('File', function() {
 	
 		describe('{value}', function() {
 			it('should change the content of the item', function() {
-				const fileItem = Item._itemForPath(testEnv.createFile('file'));
+				const fileItem = this.itemForPath(testEnv.createFile('file'));
 				
 				fileItem.content = 'text-content';
 				expect(fileItem.content).toBe('text-content');
@@ -31,7 +31,7 @@ describe('File', function() {
 			});
 
 			it('should encode the provided value in JSON', function() {
-				const fileItem = Item._itemForPath(testEnv.createFile('file'));
+				const fileItem = this.itemForPath(testEnv.createFile('file'));
 				
 				const savedObject = {key: 'value'};
 				fileItem.content = savedObject;
@@ -43,7 +43,7 @@ describe('File', function() {
 	describe('#md5', function() {
 		it('should provide the md5 hash of the file', function() {
 			const filePath = testEnv.createFile('file');
-			const fileItem = Item._itemForPath(filePath);
+			const fileItem = this.itemForPath(filePath);
 			fs.writeFileSync(filePath, 'text-content');
 			
 			expect(fileItem.md5).toBe('901a84918e4d5121ceae18305d2cd938');
@@ -52,7 +52,7 @@ describe('File', function() {
 	
 	describe('#getContentAs() {type}', function() {
 		it('should return the content of the file cast with the specified type definition', function() {
-			const fileItem = Item._itemForPath(testEnv.createFile('file'));
+			const fileItem = this.itemForPath(testEnv.createFile('file'));
 			
 			fileItem.content = {key: 'value'};
 			expect(fileItem.getContentAs(Object)).toEqual(jasmine.objectContaining({key: 'value'}));
@@ -64,7 +64,7 @@ describe('File', function() {
 	
 	describe('#appendLine() {content}', function() {
 		it('should append the provided content to the file', function() {
-			const fileItem = Item._itemForPath(testEnv.createFile('file'));
+			const fileItem = this.itemForPath(testEnv.createFile('file'));
 			
 			fileItem.content = 'first-line';
 			fileItem.appendLine('second-line');
@@ -73,7 +73,7 @@ describe('File', function() {
 		});
 
 		it('should encode the provided value in JSON', function() {
-			const fileItem = Item._itemForPath(testEnv.createFile('file'));
+			const fileItem = this.itemForPath(testEnv.createFile('file'));
 			const savedObject = {key: 'value'};
 			
 			fileItem.content = 'first-line';
@@ -85,7 +85,7 @@ describe('File', function() {
 	
 	describe('#prependLine() {content}', function() {
 		it('should prepend the provided content to the file', function() {
-			const fileItem = Item._itemForPath(testEnv.createFile('file'));
+			const fileItem = this.itemForPath(testEnv.createFile('file'));
 			
 			fileItem.content = 'second-line';
 			fileItem.prependLine('first-line');
@@ -94,7 +94,7 @@ describe('File', function() {
 		});
 
 		it('should encode the provided value in JSON', function() {
-			const fileItem = Item._itemForPath(testEnv.createFile('file'));
+			const fileItem = this.itemForPath(testEnv.createFile('file'));
 			const savedObject = {key: 'value'};
 			
 			fileItem.content = 'second-line';
@@ -106,7 +106,7 @@ describe('File', function() {
 	
 	describe('#clear()', function() {
 		it('should clear the content of the file', function() {
-			const fileItem = Item._itemForPath(testEnv.createFile('file'));
+			const fileItem = this.itemForPath(testEnv.createFile('file'));
 			
 			fileItem.content = 'second-line';
 			fileItem.clear();

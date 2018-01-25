@@ -14,9 +14,9 @@ describe('Folder', function() {
 	
 	describe('#children', function() {
 		it('should provide the list of the children of the folder', function() {
-			const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
-			const childFileItem = Item._itemForPath(testEnv.createFile('folder/childFile'));
-			const childFolderItem = Item._itemForPath(testEnv.createFolder('folder/childFolder/'));
+			const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
+			const childFileItem = this.itemForPath(testEnv.createFile('folder/childFile'));
+			const childFolderItem = this.itemForPath(testEnv.createFolder('folder/childFolder/'));
 			
 			const children = folderItem.children.sort();
 			
@@ -28,7 +28,7 @@ describe('Folder', function() {
 	
 	describe('file() {path}', function() {
 		it('should return the child file', function() {
-			const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
+			const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
 			const childItemPath = testEnv.pathFor('folder/child');
 			
 			const returnedChildItem = folderItem.file('child');
@@ -38,7 +38,7 @@ describe('Folder', function() {
 		});
 
 		it('should fail if passed a folder path', function() {
-			const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
+			const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
 			
 			expect(() => folderItem.file('child/')).toThrow();
 		});
@@ -46,7 +46,7 @@ describe('Folder', function() {
 	
 	describe('folder() {path}', function() {
 		it('should return the child folder', function() {
-			const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
+			const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
 			const childItemPath = testEnv.pathFor('folder/child/');
 			
 			const returnedChildItem = folderItem.folder('child/');
@@ -56,7 +56,7 @@ describe('Folder', function() {
 		});
 
 		it('should fail if passed a file path', function() {
-			const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
+			const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
 			
 			expect(() => folderItem.folder('child')).toThrow();
 		});
@@ -65,9 +65,9 @@ describe('Folder', function() {
 	describe('#glob()', function() {
 		describe('{pattern}', function() {
 			it('should return the children of the folder matching the pattern', function() {
-				const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
-				const matchingChildItem = Item._itemForPath(testEnv.createFile('folder/matching-child.txt'));
-				Item._itemForPath(testEnv.createFile('folder/ignored-child.md'));
+				const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
+				const matchingChildItem = this.itemForPath(testEnv.createFile('folder/matching-child.txt'));
+				this.itemForPath(testEnv.createFile('folder/ignored-child.md'));
 			
 				const returnedMatches = folderItem.glob('*.txt');
 			
@@ -76,9 +76,9 @@ describe('Folder', function() {
 			});
 
 			it('should be able to find matches in subfolders', function() {
-				const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
-				Item._itemForPath(testEnv.createFolder('folder/subfolder/'));
-				const matchingChildItem = Item._itemForPath(testEnv.createFile('folder/subfolder/matching-child.txt'));
+				const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
+				this.itemForPath(testEnv.createFolder('folder/subfolder/'));
+				const matchingChildItem = this.itemForPath(testEnv.createFile('folder/subfolder/matching-child.txt'));
 			
 				const returnedMatches = folderItem.glob('**/*.txt');
 			
@@ -89,8 +89,8 @@ describe('Folder', function() {
 
 		describe('{pattern, options}', function() {
 			it('should use the provided options when running the glob', function() {
-				const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
-				const matchingChildItem = Item._itemForPath(testEnv.createFile('folder/.matching-child.txt'));
+				const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
+				const matchingChildItem = this.itemForPath(testEnv.createFile('folder/.matching-child.txt'));
 			
 				const returnedMatches = folderItem.glob('*.txt', {dot: true});
 			
@@ -102,9 +102,9 @@ describe('Folder', function() {
 	
 	describe('empty()', function() {
 		it('should remove all items from the folder', function() {
-			const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
-			const childFileItem = Item._itemForPath(testEnv.createFile('folder/childFile'));
-			const childFolderItem = Item._itemForPath(testEnv.createFolder('folder/childFolder/'));
+			const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
+			const childFileItem = this.itemForPath(testEnv.createFile('folder/childFile'));
+			const childFolderItem = this.itemForPath(testEnv.createFolder('folder/childFolder/'));
 			
 			folderItem.empty();
 			
@@ -113,9 +113,9 @@ describe('Folder', function() {
 		
 		describe('{immediately: true}', function() {
 			it('should remove all items from the folder', function() {
-				const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
-				const childFileItem = Item._itemForPath(testEnv.createFile('folder/childFile'));
-				const childFolderItem = Item._itemForPath(testEnv.createFolder('folder/childFolder/'));
+				const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
+				const childFileItem = this.itemForPath(testEnv.createFile('folder/childFile'));
+				const childFolderItem = this.itemForPath(testEnv.createFolder('folder/childFolder/'));
 			
 				folderItem.empty(true);
 			
@@ -124,7 +124,7 @@ describe('Folder', function() {
 		});
 
 		it('should not remove the folder itself', function() {
-			const folderItem = Item._itemForPath(testEnv.createFolder('folder/'));
+			const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
 			
 			folderItem.empty();
 
