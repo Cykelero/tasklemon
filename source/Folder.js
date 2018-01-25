@@ -16,7 +16,7 @@ class Folder extends Item {
 	}
 	
 	get path() {
-		return path.join(this._parentPath, this._name) + path.sep;
+		return Item._toCleanPath(path.join(this._parentPath, this._name) + path.sep);
 	}
 	
 	get size() {
@@ -48,14 +48,14 @@ class Folder extends Item {
 		this._throwIfNonexistent(`get child file of`);
 		if (path.slice(-1) === '/') throw Error(`“${path}” is not a file path`);
 			
-		return Item._itemForPath(this.path + path);
+		return Item._itemForPath(Item._toNativePath(this.path + path));
 	}
 	
 	folder(path) {
 		this._throwIfNonexistent(`get child folder of`);
 		if (path.slice(-1) !== '/') throw Error(`“${path}” is not a folder path`);
 			
-		return Item._itemForPath(this.path + path);
+		return Item._itemForPath(Item._toNativePath(this.path + path));
 	}
 	
 	glob(pattern, options) {
@@ -94,7 +94,7 @@ class Folder extends Item {
 module.exports = Folder;
 
 Folder[TypeDefinition.symbol] = function(value) {
-	if (value.slice(-1) !== '/') value += '/';
+	if (value.slice(-1) !== path.sep) value += path.sep;
 	
 	return Item._itemForPath(value);
 };

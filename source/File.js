@@ -16,7 +16,7 @@ class File extends Item {
 	}
 	
 	get path() {
-		return path.join(this._parentPath, this._name);
+		return Item._toCleanPath(path.join(this._parentPath, this._name));
 	}
 
 	get size() {
@@ -77,7 +77,7 @@ class File extends Item {
 module.exports = File;
 
 File[TypeDefinition.symbol] = function(value) {
-	if (value.slice(-1) === '/') {
+	if (value.slice(-1) === path.sep) {
 		throw 'is not a file';
 	}
 	

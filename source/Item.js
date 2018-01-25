@@ -28,7 +28,7 @@ class Item {
 	}
 	
 	set name(value) {
-		const targetPath = this._parentPath + value + (this._isFolder ? '/' : '');
+		const targetPath = this._parentPath + value + (this._isFolder ? path.sep : '');
 
 		this._throwIfNonexistent(`set name of`);
 		
@@ -154,7 +154,7 @@ class Item {
 	moveTo(destination, forgiving) {
 		this._throwIfNonexistent(`move`);
 		
-		const targetPath = destination.path + this.name + (this._isFolder ? '/' : '');
+		const targetPath = destination.path + this.name + (this._isFolder ? path.sep : '');
 		
 		// Feasibility checks
 		if (!(destination instanceof require('./Folder'))) {
@@ -180,7 +180,7 @@ class Item {
 	copyTo(destination, forgiving) {
 		this._throwIfNonexistent(`copy`);
 		
-		const targetPath = destination.path + this.name + (this._isFolder ? '/' : '');
+		const targetPath = destination.path + this.name + (this._isFolder ? path.sep : '');
 		
 		// Feasibility checks
 		if (!(destination instanceof require('./Folder'))) {
@@ -217,13 +217,13 @@ class Item {
 				nameSuffix++;
 			}
 			
-			if (this._isFolder) newName += '/';
+			if (this._isFolder) newName += path.sep;
 		}
 		
 		targetPath = this._parentPath + newName;
 		
 		// Feasibility checks
-		if ((newName.slice(-1) === '/') !== this._isFolder) {
+		if ((newName.slice(-1) === path.sep) !== this._isFolder) {
 			throw Error(`Can't duplicate “${this.name}” to “${newName}”: newName is of the wrong type`);
 		}
 
@@ -264,6 +264,14 @@ class Item {
 	}
 	
 	_make() {}
+
+	static _toCleanPath(nativePath) {
+		return nativePath.split(path.sep).join('/');
+	}
+
+	static _toNativePath(cleanPath) {
+		return cleanPath.split('/').join(path.sep);
+	}
 	
 	static _itemForPath(inputPath) {
 		let result;
@@ -274,9 +282,9 @@ class Item {
 		const parentPath = Item._realParentPathForPath(inputPath);
 		
 		// Parse path
-		isFolder = (inputPath.slice(-1) === '/');
+		isFolder = (inputPath.slice(-1) === path.sep);
 		name = path.basename(inputPath);
-		completePath = path.join(parentPath, name) + (isFolder ? '/' : '');
+		completePath = path.join(parentPath, name) + (isFolder ? path.sep : '');
 		
 		// Find or create item
 		const itemClass = isFolder ? require('./Folder') : require('./File');
@@ -298,11 +306,11 @@ class Item {
 			} catch (e) {
 				const lastPathPiece = path.basename(parentPathExistent);
 				parentPathExistent = parentPathExistent.slice(0, -lastPathPiece.length - 1);
-				parentPathNonexistent = `/${lastPathPiece}${parentPathNonexistent}`;
+				parentPathNonexistent = path.sep + lastPathPiece + parentPathNonexistent;
 			}
 		}
 		
-		return `${resolvedParentPathExistent}${parentPathNonexistent}/`;
+		return resolvedParentPathExistent + parentPathNonexistent + path.sep;
 	}
 	
 	static _registerItem(item) {
@@ -331,7 +339,7 @@ class Item {
 			if (isRelated) {
 				const newRelatedItemPath = newItemPath + knownItemPath.slice(initialItemPathLength);
 				
-				const newRelatedItemParentPath = path.dirname(newRelatedItemPath) + '/';
+				const newRelatedItemParentPath = path.dirname(newRelatedItemPath) + path.sep;
 				const newRelatedItemName = newRelatedItemPath.slice(newRelatedItemParentPath.length);
 			
 				for (let relatedItem of Item._itemsByPath[knownItemPath].values()) {
