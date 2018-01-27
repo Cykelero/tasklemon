@@ -58,7 +58,7 @@ beforeEach(function() {
 				const nativeScriptPath = this.nativePathFor('script.lem.js');
 				fs.writeFileSync(nativeScriptPath, source);
 				
-				return childProcess.execFileSync(tasklemonPath, [nativeScriptPath, ...args], {cwd: this._nativePath});
+				return childProcess.execFileSync('node', [tasklemonPath, nativeScriptPath, ...args], {cwd: this._nativePath});
 			}
 		};
 	};
