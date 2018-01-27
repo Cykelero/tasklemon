@@ -62,7 +62,7 @@ preparedScriptPath = path.join(stagePath, scriptName);
 // // Generate script
 let preparedScriptContent = '';
 
-preparedScriptContent += `require('${moduleInjectorPath}')(global);`;
+preparedScriptContent += `require(${JSON.stringify(moduleInjectorPath)})(global);`;
 
 preparedScriptContent += '(async function() {';
 preparedScriptContent += sourceScriptContent;
