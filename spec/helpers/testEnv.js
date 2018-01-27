@@ -1,6 +1,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const childProcess = require('child_process');
 
 const Item = require('../../source/Item');
 
@@ -11,7 +12,6 @@ function toClean(nativePath) {
 function toNative(cleanPath) {
 	return cleanPath.split('/').join(path.sep);
 }
-
 
 beforeEach(function() {
 	this.getTestEnv = function() {
@@ -28,13 +28,16 @@ beforeEach(function() {
 			pathFor: function(itemPath) {
 				return path.posix.join(this.path, itemPath);
 			},
+			nativePathFor: function(nativeItemPath) {
+				return path.join(this._nativePath, nativeItemPath);
+			},
 			itemFor: function(itemPath) {
-				return Item._itemForPath(this._nativePathFor(toNative(itemPath)));
+				return Item._itemForPath(this.nativePathFor(toNative(itemPath)));
 			},
 			
 			createFile: function(filePath) {
 				const nativeFilePath = toNative(filePath);
-				const completeFilePath = this._nativePathFor(nativeFilePath);
+				const completeFilePath = this.nativePathFor(nativeFilePath);
 				
 				fs.closeSync(fs.openSync(completeFilePath, 'w'));
 				
@@ -42,15 +45,20 @@ beforeEach(function() {
 			},
 			createFolder: function(folderPath) {
 				const nativeFolderPath = toNative(folderPath);
-				const completeFolderPath = this._nativePathFor(nativeFolderPath);
+				const completeFolderPath = this.nativePathFor(nativeFolderPath);
 				
 				fs.mkdirSync(completeFolderPath);
 				
 				return toClean(path.join(completeFolderPath, path.sep));
 			},
 			
-			_nativePathFor: function(nativeItemPath) {
-				return path.join(this._nativePath, nativeItemPath);
+			runLemonScript: function(source, args = []) {
+				const tasklemonPath = fs.realpathSync('source/tasklemon.js');
+				
+				const nativeScriptPath = this.nativePathFor('script.lem.js');
+				fs.writeFileSync(nativeScriptPath, source);
+				
+				return childProcess.execFileSync(tasklemonPath, [nativeScriptPath, ...args], {cwd: this._nativePath});
 			}
 		};
 	};
