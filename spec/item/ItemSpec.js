@@ -1,11 +1,22 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 const moment = require('moment');
 
 const Item = require('../../source/Item');
 const File = require('../../source/File');
 const Folder = require('../../source/Folder');
+	
+ifPosixDescribe = function() {
+	const isPosix = os.platform() !== 'win32';
+	
+	if (isPosix) {
+		describe.apply(this, arguments);
+	} else {
+		xdescribe.apply(this, arguments);
+	}
+};
 
 describe('Item', function() {
 	let testEnv;
@@ -228,7 +239,7 @@ describe('Item', function() {
 			expect(fileItem.dateCreated.unix()).toBe(moment().unix());
 		});
 		
-		describe('{value} should allow changing the creation date of the item', function() {
+		ifPosixDescribe('{value} should allow changing the creation date of the item', function() {
 			it('to a former date', function() {
 				let fileItem = this.itemForPath(testEnv.createFile('file'));
 			
@@ -256,7 +267,7 @@ describe('Item', function() {
 			expect(fileItem.dateModified.unix()).toBe(moment().unix());
 		});
 		
-		describe('{value} should allow changing the modification date of the item', function() {
+		ifPosixDescribe('{value} should allow changing the modification date of the item', function() {
 			it('to a former date', function() {
 				let fileItem = this.itemForPath(testEnv.createFile('file'));
 			
