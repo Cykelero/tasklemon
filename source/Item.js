@@ -132,7 +132,7 @@ class Item {
 	
 	make(forgiving) {
 		// Fail or abort if item exists
-		if (this.exists) {
+		if (fs.existsSync(this._path)) {
 			if (!forgiving) {
 				if (!this._isRoot) {
 					throw new Error(`Can't make “${this.name}”: already exists in “${this.parent.path}”`);
