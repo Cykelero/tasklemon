@@ -611,14 +611,10 @@ describe('Item', function() {
 				expect(testEnv.itemFor('duplicate-file').exists).toBe(true);
 			});
 			
-			it('should fail if the new name is of the wrong type', function() {
+			it('should fail if the new name contains a slash', function() {
 				const fileItem = testEnv.itemFor('file').make();
 		
 				expect(() => fileItem.duplicate('file copy/')).toThrow();
-				
-				const folderItem = testEnv.itemFor('folder/').make();
-		
-				expect(() => folderItem.duplicate('folder copy')).toThrow();
 			});
 			
 			it('should fail if there is already an item with the new name', function() {

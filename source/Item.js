@@ -218,15 +218,13 @@ class Item {
 				newName = `${currentBasename} copy ${nameSuffix}${currentExtension}`;
 				nameSuffix++;
 			}
-			
-			if (this._isFolder) newName += path.sep;
 		}
 		
-		targetPath = this._parentPath + newName;
+		targetPath = this._parentPath + newName + (this._isFolder ? path.sep : '');
 		
 		// Feasibility checks
-		if ((newName.slice(-1) === path.sep) !== this._isFolder) {
-			throw Error(`Can't duplicate “${this.name}” to “${newName}”: newName is of the wrong type`);
+		if (newName.indexOf('/') > -1) {
+			throw Error(`Can't rename “${this.name}”: “${value}” is not a valid name`);
 		}
 
 		if (fs.existsSync(targetPath)) {
