@@ -21,7 +21,9 @@ class Item {
 	
 	get exists() {}
 	
-	get path() {}
+	get path() {
+		return Item._toCleanPath(this._path);
+	}
 	
 	get name() {
 		return this._name;
@@ -42,7 +44,7 @@ class Item {
 		}
 
 		// Rename filesystem item (and possibly throw)
-		fs.renameSync(this.path, targetPath);
+		fs.renameSync(this._path, targetPath);
 		
 		// Update paths of all related items
 		Item._registerItemPathChange(this, targetPath);
@@ -89,7 +91,7 @@ class Item {
 		const formattedDate = momentDate.format('MM/DD/YY HH:mm:ss'); // ewwww
 		
 		try {
-			childProcess.execFileSync('SetFile', ['-d', formattedDate, this.path]);
+			childProcess.execFileSync('SetFile', ['-d', formattedDate, this._path]);
 		} catch (error) {
 			if (error.message.indexOf('error: invalid active developer path') > -1) {
 				throw Error(`Can't redate “${this.name}”: command line tools are not installed. Please run \`xcode-select --install\` (macOS only).`);
@@ -110,7 +112,7 @@ class Item {
 		const momentDate = moment(value);
 		const formattedDate = momentDate.format('YYYYMMDDHHmm.ss');
 		
-		childProcess.execFileSync('touch', ['-ht', formattedDate, this.path]);
+		childProcess.execFileSync('touch', ['-ht', formattedDate, this._path]);
 	}
 	
 	get user() {
@@ -143,7 +145,7 @@ class Item {
 		}
 		
 		// If forgiving, create parents if necessary
-		if (forgiving) Item._makeParentHierarchy(this.path);
+		if (forgiving) Item._makeParentHierarchy(this._path);
 		
 		// Create item
 		this._make(forgiving);
@@ -154,7 +156,7 @@ class Item {
 	moveTo(destination, forgiving) {
 		this._throwIfNonexistent(`move`);
 		
-		const targetPath = destination.path + this.name + (this._isFolder ? path.sep : '');
+		const targetPath = destination._path + this.name + (this._isFolder ? path.sep : '');
 		
 		// Feasibility checks
 		if (!(destination instanceof require('./Folder'))) {
@@ -169,7 +171,7 @@ class Item {
 		if (forgiving) Item._makeParentHierarchy(targetPath);
 
 		// Move filesystem item (and possibly throw)
-		fs.renameSync(this.path, targetPath);
+		fs.renameSync(this._path, targetPath);
 		
 		// Update paths of all related items
 		Item._registerItemPathChange(this, targetPath);
@@ -180,7 +182,7 @@ class Item {
 	copyTo(destination, forgiving) {
 		this._throwIfNonexistent(`copy`);
 		
-		const targetPath = destination.path + this.name + (this._isFolder ? path.sep : '');
+		const targetPath = destination._path + this.name + (this._isFolder ? path.sep : '');
 		
 		// Feasibility checks
 		if (!(destination instanceof require('./Folder'))) {
@@ -195,7 +197,7 @@ class Item {
 		if (forgiving) Item._makeParentHierarchy(targetPath);
 
 		// Copy filesystem item (and possibly throw)
-		Item._recursivelyCopyItem(this.path, targetPath);
+		Item._recursivelyCopyItem(this._path, targetPath);
 		
 		return Item._itemForPath(targetPath);
 	}
@@ -232,7 +234,7 @@ class Item {
 		}
 
 		// Copy filesystem item (and possibly throw)
-		Item._recursivelyCopyItem(this.path, targetPath);
+		Item._recursivelyCopyItem(this._path, targetPath);
 		
 		return Item._itemForPath(targetPath);
 	}
@@ -240,10 +242,12 @@ class Item {
 	delete(immediately) {
 		this._throwIfNonexistent(`delete`);
 		
-		Item._deleteItem(this.path, immediately);
+		Item._deleteItem(this._path, immediately);
 		
 		return this;
 	}
+	
+	get _path() {}
 	
 	get _isRoot() {
 		return this.name === '';
@@ -254,7 +258,7 @@ class Item {
 	}
 	
 	get _stats() {
-		return fs.lstatSync(this.path);
+		return fs.lstatSync(this._path);
 	}
 
 	_throwIfNonexistent(actionDescription) {
@@ -314,19 +318,19 @@ class Item {
 	}
 	
 	static _registerItem(item) {
-		const itemPath = item.path;
+		const itemPath = item._path;
 		if (!Item._itemsByPath[itemPath]) Item._itemsByPath[itemPath] = new Set();
 		
 		Item._itemsByPath[itemPath].add(item);
 	}
 	
 	static _deregisterItem(item) {
-		const itemPath = item.path;
+		const itemPath = item._path;
 		Item._itemsByPath[itemPath].delete(item);
 	}
 		
 	static _registerItemPathChange(item, newItemPath) {
-		const initialItemPath = item.path;
+		const initialItemPath = item._path;
 		const initialItemPathLength = initialItemPath.length;
 		
 		const knownItemPaths = Object.keys(Item._itemsByPath);

@@ -15,10 +15,6 @@ class Folder extends Item {
 		}
 	}
 	
-	get path() {
-		return Item._toCleanPath(path.join(this._parentPath, this._name) + path.sep);
-	}
-	
 	get size() {
 		this._throwIfNonexistent(`get size of`);
 		
@@ -36,51 +32,55 @@ class Folder extends Item {
 				return accumulatedSize;
 			}, 0);
 		}
-		return getFolderSize(this.path);
+		return getFolderSize(this._path);
 	}
 	
 	get children() {
 		this._throwIfNonexistent(`get children of`);
-		return this._itemsForRawRelativePaths(fs.readdirSync(this.path));
+		return this._itemsForRawRelativePaths(fs.readdirSync(this._path));
 	}
 	
 	file(path) {
 		this._throwIfNonexistent(`get child file of`);
 		if (path.slice(-1) === '/') throw Error(`“${path}” is not a file path`);
 			
-		return Item._itemForPath(Item._toNativePath(this.path + path));
+		return Item._itemForPath(this._path + Item._toNativePath(path));
 	}
 	
 	folder(path) {
 		this._throwIfNonexistent(`get child folder of`);
 		if (path.slice(-1) !== '/') throw Error(`“${path}” is not a folder path`);
 			
-		return Item._itemForPath(Item._toNativePath(this.path + path));
+		return Item._itemForPath(this._path + Item._toNativePath(path));
 	}
 	
 	glob(pattern, options) {
 		this._throwIfNonexistent(`search children of`);
 		
-		return this._itemsForRawRelativePaths(glob.sync(pattern, {cwd: this.path, ...options}));
+		return this._itemsForRawRelativePaths(glob.sync(pattern, {cwd: this._path, ...options}));
 	}
 	
 	empty(immediately) {
 		this._throwIfNonexistent(`delete children of`);
 		
-		return fs.readdirSync(this.path)
+		return fs.readdirSync(this._path)
 			.forEach(childName => {
-				const childPath = path.join(this.path, childName);
+				const childPath = path.join(this._path, childName);
 				Item._deleteItem(childPath, immediately);
 			});
 	}
 	
+	get _path() {
+		return path.join(this._parentPath, this._name) + path.sep;
+	}
+	
 	_make(forgiving) {
-		fs.mkdirSync(this.path);
+		fs.mkdirSync(this._path);
 	}
 	
 	_itemsForRawRelativePaths(inputPaths) {
 		return inputPaths.map(inputPath => {
-			const childPath = path.join(this.path, inputPath);
+			const childPath = path.join(this._path, inputPath);
 		
 			if (fs.statSync(childPath).isDirectory()) {
 				return Item._itemForPath(childPath + path.sep);

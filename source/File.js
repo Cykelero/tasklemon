@@ -14,10 +14,6 @@ class File extends Item {
 			return false;
 		}
 	}
-	
-	get path() {
-		return Item._toCleanPath(path.join(this._parentPath, this._name));
-	}
 
 	get size() {
 		this._throwIfNonexistent(`get size of`);
@@ -26,17 +22,17 @@ class File extends Item {
 	
 	get content() {
 		this._throwIfNonexistent(`get content of`);
-		return fs.readFileSync(this.path, {encoding: 'utf8'});
+		return fs.readFileSync(this._path, {encoding: 'utf8'});
 	}
 	
 	set content(value) {
 		this._throwIfNonexistent(`set content of`);
-		fs.writeFileSync(this.path, this._stringify(value));
+		fs.writeFileSync(this._path, this._stringify(value));
 	}
 	
 	get md5() {
 		this._throwIfNonexistent(`get md5 hash of`);
-		return md5File.sync(this.path);
+		return md5File.sync(this._path);
 	}
 	
 	getContentAs(type) {
@@ -47,26 +43,30 @@ class File extends Item {
 	
 	appendLine(value) {
 		this._throwIfNonexistent(`append line to`);
-		fs.appendFileSync(this.path, '\n' + this._stringify(value));
+		fs.appendFileSync(this._path, '\n' + this._stringify(value));
 	}
 	
 	prependLine(value) {
 		this._throwIfNonexistent(`prepend line to`);
 		
-		const existingContentBuffer = fs.readFileSync(this.path);
+		const existingContentBuffer = fs.readFileSync(this._path);
 		
-		fs.writeFileSync(this.path, this._stringify(value) + '\n');
-		fs.appendFileSync(this.path, existingContentBuffer);
+		fs.writeFileSync(this._path, this._stringify(value) + '\n');
+		fs.appendFileSync(this._path, existingContentBuffer);
 	}
 	
 	clear(forgiving) {
 		if (!forgiving) this._throwIfNonexistent(`clear content of`);
 		
-		fs.writeFileSync(this.path, '');
+		fs.writeFileSync(this._path, '');
+	}
+	
+	get _path() {
+		return path.join(this._parentPath, this._name);
 	}
 	
 	_make(forgiving) {
-		fs.closeSync(fs.openSync(this.path, 'a'));
+		fs.closeSync(fs.openSync(this._path, 'a'));
 	}
 	
 	_stringify(value) {
