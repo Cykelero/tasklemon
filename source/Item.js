@@ -246,7 +246,7 @@ class Item {
 		}
 
 		if (fs.existsSync(targetPath)) {
-			throw Error(`Can't duplicate “${this.name}” to “${newName}”: item already exists`);
+			throw Error(`Can't duplicate “${this.name}” to “${newName}”: ${this._typeName} already exists`);
 		}
 
 		// Copy filesystem item (and possibly throw)
@@ -273,13 +273,17 @@ class Item {
 		return (this instanceof require('./Folder'));
 	}
 	
+	get _typeName() {
+		return this._isFolder ? 'folder' : 'file';
+	}
+	
 	get _stats() {
 		return fs.lstatSync(this._path);
 	}
 
 	_throwIfNonexistent(actionDescription) {
 		if (!this.exists) {
-			throw Error(`Can't ${actionDescription} “${this.name}”: item does not exist`);
+			throw Error(`Can't ${actionDescription} “${this.name}”: ${this._typeName} does not exist`);
 		}
 	}
 	
