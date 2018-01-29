@@ -37,7 +37,12 @@ class Folder extends Item {
 	
 	get children() {
 		this._throwIfNonexistent(`get children of`);
-		return this._itemsForRawRelativePaths(fs.readdirSync(this._path));
+		
+		const childPaths =
+			fs.readdirSync(this._path)
+			.filter(path => path.charAt(0) !== '.')
+		
+		return this._itemsForRawRelativePaths(childPaths);
 	}
 	
 	file(path) {

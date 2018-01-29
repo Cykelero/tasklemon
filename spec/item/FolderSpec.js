@@ -24,6 +24,15 @@ describe('Folder', function() {
 			expect(children[0].path).toBe(childFileItem.path);
 			expect(children[1].path).toBe(childFolderItem.path);
 		});
+
+		it('should exclude dotfiles', function() {
+			const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
+			const childFileItem = this.itemForPath(testEnv.createFile('folder/.childFile'));
+			
+			const children = folderItem.children;
+			
+			expect(children.length).toBe(0);
+		});
 	});
 	
 	describe('file() {path}', function() {
