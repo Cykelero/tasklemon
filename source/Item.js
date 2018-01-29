@@ -55,7 +55,7 @@ class Item {
 	get bareName() {
 		const lastDotIndex = this.name.lastIndexOf('.');
 		
-		if (lastDotIndex === -1) {
+		if (lastDotIndex < 1) {
 			return this.name;
 		} else {
 			return this.name.slice(0, lastDotIndex);
@@ -71,7 +71,7 @@ class Item {
 	get extension() {
 		const lastDotIndex = this.name.lastIndexOf('.');
 		
-		if (lastDotIndex === -1) {
+		if (lastDotIndex < 1) {
 			return '';
 		} else {
 			return this.name.slice(lastDotIndex + 1);

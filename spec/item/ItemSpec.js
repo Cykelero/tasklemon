@@ -175,6 +175,14 @@ describe('Item', function() {
 			const file2Item = this.itemForPath(testEnv.createFile('file.tar.gz'));
 			expect(file2Item.bareName).toBe('file.tar');
 		});
+
+		it('should ignore an initial dot', function() {
+			const fileItem = this.itemForPath(testEnv.createFile('.file'));
+			expect(fileItem.bareName).toBe('.file');
+			
+			const file2Item = this.itemForPath(testEnv.createFile('.file.txt'));
+			expect(file2Item.bareName).toBe('.file');
+		});
 	
 		describe('{value}', function() {
 			it('should rename the item', function() {
@@ -183,6 +191,14 @@ describe('Item', function() {
 				fileItem.bareName = 'file2';
 				
 				expect(fileItem.name).toBe('file2.txt');
+			});
+
+			it('should ignore an initial dot', function() {
+				const fileItem = this.itemForPath(testEnv.createFile('.file'));
+				
+				fileItem.bareName = '.file2';
+				
+				expect(fileItem.name).toBe('.file2');
 			});
 		});
 	});
@@ -197,6 +213,11 @@ describe('Item', function() {
 
 			const file3Item = this.itemForPath(testEnv.createFile('file'));
 			expect(file3Item.extension).toBe('');
+		});
+		
+		it('should ignore an initial dot', function() {
+			const fileItem = this.itemForPath(testEnv.createFile('.file'));
+			expect(fileItem.extension).toBe('');
 		});
 	
 		describe('{value}', function() {
@@ -222,6 +243,12 @@ describe('Item', function() {
 				fileItem.extension = '';
 				
 				expect(fileItem.name).toBe('file');
+			});
+		
+			it('should ignore an initial dot', function() {
+				const fileItem = this.itemForPath(testEnv.createFile('.file'));
+				fileItem.extension = 'txt';
+				expect(fileItem.name).toBe('.file.txt');
 			});
 		});
 	});
