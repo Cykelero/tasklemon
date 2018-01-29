@@ -150,6 +150,12 @@ describe('Item', function() {
 				
 				expect(childItem.path).toBe(testEnv.pathFor('folder2/child'));
 			});
+			
+			it('should not fail if value is the current name', function() {
+				const fileItem = this.itemForPath(testEnv.createFile('file'));
+				
+				fileItem.name = 'file';
+			});
 
 			it('should fail if there is already an item of the same name', function() {
 				const fileItem = this.itemForPath(testEnv.createFile('file'));

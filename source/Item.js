@@ -30,9 +30,11 @@ class Item {
 	}
 	
 	set name(value) {
-		const targetPath = this._parentPath + value + (this._isFolder ? path.sep : '');
-
 		this._throwIfNonexistent(`set name of`);
+		
+		const targetPath = this._parentPath + value + (this._isFolder ? path.sep : '');
+		
+		if (value === this.name) return;
 		
 		// Feasibility checks
 		if (value.indexOf('/') > -1) {
@@ -61,8 +63,6 @@ class Item {
 	}
 	
 	set bareName(value) {
-		this._throwIfNonexistent(`set name of`);
-		
 		const currentBareName = this.bareName;
 		
 		this.name = value + this.name.slice(currentBareName.length);
