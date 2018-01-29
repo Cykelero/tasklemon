@@ -187,6 +187,45 @@ describe('Item', function() {
 		});
 	});
 	
+	describe('#extension', function() {
+		it('should provide the extension of the item', function() {
+			const fileItem = this.itemForPath(testEnv.createFile('file.txt'));
+			expect(fileItem.extension).toBe('txt');
+
+			const file2Item = this.itemForPath(testEnv.createFile('file.tar.gz'));
+			expect(file2Item.extension).toBe('gz');
+
+			const file3Item = this.itemForPath(testEnv.createFile('file'));
+			expect(file3Item.extension).toBe('');
+		});
+	
+		describe('{value}', function() {
+			it('should change the extension', function() {
+				const fileItem = this.itemForPath(testEnv.createFile('file.json'));
+				
+				fileItem.extension = 'txt';
+				
+				expect(fileItem.name).toBe('file.txt');
+			});
+			
+			it('should add an extension if there is none', function() {
+				const fileItem = this.itemForPath(testEnv.createFile('file'));
+				
+				fileItem.extension = 'txt';
+				
+				expect(fileItem.name).toBe('file.txt');
+			});
+			
+			it('should remove the extension if passed an empty string', function() {
+				const fileItem = this.itemForPath(testEnv.createFile('file.txt'));
+				
+				fileItem.extension = '';
+				
+				expect(fileItem.name).toBe('file');
+			});
+		});
+	});
+	
 	describe('#size', function() {
 		it('should provide the size of a file', function() {
 			const filePath = testEnv.createFile('file');

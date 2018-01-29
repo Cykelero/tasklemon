@@ -68,6 +68,24 @@ class Item {
 		this.name = value + this.name.slice(currentBareName.length);
 	}
 	
+	get extension() {
+		const lastDotIndex = this.name.lastIndexOf('.');
+		
+		if (lastDotIndex === -1) {
+			return '';
+		} else {
+			return this.name.slice(lastDotIndex + 1);
+		}
+	}
+	
+	set extension(value) {
+		if (value === '') {
+			this.name = this.bareName;
+		} else {
+			this.name = `${this.bareName}.${value}`;
+		}
+	}
+	
 	get size() {}
 	
 	get parent() {
