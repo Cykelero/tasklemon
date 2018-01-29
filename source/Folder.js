@@ -41,14 +41,12 @@ class Folder extends Item {
 	}
 	
 	file(path) {
-		this._throwIfNonexistent(`get child file of`);
 		if (path.slice(-1) === '/') throw Error(`“${path}” is not a file path`);
 			
 		return Item._itemForPath(this._path + Item._toNativePath(path));
 	}
 	
 	folder(path) {
-		this._throwIfNonexistent(`get child folder of`);
 		if (path.slice(-1) !== '/') throw Error(`“${path}” is not a folder path`);
 			
 		return Item._itemForPath(this._path + Item._toNativePath(path));
