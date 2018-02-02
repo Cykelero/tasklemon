@@ -7,6 +7,7 @@ const moment = require('moment');
 const Item = require('../../source/Item');
 const File = require('../../source/File');
 const Folder = require('../../source/Folder');
+const root = require('../../source/injected-modules/root');
 	
 ifPosixDescribe = function() {
 	const isPosix = os.platform() !== 'win32';
@@ -290,9 +291,7 @@ describe('Item', function() {
 		});
 
 		it('should be null for the root', function() {
-			let rootItem = this.itemForPath('/');
-			
-			expect(rootItem.parent).toBe(null);
+			expect(root.parent).toBe(null);
 		});
 		
 		it('{newParent} should allow moving the item', function() {

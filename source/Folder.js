@@ -74,7 +74,11 @@ class Folder extends Item {
 	}
 	
 	get _path() {
-		return path.join(this._parentPath, this._name) + path.sep;
+		if (!this._isRoot) {
+			return path.join(this._parentPath, this._name) + path.sep;
+		} else {
+			return path.join(this._parentPath, this._name);
+		}
 	}
 	
 	_make(forgiving) {

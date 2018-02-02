@@ -324,9 +324,12 @@ class Item {
 		let parentPathNonexistent = '';
 		let resolvedParentPathExistent = null;
 		
-		while (!resolvedParentPathExistent) {
+		while (resolvedParentPathExistent === null) {
 			try {
 				resolvedParentPathExistent = fs.realpathSync(parentPathExistent);
+				if (resolvedParentPathExistent.slice(-1) === path.sep) {
+					resolvedParentPathExistent = resolvedParentPathExistent.slice(0, resolvedParentPathExistent.length - 1);
+				}
 			} catch (e) {
 				const lastPathPiece = path.basename(parentPathExistent);
 				parentPathExistent = parentPathExistent.slice(0, -lastPathPiece.length - 1);
