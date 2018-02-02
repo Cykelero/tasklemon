@@ -155,7 +155,7 @@ class Item {
 				if (!this._isRoot) {
 					throw new Error(`Can't make “${this.name}”: already exists in “${this.parent.path}”`);
 				} else {
-					throw new Error(`Can't make “/”: already exists`);
+					throw new Error(`Can't make “${this.path}”: already exists`);
 				}
 			} else {
 				return this;
