@@ -121,14 +121,14 @@ function checkArgumentDefinitionSyntax(argumentDefinitions) {
 				if (alternative.length > 2) {
 					throwForThisDefinition('shorthand names must be a single character');
 				}
-			} else if (firstCharacter === '$') {
+			} else if (firstCharacter === '#') {
 				// Positional argument
-				if (alternative === '$+' && argumentDefinition.alternatives.length > 1) {
-					throwForThisDefinition('“$+” cannot have alternatives');
+				if (alternative === '#+' && argumentDefinition.alternatives.length > 1) {
+					throwForThisDefinition('“#+” cannot have alternatives');
 				}
 			} else {
 				// Neither of these: invalid
-				throwForThisDefinition(`expected “$” or “-”, found “${firstCharacter}”`);
+				throwForThisDefinition(`expected “#” or “-”, found “${firstCharacter}”`);
 			}
 		});
 	});
@@ -165,7 +165,7 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 	});
 	
 	// // Rest values
-	const restDefinition = definitionFor('$+', false);
+	const restDefinition = definitionFor('#+', false);
 	if (restDefinition) {
 		result[restDefinition.name] = [];
 	} else {
@@ -222,7 +222,7 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 			}
 		} else {
 			// Positional argument
-			const positionalIdentity = '$' + nextPositionalIndex;
+			const positionalIdentity = '#' + nextPositionalIndex;
 			
 			let argumentDefinition;
 			if (argumentDefinition = definitionFor(positionalIdentity, false)) {
