@@ -187,7 +187,7 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 	
 	// Read arguments
 	let firstOccurences = {};
-	let nextPositionalIndex = 1;
+	let nextPositionalIndex = 0;
 	let expectValueFor = null;
 
 	function rememberOccurence({name: argumentName}, userString) {
