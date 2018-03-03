@@ -1,0 +1,96 @@
+<Class id="cli" public="true">
+	<metadata>
+		<name>cli</name>
+		<short-description>Allows user interaction through the command-line</short-description>
+		<discussion>
+		<![CDATA[
+			The <code>cli</code> object exposes several methods for reading command-line arguments, displaying messages to the user, and asking for input from the user.
+		]]>
+		</discussion>
+		<related>
+		<![CDATA[
+			To format values nicely for display, use <df-class>format</df-class> methods.
+		]]>
+		</related>
+	</metadata>
+	<members>
+		<group name="Reading program arguments">
+			<method name="accept">
+				<signature>Object definitions</signature>
+				<argument name="definitions" type="Object">A map of value names and corresponding argument definitions.</argument>
+				<returns></returns>
+				<short-description>Defines accepted arguments</short-description>
+				<discussion>
+				<![CDATA[
+					<p>
+						Reads and parses program arguments according to <df-arg>definitions</df-arg>, and populates <df-link target="#args"><code>args</code></df-link> with the resulting values.<br>
+						For each definition that matches a program argument, the processed value is stored in <code>args</code>, named after the definition's key in <df-arg>definitions</df-arg>.
+					</p>
+					<p>
+						A definition is an <code>Array</code> with the following values:
+						<ul>
+							<li>Identifier list: A space-separated string of possible names or indices that identify the argument. At least one identifier is required. See below for identifier syntax.</li>
+							<li>Type (optional): A <df-link target="TypeDefinition">type definition</df-link> to apply to the argument value. Defaults to <code>String</code>.</li>
+							<li>Description (optional): A description of the argument, to be displayed to the user when requested.</li>
+						</ul>
+					</p>
+					<p>
+						The argument value is sourced differently depending on the definition's type.<br>
+						If the type is <code>Boolean</code>, the value is set to true if the argument is present, or false.<br>
+						If the type is other than <code>Boolean</code>, the next program argument is consumed as a value.
+					</p>
+					<p>
+						An argument identifier can be:
+						<ul>
+							<li>Named: two dashes followed by a string, such as <code>--name</code>. Matches an argument if it is exactly the identifier string.</li>
+							<li>Shorthand: one dash followed by a letter, such as <code>-n</code>. Matches an argument if it is exactly identifier string, or if it is part of a dash-prefixed group, such as <code>-vn</code>.</li>
+							<li>Positional: a dollar sign followed by a zero-indexed position P, such as <code>#0</code>. Matches an argument that doesn't match named or shorthand identifiers, if it is the the Pth such one.</li>
+							<li>Rest: the string <code>#+</code>. Matches all arguments that doesn't match any other identifier, collected in an array.</li>
+						</ul>
+					
+						If there is no definition using a rest identifier, the rest values are implicitely collected in a value named <code>rest</code>.
+					</p>
+				]]>
+				</discussion>
+				<sample name="Named argument and shorthand argument">
+				<![CDATA[
+// $ lemon adduser.js -a --name Rose
+
+cli.accept({
+	username: ['--name', String, 'Name of user to add'],
+	isAdmin: ['-a', Boolean, 'Make user an admin']
+});
+
+return cli.args; // {username: 'Rose', isAdmin: true}
+				]]>
+				</sample>
+				<sample name="Positional arguments">
+				<![CDATA[
+// $ lemon transpile.js -x app.ts build.js
+
+cli.accept({
+	sourcePath: ['#0', File, 'Source file'],
+	destinationPath: ['#1', File, 'Where to write the transpiled file'],
+	overrideExisting: ['-x', Boolean, 'Silently override the destination']
+});
+
+return cli.args; // {sourcePath: File('app.ts'), destinationPath: File('build.js'), overrideExisting: true}
+				]]>
+				</sample>
+				<sample name="Rest argument and multiple identifiers">
+				<![CDATA[
+// $ lemon check.js -v --strict catfacts.txt dogfacts.txt
+
+cli.accept({
+	paths: ['#+', File, 'Files to check for errors'],
+	verbose: ['-v --verbose', Boolean, 'Shows all errors'],
+	strictMode: ['-s --strict', Boolean, 'Enable strict checks']
+});
+
+return cli.args; // {paths: [File('catfacts.txt'), File('dogfacts.txt')], verbose: true, strictMode: true}
+				]]>
+				</sample>
+			</method>
+		</group>
+	</members>
+</Class>
