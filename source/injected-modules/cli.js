@@ -49,8 +49,7 @@ cli.ask = function(promptText, type, skippable) {
 cli.askMany = async function(askArguments) {
 	let result = {};
 	
-	const askKeys = Object.keys(askArguments);
-	for (let askKey of askKeys) {
+	for (let askKey of Object.keys(askArguments)) {
 		result[askKey] = await cli.ask.apply(cli, askArguments[askKey]);
 	};
 	
