@@ -15,7 +15,9 @@
  "scripts": {
   "install": "mkdir -p package-cache",
   "test": "jasmine",
-  "watch:test": "jasmine; chokidar 'source/**/*.js' 'spec/**/*.js' -c 'jasmine'"
+  "watch:test": "jasmine; chokidar 'source/**/*.js' 'spec/**/*.js' -c 'jasmine'",
+  "build-docs": "docfish --source=docs/api-reference-source --destination=docs/api-reference-build",
+  "watch:build-docs": "npm run build-docs; chokidar 'docs/api-reference-source/*' -c 'npm run build-docs'"
  },
  "homepage": "https://github.com/cykelero/tasklemon#readme",
  "engines": {
@@ -32,6 +34,7 @@
  },
  "devDependencies": {
   "chokidar-cli": "^1.2.0",
+  "docfish": "^1.1.0",
   "jasmine": "^2.8.0",
   "jasmine-spec-reporter": "^4.2.1"
  }
