@@ -16,7 +16,7 @@
 	</metadata>
 	<members>
 		<group name="Reading program arguments">
-			<method name="accept">
+			<method name="cli.accept">
 				<signature>Object definitions</signature>
 				<argument name="definitions" type="Object">A map of argument definitions, by value name.</argument>
 				<returns></returns>
@@ -24,7 +24,7 @@
 				<discussion>
 				<![CDATA[
 					<p>
-						Reads and parses program arguments according to <df-arg>definitions</df-arg>, and populates <df-link target="#args"><code>args</code></df-link> with the resulting values.<br>
+						Reads and parses program arguments according to <df-arg>definitions</df-arg>, and populates <df-link target="#cli.args"><code>cli.args</code></df-link> with the resulting values.<br>
 						For each definition that matches a program argument, the processed value is stored in <code>args</code>, named after the definition's key in <df-arg>definitions</df-arg>.
 					</p>
 					<p>
@@ -92,19 +92,19 @@ return cli.args; // {paths: [File('catfacts.txt'), File('dogfacts.txt')], verbos
 				]]>
 				</sample>
 			</method>
-			<property name="args">
+			<property name="cli.args">
 				<type>Object</type>
 				<short-description>Holds program arguments</short-description>
 				<read-only/>
 				<discussion>
 				<![CDATA[
-					Holds the processed program arguments. See <df-link target="#accept"><code>accept()</code></df-link>.
+					Holds the processed program arguments. See <df-link target="#cli.accept"><code>cli.accept()</code></df-link>.
 				]]>
 				</discussion>
 			</property>
 		</group>
 		<group name="Displaying messages">
-			<method name="tell">
+			<method name="cli.tell">
 				<signature>String text</signature>
 				<argument name="text" type="String">The text to display.</argument>
 				<returns></returns>
@@ -120,7 +120,7 @@ cli.tell('Hello there!'); // displays “Hello there!”
 					]]>
 				</sample>
 			</method>
-			<method name="tellWhile">
+			<method name="cli.tellWhile">
 				<signature>String text, Promise asyncOperation</signature>
 				<argument name="text" type="String">The text to display while awaiting.</argument>
 				<argument name="asyncOperation" type="Promise">The <code>Promise</code> to wait for.</argument>
@@ -145,7 +145,7 @@ cli.tell(`Latest version is ${versionData.latest}.`);
 			</method>
 		</group>
 		<group name="Asking for input">
-			<method name="ask">
+			<method name="cli.ask">
 				<signature>String promptText, [TypeDefinition type = String, [Boolean optional = false]]</signature>
 				<argument name="promptText" type="String">The prompt to display.</argument>
 				<argument name="type" type="TypeDefinition" default="String">The type to apply to the entered value.</argument>
@@ -165,14 +165,14 @@ cli.tell(`Number of balloons requested: ${balloonCount}`);
 					]]>
 				</sample>
 			</method>
-			<method name="askMany">
+			<method name="cli.askMany">
 				<signature>Object definitions</signature>
 				<argument name="definitions" type="Object">A map of argument arrays for <code>ask()</code>, by value name.</argument>
 				<returns>Promise&lt;Object&gt;</returns>
 				<short-description>Asks the user for multiple values</short-description>
 				<discussion>
 				<![CDATA[
-					Calls <df-link target="#ask"><code>ask()</code></df-link> for each item in <df-arg>definitions</df-arg>, using the item's values for arguments.<br>
+					Calls <df-link target="#cli.ask"><code>cli.ask()</code></df-link> for each item in <df-arg>definitions</df-arg>, using the item's values for arguments.<br>
 					Returns a map of all the entered values as a <code>Promise</code>.
 				]]>
 				</discussion>
