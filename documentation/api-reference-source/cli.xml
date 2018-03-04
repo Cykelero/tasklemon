@@ -4,12 +4,13 @@
 		<short-description>Allows user interaction through the command-line</short-description>
 		<discussion>
 		<![CDATA[
-			The <code>cli</code> object exposes several methods for reading command-line arguments, displaying messages to the user, and asking for input from the user.
+			The <code>cli</code> object exposes methods for reading command-line arguments, displaying messages to the user, and asking for input from the user.
 		]]>
 		</discussion>
 		<related>
 		<![CDATA[
-			To format values nicely for display, use <df-class>format</df-class> methods.
+			To format values nicely for display, use <df-class>format</df-class> methods.<br>
+			User input is validated and cast using <df-link target="TypeDefinition"><code>TypeDefinition</code></df-link> objects.
 		]]>
 		</related>
 	</metadata>
@@ -17,7 +18,7 @@
 		<group name="Reading program arguments">
 			<method name="accept">
 				<signature>Object definitions</signature>
-				<argument name="definitions" type="Object">A map of value names and corresponding argument definitions.</argument>
+				<argument name="definitions" type="Object">A map of argument definitions, by value name.</argument>
 				<returns></returns>
 				<short-description>Defines accepted arguments</short-description>
 				<discussion>
@@ -44,7 +45,7 @@
 						<ul>
 							<li>Named: two dashes followed by a string, such as <code>--name</code>. Matches an argument if it is exactly the identifier string.</li>
 							<li>Shorthand: one dash followed by a letter, such as <code>-n</code>. Matches an argument if it is exactly identifier string, or if it is part of a dash-prefixed group, such as <code>-vn</code>.</li>
-							<li>Positional: a dollar sign followed by a zero-indexed position P, such as <code>#0</code>. Matches an argument that doesn't match named or shorthand identifiers, if it is the the Pth such one.</li>
+							<li>Positional: a dollar sign followed by a zero-indexed position P, such as <code>#0</code>. Matches an argument that doesn't match named or shorthand identifiers, if it is the Pth such one.</li>
 							<li>Rest: the string <code>#+</code>. Matches all arguments that doesn't match any other identifier, collected in an array.</li>
 						</ul>
 					
@@ -89,6 +90,102 @@ cli.accept({
 
 return cli.args; // {paths: [File('catfacts.txt'), File('dogfacts.txt')], verbose: true, strictMode: true}
 				]]>
+				</sample>
+			</method>
+			<property name="args">
+				<type>Object</type>
+				<short-description>Holds program arguments</short-description>
+				<read-only/>
+				<discussion>
+				<![CDATA[
+					Holds the processed program arguments. See <df-link target="#accept"><code>accept()</code></df-link>.
+				]]>
+				</discussion>
+			</property>
+		</group>
+		<group name="Displaying messages">
+			<method name="tell">
+				<signature>String text</signature>
+				<argument name="text" type="String">The text to display.</argument>
+				<returns></returns>
+				<short-description>Displays text to the user</short-description>
+				<discussion>
+				<![CDATA[
+					Displays <df-arg>text</df-arg> to the user by outputting it to <code>stdout</code>.
+				]]>
+				</discussion>
+				<sample name="Say hi">
+					<![CDATA[
+cli.tell('Hello there!'); // displays “Hello there!”
+					]]>
+				</sample>
+			</method>
+			<method name="tellWhile">
+				<signature>String text, Promise asyncOperation</signature>
+				<argument name="text" type="String">The text to display while awaiting.</argument>
+				<argument name="asyncOperation" type="Promise">The <code>Promise</code> to wait for.</argument>
+				<returns>Promise&lt;Any&gt;</returns>
+				<short-description>Displays text until a Promise resolves</short-description>
+				<discussion>
+				<![CDATA[
+					Displays <df-arg>text</df-arg> to the user by outputting it to <code>stdout</code>, then erases it once <df-arg>asyncOperation</df-arg> resolves.<br>
+					Returns the resolved value of <df-arg>asyncOperation</df-arg> as a <code>Promise</code>.
+				]]>
+				</discussion>
+				<sample name="Wait for a network request to complete">
+					<![CDATA[
+const versionData = await cli.tellWhile(
+	'Loading version data.',
+	net.getJSON('http://example.org/versions.json')
+);
+
+cli.tell(`Latest version is ${versionData.latest}.`);
+					]]>
+				</sample>
+			</method>
+		</group>
+		<group name="Asking for input">
+			<method name="ask">
+				<signature>String promptText, [TypeDefinition type = String, [Boolean optional = false]]</signature>
+				<argument name="promptText" type="String">The prompt to display.</argument>
+				<argument name="type" type="TypeDefinition" default="String">The type to apply to the entered value.</argument>
+				<argument name="optional" type="Boolean" default="false">If <code>true</code>, allows the user to enter an empty string, which will result in the value being <code>null</code>.</argument>
+				<returns>Promise&lt;Any&gt;</returns>
+				<short-description>Asks the user for a value</short-description>
+				<discussion>
+				<![CDATA[
+					Displays <df-arg>prompt</df-arg> to the user then waits for input.<br>
+					Once a value is entered, it is cast and validated with <df-arg>type</df-arg>. If the value is valid, the method returns it as a <code>Promise</code>. If it is invalid, the user is asked again.
+				]]>
+				</discussion>
+				<sample name="Ask for a number">
+					<![CDATA[
+const balloonCount = await cli.ask('How many balloons do you want?', Number);
+cli.tell(`Number of balloons requested: ${balloonCount}`);
+					]]>
+				</sample>
+			</method>
+			<method name="askMany">
+				<signature>Object definitions</signature>
+				<argument name="definitions" type="Object">A map of argument arrays for <code>ask()</code>, by value name.</argument>
+				<returns>Promise&lt;Object&gt;</returns>
+				<short-description>Asks the user for multiple values</short-description>
+				<discussion>
+				<![CDATA[
+					Calls <df-link target="#ask"><code>ask()</code></df-link> for each item in <df-arg>definitions</df-arg>, using the item's values for arguments.<br>
+					Returns a map of all the entered values as a <code>Promise</code>.
+				]]>
+				</discussion>
+				<sample name="Ask for two values">
+					<![CDATA[
+const responses = await cli.askMany({
+	flavor: ['What flavor should the cake be?', String],
+	deliveryDate: ['When should it be delivered?', moment]
+});
+
+const formattedDeliveryDate = format.date(responses.deliveryDate, true);
+cli.tell(`Your ${responses.flavor} cake will be delivered ${formattedDeliveryDate}.`);
+					]]>
 				</sample>
 			</method>
 		</group>
