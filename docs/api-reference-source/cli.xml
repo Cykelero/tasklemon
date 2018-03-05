@@ -115,9 +115,9 @@ return cli.args; // {paths: [File('catfacts.txt'), File('dogfacts.txt')], verbos
 				]]>
 				</discussion>
 				<sample name="Say hi">
-					<![CDATA[
+				<![CDATA[
 cli.tell('Hello there!'); // displays “Hello there!”
-					]]>
+				]]>
 				</sample>
 			</method>
 			<method name="cli.tellWhile">
@@ -133,14 +133,14 @@ cli.tell('Hello there!'); // displays “Hello there!”
 				]]>
 				</discussion>
 				<sample name="Wait for a network request to complete">
-					<![CDATA[
+				<![CDATA[
 const versionData = await cli.tellWhile(
 	'Loading version data.',
 	net.getJSON('http://example.org/versions.json')
 );
 
 cli.tell(`Latest version is ${versionData.latest}.`);
-					]]>
+				]]>
 				</sample>
 			</method>
 		</group>
@@ -159,10 +159,10 @@ cli.tell(`Latest version is ${versionData.latest}.`);
 				]]>
 				</discussion>
 				<sample name="Ask for a number">
-					<![CDATA[
+				<![CDATA[
 const balloonCount = await cli.ask('How many balloons do you want?', Number);
 cli.tell(`Number of balloons requested: ${balloonCount}`);
-					]]>
+				]]>
 				</sample>
 			</method>
 			<method name="cli.askMany">
@@ -177,7 +177,7 @@ cli.tell(`Number of balloons requested: ${balloonCount}`);
 				]]>
 				</discussion>
 				<sample name="Ask for two values">
-					<![CDATA[
+				<![CDATA[
 const responses = await cli.askMany({
 	flavor: ['What flavor should the cake be?', String],
 	deliveryDate: ['When should it be delivered?', moment]
@@ -185,7 +185,7 @@ const responses = await cli.askMany({
 
 const formattedDeliveryDate = format.date(responses.deliveryDate, true);
 cli.tell(`Your ${responses.flavor} cake will be delivered ${formattedDeliveryDate}.`);
-					]]>
+				]]>
 				</sample>
 			</method>
 		</group>
