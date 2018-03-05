@@ -66,11 +66,7 @@ format.date.relative = function(value) {
 };
 
 format.duration = function() {
-	return format.duration.absolute.apply(this, arguments);
-};
-
-format.duration.absolute = function(value) {
-	return moment().add(value, 'ms').fromNow(true);
+	return format.duration.between.apply(this, arguments);
 };
 
 format.duration.between = function(value1, value2) {
