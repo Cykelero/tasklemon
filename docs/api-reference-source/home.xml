@@ -1,0 +1,11 @@
+<Class id="home" public="true">
+	<metadata>
+		<name>home</name>
+		<short-description>Folder object for the user's home</short-description>
+		<discussion>
+		<![CDATA[
+		The <code>home</code> global is a <df-link target="Folder"><code>Folder</code></df-link> object representing the home folder of the current user. This is <code>/users/&lt;username&gt;/</code> on macOS, usually <code>/home/&lt;username&gt;/</code> on Linux, and usually <code>C:/users/&lt;username&gt;/</code> on Windows.
+		]]>
+		</discussion>
+	</metadata>
+</Class>

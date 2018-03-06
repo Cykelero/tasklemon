@@ -1,0 +1,11 @@
+<Class id="here" public="true">
+	<metadata>
+		<name>here</name>
+		<short-description>Folder object for the working directory</short-description>
+		<discussion>
+		<![CDATA[
+		The <code>here</code> global is a <df-link target="Folder"><code>Folder</code></df-link> object representing the working directory of the program.
+		]]>
+		</discussion>
+	</metadata>
+</Class>
