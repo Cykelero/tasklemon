@@ -1,0 +1,186 @@
+<Class id="format" public="true">
+	<metadata>
+		<name>format</name>
+		<short-description>Formats value nicely for user display</short-description>
+		<discussion>
+		<![CDATA[
+			The <code>format</code> object exposes methods for formatting numbers, dates and durations to be human-readable.<br>
+		]]>
+		</discussion>
+		<related>
+		<![CDATA[
+		<df-link target="cli"><code>cli</code></df-link> methods such as <df-link target="cli#tell"><code>cli.tell()</code></df-link> are a natural place to use nicely formatted values.
+		]]>
+		</related>
+	</metadata>
+	<members>
+		<group name="Formatting automatically">
+			<method name="format">
+				<signature>Number|Date value</signature>
+				<argument name="value" type="Number|Date">The value to format.</argument>
+				<returns>String</returns>
+				<short-description>Formats a value based on its type</short-description>
+				<discussion>
+				<![CDATA[
+					If <df-arg>value</df-arg> is a number, returns the value formatted with <df-link target="#format.number"><code>format.number()</code></df-link>. Otherwise, returns the value formatted with <df-link target="#format.date"><code>format.date()</code></df-link>.
+				]]>
+				</discussion>
+				<sample name="Format a number then a date">
+				<![CDATA[
+cli.tell(format(8.9)); // “8.90”
+cli.tell(format(new Date('June 29, 2007 09:42'))); // “07-06-29 09:42:00”
+				]]>
+				</sample>
+			</method>
+		</group>
+		<group name="Formatting numbers">
+			<method name="format.number">
+				<signature>Number value, [String|Array unit, [Number decimalPlaces]]</signature>
+				<returns>String</returns>
+				<short-description>Formats a float (alias)</short-description>
+				<discussion>
+				<![CDATA[
+					Aliases <df-link target="#format.number.float"><code>format.number.float()</code></df-link>.
+				]]>
+				</discussion>
+			</method>
+			<method name="format.number.float">
+				<signature>Number value, [String|Array unit, [Number decimalPlaces]]</signature>
+				<argument name="value" type="Number">The number to format.</argument>
+				<argument name="unit" type="String|Array" default="null">The unit to append to the formatted number. Can either be an array of two strings (the singular and plural form respectively) or a single string, to which an “s” will be appended to create the plural form.</argument>
+				<argument name="decimalPlaces" type="Number" default="2">The number of decimal places to include in the result. Zeroes are added to pad if necessary.</argument>
+				<returns>String</returns>
+				<short-description>Formats a float</short-description>
+				<discussion>
+				<![CDATA[
+					Returns <df-arg>value</df-arg> as a formatted string, adding thousands separators and enforcing the number of decimal places. If <df-arg>unit</df-arg> is specified, it is appended, and pluralized based on <df-arg>value</df-arg>.
+				]]>
+				</discussion>
+				<sample name="Format with a string unit">
+				<![CDATA[
+cli.tell(format.number(1, 'carrot')); // “1 carrot”
+cli.tell(format.number(4528.5, 'carrot')); // “4,528.50 carrots”
+				]]>
+				</sample>
+				<sample name="Format with an array unit">
+				<![CDATA[
+cli.tell(format.number(12.536, ['cactus', 'cacti'])); // “12.54 cacti”
+				]]>
+				</sample>
+			</method>
+			<method name="format.number.integer">
+				<signature>Number value, [String|Array unit]</signature>
+				<argument name="value" type="Number">The number to format.</argument>
+				<argument name="unit" type="String|Array" default="null">The unit to append to the formatted number. See <code>format.number.float</code> for details.</argument>
+				<returns>String</returns>
+				<short-description>Rounds and formats a number</short-description>
+				<discussion>
+				<![CDATA[
+					Returns <df-arg>value</df-arg> formatted with <df-link target="#format.number.float"><code>format.number.float()</code></df-link> with the <code>decimalPlaces</code> argument set to <code>0</code>.
+				]]>
+				</discussion>
+				<sample name="Format a number">
+				<![CDATA[
+cli.tell(format.number.integer(67.82, 'donut')); // “68 donuts”
+				]]>
+				</sample>
+			</method>
+		</group>
+		<group name="Formatting dates">
+			<method name="format.date">
+				<signature>Date|Moment value, [Boolean omitTime]</signature>
+				<returns>String</returns>
+				<short-description>Formats a date (alias)</short-description>
+				<discussion>
+				<![CDATA[
+					Aliases <df-link target="#format.number.float"><code>format.number.float()</code></df-link>.
+				]]>
+				</discussion>
+			</method>
+			<method name="format.date.short">
+				<signature>Date|Moment value, [Boolean omitTime]</signature>
+				<argument name="value" type="Date|moment">The date to format.</argument>
+				<argument name="omitTime" type="Boolean" default="false">Whether or not to leave out the time component of the date.</argument>
+				<returns>String</returns>
+				<short-description>Formats a date compactly</short-description>
+				<discussion>
+				<![CDATA[
+					Returns <df-arg>value</df-arg> as string, in <code>YY-MM-DD HH:mm:ss</code> format.
+				]]>
+				</discussion>
+				<sample name="Format a date compactly">
+				<![CDATA[
+cli.tell(format.date.short(new Date('March 11, 1984, 8:30'))); // “84-03-11 08:30:00”
+				]]>
+				</sample>
+			</method>
+			<method name="format.date.long">
+				<signature>Date|Moment value, [Boolean omitTime]</signature>
+				<argument name="value" type="Date|moment">The date to format.</argument>
+				<argument name="omitTime" type="Boolean" default="false">Whether or not to leave out the time component of the date.</argument>
+				<returns>String</returns>
+				<short-description>Formats a date verbosely</short-description>
+				<discussion>
+				<![CDATA[
+					Returns <df-arg>value</df-arg> as a string, in <code>WeekDayName, MonthName MonthDay, FullYear HH:mm:ss</code> format.
+				]]>
+				</discussion>
+				<sample name="Format a date explicitely">
+				<![CDATA[
+cli.tell(format.date.long(new Date('March 11, 1984, 8:30'))); // “Sunday, March 11th, 1984, 08:30:00”
+				]]>
+				</sample>
+			</method>
+			<method name="format.date.relative">
+				<signature>Date|Moment value</signature>
+				<argument name="value" type="Date|moment">The date to format.</argument>
+				<returns>String</returns>
+				<short-description>Formats a date relative to now</short-description>
+				<discussion>
+				<![CDATA[
+					Returns the duration from the present date to <df-arg>value</df-arg> as a formatted string, such as <code>"in 3 hours"</code> or <code>"10 days ago"</code>.
+				]]>
+				</discussion>
+				<sample name="Format a modification date naturally">
+				<![CDATA[
+const logDate = here.file('log.txt').dateModified;
+cli.tell(format.date.relative(logDate)); // “3 minutes ago”
+				]]>
+				</sample>
+			</method>
+		</group>
+		<group name="Formatting durations">
+			<method name="format.duration">
+				<signature>Date|Moment date1, Date|Moment date2</signature>
+				<returns>String</returns>
+				<short-description>Formats two dates as a duration (alias)</short-description>
+				<discussion>
+				<![CDATA[
+					Aliases <df-link target="#format.duration.between"><code>format.duration.between()</code></df-link>.
+				]]>
+				</discussion>
+			</method>
+			<method name="format.duration.between">
+				<signature>Date|Moment date1, Date|Moment date2</signature>
+				<argument name="date1" type="Date|moment">The start of the duration.</argument>
+				<argument name="date2" type="Date|moment">The end of the duration.</argument>
+				<returns>String</returns>
+				<short-description>Formats two dates as a duration</short-description>
+				<discussion>
+				<![CDATA[
+					Returns the duration between <df-arg>date1</df-arg> and <df-arg>date2</df-arg> as a formatted string.
+				]]>
+				</discussion>
+				<sample name="Report execution time">
+				<![CDATA[
+const startDate = new Date();
+performSlowOperation();
+const endDate = new Date();
+
+cli.tell(format.duration(startDate, endDate)); // “32 minutes”
+				]]>
+				</sample>
+			</method>
+		</group>
+	</members>
+</Class>
