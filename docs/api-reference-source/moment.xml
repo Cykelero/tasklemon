@@ -1,0 +1,17 @@
+<Class id="moment" public="true">
+	<metadata>
+		<name>Moment.js</name>
+		<short-description>Describes a date and provides manipulation methods</short-description>
+		<discussion>
+		<![CDATA[
+			<a href="https://momentjs.com">Moment.js</a> is a handy date and time manipulation library that Tasklemon embeds, and exposes through the <code>moment</code> global. For more information on Moment's API, see the <a href="https://momentjs.com/docs/">online documentation</a>.
+			Anywhere dates are accepted in Tasklemon, you can both pass native <code>Date</code> objects and <code>Moment</code> dates.
+		]]>
+		</discussion>
+		<related>
+		<![CDATA[
+			The <code>moment</code> global is a valid <df-link target="#TypeDefinition"><code>TypeDefinition</code></df-link>.
+		]]>
+		</related>
+	</metadata>
+</Class>
