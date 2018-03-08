@@ -5,7 +5,7 @@
 		<discussion>
 		<![CDATA[
 			<a href="https://momentjs.com">Moment.js</a> is a handy date and time manipulation library that Tasklemon embeds, and exposes through the <code>moment</code> global. For more information on Moment's API, see the <a href="https://momentjs.com/docs/">online documentation</a>.
-			Anywhere dates are accepted in Tasklemon, you can both pass native <code>Date</code> objects and <code>Moment</code> dates.
+			Anywhere dates are accepted in Tasklemon, you can both pass native <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date"><code>Date</code></a> objects and <code>Moment</code> objects.
 		]]>
 		</discussion>
 		<related>
