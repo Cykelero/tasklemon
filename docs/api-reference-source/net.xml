@@ -1,0 +1,101 @@
+<Class id="net" public="true">
+	<metadata>
+		<name>net</name>
+		<short-description>Allows retrieving and sending data</short-description>
+		<discussion>
+		<![CDATA[
+			The <code>net</code> object exposes methods for retrieving data from the Web and performing arbitrary HTTP requests.<br>
+			Under the hood, requests are made using the <a href="https://github.com/bitinn/node-fetch"><code>node-fetch</code></a> polyfill of the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API">Fetch API</a>.<br>
+			DOM parsing relies on <a href="https://github.com/jsdom/jsdom">JSDOM</a>, an implementation of DOM/HTML for Node.
+		]]>
+		</discussion>
+		<related>
+		<![CDATA[
+			You can use <df-link target="cli#cli.tellWhile"><code>cli.tellWhile()</code></df-link> to display a message while a network request is pending.
+		]]>
+		</related>
+	</metadata>
+	<members>
+		<group name="Performing requests">
+			<method name="net.getText">
+				<signature>String url, [Object options]</signature>
+				<argument name="url" type="String">The url to query.</argument>
+				<argument name="options" type="Object">Custom options passed to <code>fetch()</code>.</argument>
+				<returns>Promise&lt;String&gt;</returns>
+				<short-description>Gets text from a URL</short-description>
+				<discussion>
+				<![CDATA[
+					Queries a URL and returns the response body as a string, as a <code>Promise</code>.<br>
+					Rejects if the query fails.
+				]]>
+				</discussion>
+				<sample name="Get a string from a random number API">
+				<![CDATA[
+const trulyRandomNumber = await net.getText('https://www.random.org/cgi-bin/randbyte?nbytes=1&format=d');
+cli.tell(trulyRandomNumber);
+				]]>
+				</sample>
+			</method>
+			<method name="net.getJSON">
+				<signature>String url, [Object options]</signature>
+				<argument name="url" type="String">The url to query.</argument>
+				<argument name="options" type="Object">Custom options passed to <code>fetch()</code>.</argument>
+				<returns>Promise&lt;Any&gt;</returns>
+				<short-description>Gets JSON from a URL</short-description>
+				<discussion>
+				<![CDATA[
+					Queries a URL and returns the response body parsed as JSON, as a <code>Promise</code>.<br>
+					Rejects if the query fails, or if the body cannot be parsed as JSON.
+				]]>
+				</discussion>
+				<sample name="Get the release date of an NPM package">
+				<![CDATA[
+const tasklemonNpmDetails = await net.getJSON('https://registry.npmjs.org/tasklemon');
+const lastReleaseDate = tasklemonNpmDetails.time.modified;
+
+cli.tell('Last tasklemon release was ' + format.date.relative(lastReleaseDate) + '.');
+				]]>
+				</sample>
+			</method>
+			<method name="net.getDOM">
+				<signature>String url, [Object options]</signature>
+				<argument name="url" type="String">The url to query.</argument>
+				<argument name="options" type="Object">Custom options passed to <code>fetch()</code>.</argument>
+				<returns>Promise&lt;JSDOM&gt;</returns>
+				<short-description>Gets a DOM tree from a URL</short-description>
+				<discussion>
+				<![CDATA[
+					Queries a URL and returns the response body as a <code>JSDOM</code> object, as a <code>Promise</code>.<br>
+					Rejects if the query fails, or if the body cannot be parsed as HTML.
+				]]>
+				</discussion>
+				<sample name="Query isitweekendyet.com">
+				<![CDATA[
+const weekendDOM = await net.getDOM('http://isitweekendyet.com');
+const weekendEstimation = weekendDOM.querySelector('div').textContent.trim();
+
+cli.tell('Is it the weekend yet? ' + weekendEstimation);
+				]]>
+				</sample>
+			</method>
+			<method name="net.fetch">
+				<signature>String|Request input, [Object init]</signature>
+				<argument name="input" type="String|Request">The url to query or request to perform.</argument>
+				<argument name="init" type="Object">Fetch options.</argument>
+				<returns>Promise&lt;Response&gt;</returns>
+				<short-description>Performs a fetch</short-description>
+				<discussion>
+				<![CDATA[
+					Performs an arbitrary request by making a <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API">Fetch</a> call.
+				]]>
+				</discussion>
+				<sample name="Check the response status of a URL">
+				<![CDATA[
+const response = await net.fetch(await cli.ask('URL to check?'));
+cli.tell('URL is ' + response.ok ? 'OK' : 'not OK');
+				]]>
+				</sample>
+			</method>
+		</group>
+	</members>
+</Class>
