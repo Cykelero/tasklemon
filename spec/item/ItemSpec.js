@@ -380,6 +380,7 @@ describe('Item', function() {
 			testEnv.createFolder('file/');
 			
 			expect(() => fileItem.make()).toThrow();
+			expect(() => fileItem.make(true)).toThrow();
 		});
 
 		describe('{forgiving: false}', function() {

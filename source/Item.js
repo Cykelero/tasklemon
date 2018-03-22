@@ -157,7 +157,7 @@ class Item {
 				} else {
 					throw new Error(`Can't make “${this.path}”: already exists`);
 				}
-			} else {
+			} else if (this.exists) {
 				return this;
 			}
 		}
