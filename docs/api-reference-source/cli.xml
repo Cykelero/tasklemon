@@ -27,20 +27,20 @@
 						Reads and parses program arguments according to <df-arg>definitions</df-arg>, and populates <df-link target="#cli.args"><code>cli.args</code></df-link> with the resulting values.<br>
 						For each definition that matches a program argument, the processed value is stored in <code>args</code>, named after the definition's key in <df-arg>definitions</df-arg>.
 					</p>
-					<p>
+					<div class="df-list-with-title">
 						A definition is an <code>Array</code> with the following values:
 						<ul>
 							<li>Identifier list: A space-separated string of possible names or indices that identify the argument. At least one identifier is required. See below for identifier syntax.</li>
 							<li>Type (optional): A <df-link target="TypeDefinition">type definition</df-link> to apply to the argument value. Defaults to <code>String</code>.</li>
 							<li>Description (optional): A description of the argument, to be displayed to the user when requested.</li>
 						</ul>
-					</p>
+					</div>
 					<p>
 						The argument value is sourced differently depending on the definition's type.<br>
 						If the type is <code>Boolean</code>, the value is set to true if the argument is present, or false.<br>
 						If the type is other than <code>Boolean</code>, the next program argument is consumed as a value.
 					</p>
-					<p>
+					<div class="df-list-with-title">
 						An argument identifier can be:
 						<ul>
 							<li>Named: two dashes followed by a string, such as <code>--name</code>. Matches an argument if it is exactly the identifier string.</li>
@@ -48,7 +48,8 @@
 							<li>Positional: a dollar sign followed by a zero-indexed position P, such as <code>#0</code>. Matches an argument that doesn't match named or shorthand identifiers, if it is the Pth such one.</li>
 							<li>Rest: the string <code>#+</code>. Matches all arguments that doesn't match any other identifier, collected in an array.</li>
 						</ul>
-					
+					</div>
+					<p>
 						If there is no definition using a rest identifier, the rest values are implicitely collected in a value named <code>rest</code>.
 					</p>
 				]]>
