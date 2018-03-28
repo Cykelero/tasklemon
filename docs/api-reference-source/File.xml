@@ -1,0 +1,35 @@
+<Class id="File" public="true">
+	<metadata>
+		<name>File</name>
+		<short-description>Describes a file on the filesystem</short-description>
+		<discussion>
+		<![CDATA[
+			<code>File</code> objects represent a file on the filesystem, whether it exists or not.<br>
+			Create <code>File</code> objects by calling <df-link target="Folder#file"><code>file()</code></df-link> on a <df-class>Folder</df-class> object, or get them from a <df-class>cli</df-class> method, using the <code>File</code> <df-link target="TypeDefinition">type definition</df-link>.
+		]]>
+		</discussion>
+		<related>
+		<![CDATA[
+			<code>File</code> objects are a type of <df-class>Item</df-class>.
+		]]>
+		</related>
+		<placeholder-values>
+			<placeholder name="commonName">file</placeholder>
+			<placeholder name="SetMethod.sampleBlockName">Move and rename a file in one call</placeholder>
+			<placeholder name="SetMethod.sampleMake">here.file('package.json')</placeholder>
+			<placeholder name="SetMethod.sampleName">packageInfo</placeholder>
+			<placeholder name="SetMethod.sampleAttributeName1">name</placeholder>
+			<placeholder name="SetMethod.sampleAttributeValue1">'package-previous'</placeholder>
+			<placeholder name="SetMethod.sampleAttributeName2">parent</placeholder>
+			<placeholder name="SetMethod.sampleAttributeValue2">here.folder('archive/')</placeholder>
+		</placeholder-values>
+	</metadata>
+	<members>
+		<group name="Creating and deleting, checking existence">
+			<import from="Item" id="existence" />
+		</group>
+		<group name="Setting multiple properties at once">
+			<import from="SetMethod" id="mutate" />
+		</group>
+	</members>
+</Class>

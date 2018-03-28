@@ -1,0 +1,99 @@
+<Class id="Item" public="true">
+	<metadata>
+		<name>Item</name>
+		<short-description>Describes an item on the filesystem</short-description>
+		<discussion>
+		<![CDATA[
+			<code>Item</code> objects act in X way.
+		]]>
+		</discussion>
+		<related>
+		<![CDATA[
+			<ul>
+				<li><df-class>File</df-class></li>
+				<li><df-class>Folder</df-class></li>
+			</ul>
+		]]>
+		</related>
+	</metadata>
+	<exports>
+		<export id="existence">
+			<property name="exists">
+				<type>Boolean</type>
+				<short-description>Whether or not the {df:commonName} exists</short-description>
+				<read-only/>
+				<discussion>
+				<![CDATA[
+					Whether or not the {df:commonName} exists on disk.<br>
+					If there is an item of the same name which isn't a {df:commonName}, returns <code>false</code>.
+				]]>
+				</discussion>
+				SAMPLES
+			</property>
+			<method name="make">
+				<signature>[Boolean forgiving]</signature>
+				<argument name="forgiving" type="Boolean" default="false">
+					<![CDATA[
+						If true:
+						<ul>
+							<li>If the parent doesn't exist, <code>make()</code> doesn't throw and creates the parent folder and any missing parent folder.</li>
+							<li>If there is already an item of the same name, only throws if the item is not a {df:commonName}. If it is a {df:commonName}, does not modify it.</li>
+						</ul>
+					]]>
+				</argument>
+				<returns>self</returns>
+				<short-description>Creates the {df:commonName}</short-description>
+				<discussion>
+				<![CDATA[
+					Creates the {df:commonName} based on its <df-link target="#path"><code>path</code></df-link>.<br>
+					Throws if the parent doesn't exist, or if there is already an item at that path.
+				]]>
+				</discussion>
+				SAMPLES
+			</method>
+			<method name="copyTo">
+				<signature>Folder destination, [Boolean forgiving]</signature>
+				<argument name="destination" type="Folder">The folder in which to create the copy.</argument>
+				<argument name="forgiving" type="Boolean" default="false">
+					<![CDATA[
+					If true, if <df-arg>destination</df-arg> doesn't exist, <code>copyTo()</code> doesn't throw and creates <df-arg>destination</df-arg> and any missing parent folder.
+					]]>
+				</argument>
+				<returns>{df:$classname}</returns>
+				<short-description>Copies the {df:commonName} to a folder</short-description>
+				<discussion>
+				<![CDATA[
+					Copies the {df:commonName} into the <df-arg>destination</df-arg> folder, and returns a <code>{df:$classname}</code> object representing the copy.<br>
+					Throws if there already exists an item of the same name at the destination, or if the destination doesn't exist.
+				]]>
+				</discussion>
+				SAMPLES
+			</method>
+			<method name="duplicate">
+				<signature>[String newName]</signature>
+				<argument name="newName" type="String">The name to use for the copy instead of an automatically-picked one. <code>duplicate()</code> will throw if the name is taken.</argument>
+				<returns>{df:$classname}</returns>
+				<short-description>Duplicates the {df:commonName} in place.</short-description>
+				<discussion>
+				<![CDATA[
+					Creates a copy of the {df:commonName} in the same folder, and returns a <code>{df:$classname}</code> object representing the copy. The name of the copy is derived from the {df:commonName}'s name.
+				]]>
+				</discussion>
+				SAMPLES
+			</method>
+			<method name="delete">
+				<signature>[Boolean immediately]</signature>
+				<argument name="immediately" type="Boolean" default="false">If true, the {df:commonName} is deleted right away instead of being placed in the trash.</argument>
+				<returns>self</returns>
+				<short-description>Deletes the {df:commonName}</short-description>
+				<discussion>
+				<![CDATA[
+					Deletes the {df:commonName} by moving it to the user's trash.<br>
+					Relies on the <a href="https://www.npmjs.com/package/trash">trash</a> package.
+				]]>
+				</discussion>
+				SAMPLES
+			</method>
+		</export>
+	</exports>
+</Class>
