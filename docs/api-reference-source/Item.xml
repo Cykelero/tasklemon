@@ -1,7 +1,7 @@
 <Class id="Item" public="true">
 	<metadata>
 		<name>Item</name>
-		<short-description>Describes an item on the filesystem</short-description>
+		<short-description>Describes an item on the file system</short-description>
 		<discussion>
 		<![CDATA[
 			<code>Item</code> objects act in X way.
@@ -92,8 +92,156 @@
 					Relies on the <a href="https://www.npmjs.com/package/trash">trash</a> package.
 				]]>
 				</discussion>
+				<sample name="Clean up after an operation">
+				<![CDATA[
+const keepLog = await cli.ask('Keep log file?', Boolean);
+if (!keepLog) here.file('events.log').delete();
+				]]>
+				</sample>
+			</method>
+		</export>
+		<export id="path">
+			<property name="name">
+				<type>String</type>
+				<short-description>The complete name of the {df:commonName}</short-description>
+				<discussion>
+				<![CDATA[
+					The complete name of the {df:commonName}, including its extension.
+				]]>
+				</discussion>
+				<sample name="Display the name of the first found log file">
+				<![CDATA[
+const someLog = logFolder.children[0];
+cli.tell(someLog.name); // "events.log"
+				]]>
+				</sample>
+			</property>
+			<property name="bareName">
+				<type>String</type>
+				<short-description>The name of the {df:commonName} without the extension</short-description>
+				<discussion>
+				<![CDATA[
+					The name of the {df:commonName}, without the extension.
+				]]>
+				</discussion>
+				<sample name="Get the bareName of a file">
+				<![CDATA[
+const readme = here.file('README.md');
+cli.tell(readme.bareName); // "README"
+
+const minifiedMomentFile = here.file('moment.min.js');
+cli.tell(minifiedMomentFile.bareName); // "moment.min"
+				]]>
+				</sample>
+				<sample name="Set the bareName of a file">
+				<![CDATA[
+const readme = here.file('README.md');
+readme.bareName = 'First steps';
+cli.tell(readme.name); // "First steps.md"
+				]]>
+				</sample>
+			</property>
+			<property name="extension">
+				<type>String</type>
+				<short-description>The extension of the {df:commonName}</short-description>
+				<discussion>
+				<![CDATA[
+					The extension of the {df:commonName}, such as <code>"txt"</code>.
+				]]>
+				</discussion>
+			</property>
+			<property name="path">
+				<type>String</type>
+				<short-description>The complete path to the {df:commonName}</short-description>
+				<discussion>
+				<![CDATA[
+					The absolute path to the {df:commonName}, including its name.
+				]]>
+				</discussion>
+				SAMPLES
+			</property>
+			<property name="parent">
+				<type>Folder</type>
+				<short-description>The parent item of the {df:commonName}</short-description>
+				<discussion>
+				<![CDATA[
+					The parent <df-class>Folder</df-class> of the {df:commonName}.<br>
+					Is <code>null</code> if the item is a file system root.
+				]]>
+				</discussion>
+				SAMPLES
+			</property>
+			<method name="moveTo">
+				<signature>Folder destination, [Boolean forgiving]</signature>
+				<argument name="destination" type="Folder">The new parent folder.</argument>
+				<argument name="forgiving" type="Boolean" default="false">
+					<![CDATA[
+					If true, if <df-arg>destination</df-arg> doesn't exist, <code>moveTo()</code> doesn't throw and creates <df-arg>destination</df-arg> and any missing parent folder.
+					]]>
+				</argument>
+				<returns>self</returns>
+				<short-description>Moves the {df:commonName} to a different folder</short-description>
+				<discussion>
+				<![CDATA[
+					Moves the {df:commonName} into the <df-arg>destination</df-arg> folder.<br>
+					Throws if there already exists an item of the same name at the destination, or if the destination doesn't exist.
+				]]>
+				</discussion>
 				SAMPLES
 			</method>
+		</export>
+		<export id="metadata">
+			<property name="dateCreated">
+				<type>Moment</type>
+				<short-description>The creation date of the {df:commonName}</short-description>
+				<discussion>
+				<![CDATA[
+					The creation date of the {df:commonName}. Only supported on macOS.
+				]]>
+				</discussion>
+			</property>
+			<property name="dateModified">
+				<type>Moment</type>
+				<short-description>The modification date of the {df:commonName}</short-description>
+				<discussion>
+				<![CDATA[
+					The last modification date of the {df:commonName}.
+				]]>
+				</discussion>
+			</property>
+			<property name="user">
+				<type>ItemUserPermissions</type>
+				<short-description>The user permissions of the {df:commonName}</short-description>
+				<read-only/>
+				<discussion>
+				<![CDATA[
+					The <df-class>ItemUserPermissions</df-class> object for the {df:commonName}. Allows reading and modifying the owner of the {df:commonName}, and the owner's permissions to the {df:commonName}.
+				]]>
+				</discussion>
+				SAMPLES
+			</property>
+			<property name="group">
+				<type>ItemGroupPermissions</type>
+				<short-description>The group permissions of the {df:commonName}</short-description>
+				<read-only/>
+				<discussion>
+				<![CDATA[
+					The <df-class>ItemGroupPermissions</df-class> object for the {df:commonName}. Allows reading and modifying the owner group of the {df:commonName}, and the group's permissions to the {df:commonName}.
+				]]>
+				</discussion>
+				SAMPLES
+			</property>
+			<property name="other">
+				<type>ItemOtherPermissions</type>
+				<short-description>The world permissions of the {df:commonName}</short-description>
+				<read-only/>
+				<discussion>
+				<![CDATA[
+					The <df-class>ItemOtherPermissions</df-class> object for the {df:commonName}. Allows reading and modifying world permissions to the {df:commonName}.
+				]]>
+				</discussion>
+				SAMPLES
+			</property>
 		</export>
 	</exports>
 </Class>

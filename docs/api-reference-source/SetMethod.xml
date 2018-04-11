@@ -15,7 +15,7 @@
 				</discussion>
 				<sample name="{df:SetMethod.sampleBlockName}">
 				<![CDATA[
-var {df:SetMethod.sampleName} = {df:SetMethod.sampleMake};
+let {df:SetMethod.sampleName} = {df:SetMethod.sampleMake};
 {df:SetMethod.sampleName}.set({
 	{df:SetMethod.sampleAttributeName1}: {df:SetMethod.sampleAttributeValue1},
 	{df:SetMethod.sampleAttributeName2}: {df:SetMethod.sampleAttributeValue2}

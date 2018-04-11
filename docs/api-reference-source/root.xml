@@ -1,7 +1,7 @@
 <Class id="root" public="true">
 	<metadata>
 		<name>root</name>
-		<short-description>Folder object for the filesystem root</short-description>
+		<short-description>Folder object for the file system root</short-description>
 		<discussion>
 		<![CDATA[
 		The <code>root</code> global is a <df-link target="Folder"><code>Folder</code></df-link> object representing the root directory of the file system. This is <code>/</code> on Unix systems, and usually <code>C:/</code> on Windows.
