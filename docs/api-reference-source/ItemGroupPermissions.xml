@@ -1,0 +1,38 @@
+<Class id="ItemGroupPermissions" public="true">
+	<metadata>
+		<name>ItemGroupPermissions</name>
+		<short-description>The owning group permissions of an item</short-description>
+		<discussion>
+		<![CDATA[
+			<code>ItemGroupPermissions</code> objects describe the owning group of an <df-class>Item</df-class>, and its permissions on the item.<br>
+			To access this object, use the <df-link target="File#group"><code>group</code></df-link> property of the associated <code>Item</code>.
+		]]>
+		</discussion>
+		<related>
+		<![CDATA[
+		For user permissions, use <df-class>ItemUserPermissions</df-class>. For world permissions, use <df-class>ItemOtherPermissions</df-class>.
+		]]>
+		</related>
+		<placeholder-values>
+			<placeholder name="commonName">owning group</placeholder>
+			<placeholder name="SetMethod.sampleBlockName">Change write and execute permissions in one call</placeholder>
+			<placeholder name="SetMethod.sampleMake">here.file('script.js').group</placeholder>
+			<placeholder name="SetMethod.sampleName">scriptPermissions</placeholder>
+			<placeholder name="SetMethod.sampleAttributeName1">canWrite</placeholder>
+			<placeholder name="SetMethod.sampleAttributeValue1">false</placeholder>
+			<placeholder name="SetMethod.sampleAttributeName2">canExecute</placeholder>
+			<placeholder name="SetMethod.sampleAttributeValue2">true</placeholder>
+		</placeholder-values>
+	</metadata>
+	<members>
+		<group name="Owner group identity">
+			<import from="ItemPermissionsSlice" id="owner" />
+		</group>
+		<group name="Owner group permissions">
+			<import from="ItemPermissionsSlice" id="permissions" />
+		</group>
+		<group name="Setting multiple properties at once">
+			<import from="SetMethod" id="mutate" />
+		</group>
+	</members>
+</Class>

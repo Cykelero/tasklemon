@@ -1,0 +1,61 @@
+<Class id="ItemPermissionsSlice">
+	<metadata>
+		<name>ItemPermissionsSlice</name>
+	</metadata>
+	<exports>
+		<export id="owner">
+			<property name="name">
+				<type>String</type>
+				<short-description>The name of the {df:commonName}</short-description>
+				<discussion>
+				<![CDATA[
+					The name of the {df:commonName}.
+				]]>
+				</discussion>
+				SAMPLES
+			</property>
+			<property name="id">
+				<type>Number</type>
+				<short-description>The id of the {df:commonName}</short-description>
+				<discussion>
+				<![CDATA[
+					The id of the {df:commonName}.
+				]]>
+				</discussion>
+				SAMPLES
+			</property>
+		</export>
+		<export id="permissions">
+			<property name="canRead">
+				<type>Boolean</type>
+				<short-description>Whether the {df:commonName} can read the item</short-description>
+				<discussion>
+				<![CDATA[
+					Whether the {df:commonName} can read the item.
+				]]>
+				</discussion>
+				SAMPLES
+			</property>
+			<property name="canWrite">
+				<type>Boolean</type>
+				<short-description>Whether the {df:commonName} can write the item</short-description>
+				<discussion>
+				<![CDATA[
+					Whether the {df:commonName} can write the item.
+				]]>
+				</discussion>
+				SAMPLES
+			</property>
+			<property name="canExecute">
+				<type>Boolean</type>
+				<short-description>Whether the {df:commonName} can execute the item</short-description>
+				<discussion>
+				<![CDATA[
+					Whether the {df:commonName} can execute the item.
+				]]>
+				</discussion>
+				SAMPLES
+			</property>
+		</export>
+	</exports>
+</Class>
