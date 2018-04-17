@@ -28,7 +28,16 @@
 					If there is an item of the same name which isn't a {df:commonName}, returns <code>false</code>.
 				]]>
 				</discussion>
-				SAMPLES
+				<sample name="Check if a file exists">
+				<![CDATA[
+let newFile = here.file('new-file.txt');
+
+cli.tell(newFile.exists); // `false`
+
+newFile.make();
+cli.tell(newFile.exists); // now `true`
+				]]>
+				</sample>
 			</property>
 			<method name="make">
 				<signature>[Boolean forgiving]</signature>
@@ -49,7 +58,28 @@
 					Throws if the parent doesn't exist, or if there is already an item at that path.
 				]]>
 				</discussion>
-				SAMPLES
+				<sample name="Create a file">
+				<![CDATA[
+let newFile = here.file('new-file.txt');
+newFile.make();
+
+cli.tell(newFile.exists); // now `true`
+				]]>
+				</sample>
+				<sample name="Create a file and its parents">
+				<![CDATA[
+let packageFolder = here.folder('new-package/');
+let packageMetadata = here.file('new-package/package.json');
+
+cli.tell(packageFolder.exists); // `false`
+cli.tell(packageMetadata.exists); // `false`
+
+packageMetadata.make(true);
+
+cli.tell(packageFolder.exists); // `true`
+cli.tell(packageMetadata.exists); // `true`
+				]]>
+				</sample>
 			</method>
 			<method name="copyTo">
 				<signature>Folder destination, [Boolean forgiving]</signature>
@@ -67,7 +97,14 @@
 					Throws if there already exists an item of the same name at the destination, or if the destination doesn't exist.
 				]]>
 				</discussion>
-				SAMPLES
+				<sample name="Copy a file and give the copy a new name">
+				<![CDATA[
+const playerSheetTemplate = here.file('templates/player-sheet.template.md');
+
+let newPlayerSheet = playerSheetTemplate.copyTo(here);
+newPlayerSheet.name = 'player-sheet.md';
+				]]>
+				</sample>
 			</method>
 			<method name="duplicate">
 				<signature>[String newName]</signature>
@@ -79,7 +116,14 @@
 					Creates a copy of the {df:commonName} in the same folder, and returns a <code>{df:$classname}</code> object representing the copy. The name of the copy is derived from the {df:commonName}'s name.
 				]]>
 				</discussion>
-				SAMPLES
+				<sample name="Duplicate a file then move the copy somewhere else">
+				<![CDATA[
+const playerSheetTemplate = here.file('templates/player-sheet.template.md');
+
+let newPlayerSheet = playerSheetTemplate.duplicate('player-sheet.md');
+newPlayerSheet.moveTo(here);
+				]]>
+				</sample>
 			</method>
 			<method name="delete">
 				<signature>[Boolean immediately]</signature>
@@ -158,7 +202,11 @@ cli.tell(readme.name); // "First steps.md"
 					The absolute path to the {df:commonName}, including its name.
 				]]>
 				</discussion>
-				SAMPLES
+				<sample name="Read the path of a folder">
+				<![CDATA[
+cli.tell(home.path); // something like "/Users/cykelero/"
+				]]>
+				</sample>
 			</property>
 			<property name="parent">
 				<type>Folder</type>
@@ -169,7 +217,12 @@ cli.tell(readme.name); // "First steps.md"
 					Is <code>null</code> if the item is a file system root.
 				]]>
 				</discussion>
-				SAMPLES
+				<sample name="Get the parent of the user folder">
+				<![CDATA[
+const userFolderParent = home.parent;
+cli.tell(userFolderParent.path);
+				]]>
+				</sample>
 			</property>
 			<method name="moveTo">
 				<signature>Folder destination, [Boolean forgiving]</signature>
@@ -187,7 +240,18 @@ cli.tell(readme.name); // "First steps.md"
 					Throws if there already exists an item of the same name at the destination, or if the destination doesn't exist.
 				]]>
 				</discussion>
-				SAMPLES
+				<sample name="Move a file">
+				<![CDATA[
+const folderA = here.folder('A/');
+const folderB = here.folder('B/');
+let file = folderA.file('file.txt');
+
+cli.tell(file.parent.name); // "A"
+
+file.moveTo(folderB);
+cli.tell(file.parent.name); // "B"
+				]]>
+				</sample>
 			</method>
 		</export>
 		<export id="metadata">
@@ -218,7 +282,12 @@ cli.tell(readme.name); // "First steps.md"
 					The <df-class>ItemUserPermissions</df-class> object for the {df:commonName}. Allows reading and modifying the owner of the {df:commonName}, and the owner's permissions to the {df:commonName}.
 				]]>
 				</discussion>
-				SAMPLES
+				<sample name="Make a file user-executable">
+				<![CDATA[
+const script = here.file('script.js');
+script.user.canExecute = true;
+				]]>
+				</sample>
 			</property>
 			<property name="group">
 				<type>ItemGroupPermissions</type>
@@ -229,7 +298,12 @@ cli.tell(readme.name); // "First steps.md"
 					The <df-class>ItemGroupPermissions</df-class> object for the {df:commonName}. Allows reading and modifying the owner group of the {df:commonName}, and the group's permissions to the {df:commonName}.
 				]]>
 				</discussion>
-				SAMPLES
+				<sample name="Make a file group-writeable">
+				<![CDATA[
+const script = here.file('script.js');
+script.group.canWrite = true;
+				]]>
+				</sample>
 			</property>
 			<property name="other">
 				<type>ItemOtherPermissions</type>
@@ -240,7 +314,12 @@ cli.tell(readme.name); // "First steps.md"
 					The <df-class>ItemOtherPermissions</df-class> object for the {df:commonName}. Allows reading and modifying world permissions to the {df:commonName}.
 				]]>
 				</discussion>
-				SAMPLES
+				<sample name="Make a file world-readable">
+				<![CDATA[
+const script = here.file('script.js');
+script.other.canRead = true;
+				]]>
+				</sample>
 			</property>
 		</export>
 	</exports>
