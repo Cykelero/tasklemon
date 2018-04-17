@@ -15,6 +15,9 @@
 		</related>
 		<placeholder-values>
 			<placeholder name="commonName">owning group</placeholder>
+			<placeholder name="shortCommonName">group</placeholder>
+			<placeholder name="ItemPermissionsSlice.propertyName">group</placeholder>
+			<placeholder name="ItemPermissionsSlice.sampleName">staff</placeholder>
 			<placeholder name="SetMethod.sampleBlockName">Change write and execute permissions in one call</placeholder>
 			<placeholder name="SetMethod.sampleMake">here.file('script.js').group</placeholder>
 			<placeholder name="SetMethod.sampleName">scriptPermissions</placeholder>

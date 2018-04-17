@@ -15,6 +15,9 @@
 		</related>
 		<placeholder-values>
 			<placeholder name="commonName">owning user</placeholder>
+			<placeholder name="shortCommonName">user</placeholder>
+			<placeholder name="ItemPermissionsSlice.propertyName">user</placeholder>
+			<placeholder name="ItemPermissionsSlice.sampleName">cykelero</placeholder>
 			<placeholder name="SetMethod.sampleBlockName">Change write and execute permissions in one call</placeholder>
 			<placeholder name="SetMethod.sampleMake">here.file('script.js').user</placeholder>
 			<placeholder name="SetMethod.sampleName">scriptPermissions</placeholder>

@@ -12,7 +12,12 @@
 					The name of the {df:commonName}.
 				]]>
 				</discussion>
-				SAMPLES
+				<sample name="Set the {df:commonName} by name">
+				<![CDATA[
+let recipes = here.file('recipes.md');
+recipes.{df:ItemPermissionsSlice.propertyName}.name = '{df:ItemPermissionsSlice.sampleName}';
+				]]>
+				</sample>
 			</property>
 			<property name="id">
 				<type>Number</type>
@@ -22,7 +27,13 @@
 					The id of the {df:commonName}.
 				]]>
 				</discussion>
-				SAMPLES
+				<sample name="Copy the {df:commonName} of another file">
+				<![CDATA[
+const recipes = here.file('recipes.md');
+let ingredients = here.file('ingredients.md');
+ingredients.{df:ItemPermissionsSlice.propertyName}.id = recipes.{df:ItemPermissionsSlice.propertyName}.id;
+				]]>
+				</sample>
 			</property>
 		</export>
 		<export id="permissions">
@@ -34,7 +45,12 @@
 					Whether the {df:commonName} can read the item.
 				]]>
 				</discussion>
-				SAMPLES
+				<sample name="Make a file {df:shortCommonName}-readable">
+				<![CDATA[
+const recipes = here.file('recipes.md');
+recipes.{df:ItemPermissionsSlice.propertyName}.canRead = true;
+				]]>
+				</sample>
 			</property>
 			<property name="canWrite">
 				<type>Boolean</type>
@@ -44,7 +60,12 @@
 					Whether the {df:commonName} can write the item.
 				]]>
 				</discussion>
-				SAMPLES
+				<sample name="Make a file {df:shortCommonName}-writeable">
+				<![CDATA[
+const recipes = here.file('recipes.md');
+recipes.{df:ItemPermissionsSlice.propertyName}.canWrite = true;
+				]]>
+				</sample>
 			</property>
 			<property name="canExecute">
 				<type>Boolean</type>
@@ -54,7 +75,12 @@
 					Whether the {df:commonName} can execute the item.
 				]]>
 				</discussion>
-				SAMPLES
+				<sample name="Make a file {df:shortCommonName}-executable">
+				<![CDATA[
+const recipes = here.file('recipes.md');
+recipes.{df:ItemPermissionsSlice.propertyName}.canExecute = true;
+				]]>
+				</sample>
 			</property>
 		</export>
 	</exports>
