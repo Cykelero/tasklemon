@@ -35,6 +35,73 @@
 			<import from="Item" id="metadata" />
 		</group>
 		<group name="Contents">
+			<property name="content">
+				<type>String</type>
+				<short-description>The text content of the file</short-description>
+				<discussion>
+				<![CDATA[
+					The text content of the file, interpreted as UTF-8.<br>
+					When set, the value is serialized using <code>JSON.stringify()</code> if it isn't already a string.<br>
+					Throws if the file doesn't exist.
+				]]>
+				</discussion>
+				<sample name="Count the lines in a text file">
+				<![CDATA[
+const readmeContent = here.file('README.md').content;
+const readmeLineCount = readmeContent.split('\n').length;
+cli.tell(`The readme file has ${format.number.integer(readmeLineCount, 'line')}.`);
+				]]>
+				</sample>
+				<sample name="Write JSON to a file">
+				<![CDATA[
+const basicInfo = {
+	name: await cli.ask('Project name?'),
+	description:  await cli.ask('Project description?')
+};
+
+here.file('package.json').make().content = basicInfo;
+				]]>
+				</sample>
+			</property>
+			<method name="getContentAs">
+				<signature>TypeDefinition castType</signature>
+				<argument name="castType" type="TypeDefinition">The type to apply to the text content.</argument>
+				<returns>Any</returns>
+				<short-description>Casts and returns the content of the file</short-description>
+				<discussion>
+				<![CDATA[
+					Reads the text content of the file, then casts it using <df-arg>castType</df-arg> and returns the result.<br>
+					If the content of the file is not valid for <df-arg>castType</df-arg>, the method returns <code>null</code> instead.<br>
+					Throws if the file doesn't exist.
+				]]>
+				</discussion>
+				<sample name="Read JSON from a file">
+				<![CDATA[
+const packageInfo = here.file('package.json').getContentAs(Object);
+cli.tell(`The current project is ${packageInfo.name}.`);
+				]]>
+				</sample>
+			</method>
+			<property name="md5">
+				<type>String</type>
+				<short-description>The md5 checksum of the file</short-description>
+				<read-only/>
+				<discussion>
+				<![CDATA[
+					The md5 checksum of the file.
+				]]>
+				</discussion>
+				<sample name="Compare the content of two files">
+				<![CDATA[
+const fileA = await cli.ask('First file?', File);
+const fileB = await cli.ask('Second file?', File);
+
+const contentIdentical = fileA.md5 === fileB.md5;
+
+cli.tell('The two files are ' + (contentIdentical ? 'the same' : 'different') + '.');
+				]]>
+				</sample>
+			</property>
 			<property name="size">
 				<type>Number</type>
 				<short-description>The size of the file</short-description>
@@ -45,6 +112,61 @@
 				]]>
 				</discussion>
 			</property>
+			<method name="appendLine">
+				<signature>Any content</signature>
+				<argument name="content" type="Any">The content to be appended.</argument>
+				<returns></returns>
+				<short-description>Appends content as a new line</short-description>
+				<discussion>
+				<![CDATA[
+					Serializes <df-arg>content</df-arg> using <code>JSON.stringify()</code> if it is not already a string, then adds it at the end of the file, followed by a newline character.
+				]]>
+				</discussion>
+				<sample name="Add text at the end of a file">
+				<![CDATA[
+here.file('events.log').appendLine('Operation complete.');
+				]]>
+				</sample>
+			</method>
+			<method name="prependLine">
+				<signature>Any content</signature>
+				<argument name="content" type="Any">The content to be prepended.</argument>
+				<returns></returns>
+				<short-description>Prepends content as a new line</short-description>
+				<discussion>
+				<![CDATA[
+					Serializes <df-arg>content</df-arg> using <code>JSON.stringify()</code> if it is not already a string, then adds it at the beginning of the file, followed by a newline character.
+				]]>
+				</discussion>
+				<sample name="Add text at the beginning of a file">
+				<![CDATA[
+here.file('events.log').prependLine('Operation complete.');
+				]]>
+				</sample>
+			</method>
+			<method name="clear">
+				<signature>Boolean forgiving</signature>
+				<argument name="forgiving" type="Boolean" default="false">
+					<![CDATA[
+						If true, if the file doesn't exist, <code>clear()</code> doesn't throw and creates the file.<br>
+						The method will still throw if the parent doesn't exist.
+					]]>
+				</argument>
+				<returns></returns>
+				<short-description>Empties the file</short-description>
+				<discussion>
+				<![CDATA[
+					Empties the file, removing all its content.<br>
+					Throws if the file doesn't exist.
+				]]>
+				</discussion>
+				<sample name="Make sure a file exists and is empty">
+				<![CDATA[
+const projectFolder = await cli.ask('Where should the project be initialized?', Folder);
+projectFolder.file('package.json').clear(true);
+				]]>
+				</sample>
+			</method>
 		</group>
 		<group name="Setting multiple properties at once">
 			<import from="SetMethod" id="mutate" />
