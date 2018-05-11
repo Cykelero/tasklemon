@@ -66,20 +66,20 @@ describe('File', function() {
 		it('should append the provided content to the file', function() {
 			const fileItem = this.itemForPath(testEnv.createFile('file'));
 			
-			fileItem.content = 'first-line';
+			fileItem.content = 'first-line\n';
 			fileItem.appendLine('second-line');
 			
-			expect(fileItem.content).toBe('first-line\nsecond-line');
+			expect(fileItem.content).toBe('first-line\nsecond-line\n');
 		});
 
 		it('should encode the provided value in JSON', function() {
 			const fileItem = this.itemForPath(testEnv.createFile('file'));
 			const savedObject = {key: 'value'};
 			
-			fileItem.content = 'first-line';
+			fileItem.content = 'first-line\n';
 			fileItem.appendLine(savedObject);
 			
-			expect(fileItem.content).toBe('first-line\n' + JSON.stringify(savedObject));
+			expect(fileItem.content).toBe('first-line\n' + JSON.stringify(savedObject) + '\n');
 		});
 	});
 	

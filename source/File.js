@@ -43,7 +43,7 @@ class File extends Item {
 	
 	appendLine(value) {
 		this._throwIfNonexistent(`append line to`);
-		fs.appendFileSync(this._path, '\n' + this._stringify(value));
+		fs.appendFileSync(this._path, this._stringify(value) + '\n');
 	}
 	
 	prependLine(value) {
