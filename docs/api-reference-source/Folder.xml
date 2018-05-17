@@ -1,0 +1,155 @@
+<Class id="Folder" public="true">
+	<metadata>
+		<name>Folder</name>
+		<short-description>Describes a folder on the file system</short-description>
+		<discussion>
+		<![CDATA[
+			<code>Folder</code> objects represent a folder on the file system, whether it exists or not.<br>
+			Create <code>Folder</code> objects by calling <df-link target="#folder"><code>folder()</code></df-link> on another <code>Folder</code>, or get them from a <df-class>cli</df-class> method, using the <code>Folder</code> <df-link target="TypeDefinition">type definition</df-link>.
+		]]>
+		</discussion>
+		<related>
+		<![CDATA[
+			<code>Folder</code> objects are a type of <df-class>Item</df-class>.<br>
+			<df-class>root</df-class>, <df-class>home</df-class> and <df-class>here</df-class> are <code>Folder</code> globals representing useful filesystem locations.
+		]]>
+		</related>
+		<placeholder-values>
+			<placeholder name="commonName">folder</placeholder>
+			<placeholder name="SetMethod.sampleBlockName">Move and rename a folder in one call</placeholder>
+			<placeholder name="SetMethod.sampleMake">here.folder('screenshots/')</placeholder>
+			<placeholder name="SetMethod.sampleName">screenshotFolder</placeholder>
+			<placeholder name="SetMethod.sampleAttributeName1">name</placeholder>
+			<placeholder name="SetMethod.sampleAttributeValue1">'screenshots-previous'</placeholder>
+			<placeholder name="SetMethod.sampleAttributeName2">parent</placeholder>
+			<placeholder name="SetMethod.sampleAttributeValue2">here.folder('archive/')</placeholder>
+		</placeholder-values>
+	</metadata>
+	<members>
+		<group name="Creating and deleting, checking existence">
+			<import from="Item" id="existence" />
+		</group>
+		<group name="Name and path">
+			<import from="Item" id="path" />
+		</group>
+		<group name="Metadata">
+			<import from="Item" id="metadata" />
+		</group>
+		<group name="Contents">
+			<method name="file">
+				<signature>String relativePath</signature>
+				<argument name="relativePath" type="String">The path to the file to get, relative to the path of the folder instance.</argument>
+				<returns>File</returns>
+				<short-description>Gets a file by path</short-description>
+				<discussion>
+				<![CDATA[
+					Returns a new <df-class>File</df-class> instance for <df-arg>relativePath</df-arg>.
+				]]>
+				</discussion>
+				<sample name="Get a file by name">
+				<![CDATA[
+const bashProfile = home.file('.bash_profile'); // returns the .bash_profile file from the user's home folder
+				]]>
+				</sample>
+				<sample name="Get a file by path">
+				<![CDATA[
+const hosts = root.file('etc/hosts'); // returns the /etc/hosts file
+				]]>
+				</sample>
+			</method>
+			<method name="folder">
+				<signature>String relativePath</signature>
+				<argument name="relativePath" type="String">The path to the folder to get, relative to the path of the folder instance.</argument>
+				<returns>Folder</returns>
+				<short-description>Gets a folder by path</short-description>
+				<discussion>
+				<![CDATA[
+					Returns a new <df-class>Folder</df-class> instance for <df-arg>relativePath</df-arg>.
+				]]>
+				</discussion>
+				<sample name="Get a folder by name">
+				<![CDATA[
+const documents = home.folder('Documents/'); // returns the Documents folder from the user's home folder
+				]]>
+				</sample>
+				<sample name="Get a folder by path">
+				<![CDATA[
+const preferences = home.folder('Library/Preferences/'); // returns the ~/Library/Preferences folder
+				]]>
+				</sample>
+			</method>
+			<property name="children">
+				<type>Item[]</type>
+				<short-description>The items inside the folder</short-description>
+				<read-only/>
+				<discussion>
+				<![CDATA[
+					The list of items contained inside the folder, as <df-class>File</df-class> and <code>Folder</code> instances.
+				]]>
+				</discussion>
+				<sample name="Remove items without a specific extension from a folder">
+				<![CDATA[
+const buildFolder = here.folder('build/');
+buildFolder.children
+	.filter(child => child.extension !== 'js')
+	.forEach(child => child.delete());
+				]]>
+				</sample>
+			</property>
+			
+			<method name="glob">
+				<signature>String pattern, [Object options]</signature>
+				<argument name="pattern" type="String">The glob pattern.</argument>
+				<argument name="options" type="Object">
+				<![CDATA[
+					The options to pass to <code>glob</code>. See the <a href="https://github.com/isaacs/node-glob#options"><code>glob</code> documentation</a> for a list of supported options.
+				]]>
+				</argument>
+				<returns>Item[]</returns>
+				<short-description>Gets items for a glob pattern</short-description>
+				<discussion>
+				<![CDATA[
+					Returns the list of items in the folder that match the glob pattern <df-arg>pattern</df-arg>.<br>
+					Relies on the <a href="https://github.com/isaacs/node-glob">glob</a> package.
+				]]>
+				</discussion>
+				<sample name="Remove files with a specific extension from a folder">
+				<![CDATA[
+const buildFolder = here.folder('build/');
+buildFolder.glob('*.js').forEach(child => child.delete());
+				]]>
+				</sample>
+			</method>
+			<property name="size">
+				<type>Number</type>
+				<short-description>The total size of the folder</short-description>
+				<read-only/>
+				<discussion>
+				<![CDATA[
+					The size of the folder and its children, in bytes.
+				]]>
+				</discussion>
+			</property>
+			<method name="empty">
+				<signature>[Boolean immediately]</signature>
+				<argument name="immediately" type="Boolean" default="false">If true, the children are deleted right away instead of being placed in the trash.</argument>
+				<returns></returns>
+				<short-description>Deletes the folder's children</short-description>
+				<discussion>
+				<![CDATA[
+					Deletes the folder's children by moving them to the user's trash.<br>
+					Relies on the <a href="https://www.npmjs.com/package/trash">trash</a> package.
+				]]>
+				</discussion>
+				<sample name="Empty a folder">
+				<![CDATA[
+here.folder('build/').empty();
+				]]>
+				</sample>
+			</method>
+		</group>
+		<group name="Setting multiple properties at once">
+			<import from="SetMethod" id="mutate" />
+		</group>
+	</members>
+</Class>

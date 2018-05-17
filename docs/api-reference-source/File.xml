@@ -5,7 +5,7 @@
 		<discussion>
 		<![CDATA[
 			<code>File</code> objects represent a file on the file system, whether it exists or not.<br>
-			Create <code>File</code> objects by calling <df-link target="Folder#file"><code>file()</code></df-link> on a <df-class>Folder</df-class> object, or get them from a <df-class>cli</df-class> method, using the <code>File</code> <df-link target="TypeDefinition">type definition</df-link>.
+			Create <code>File</code> objects by calling <df-link target="Folder#file"><code>file()</code></df-link> on a <df-class>Folder</df-class>, or get them from a <df-class>cli</df-class> method, using the <code>File</code> <df-link target="TypeDefinition">type definition</df-link>.
 		]]>
 		</discussion>
 		<related>
