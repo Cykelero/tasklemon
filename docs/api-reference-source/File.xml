@@ -4,8 +4,8 @@
 		<short-description>Describes a file on the file system</short-description>
 		<discussion>
 		<![CDATA[
-			<code>File</code> objects represent a file on the file system, whether it exists or not.<br>
-			Create <code>File</code> objects by calling <df-link target="Folder#file"><code>file()</code></df-link> on a <df-class>Folder</df-class>, or get them from a <df-class>cli</df-class> method, using the <code>File</code> <df-link target="TypeDefinition">type definition</df-link>.
+			<code>File</code> objects represent a file on the file system, whether it exists or not, based on its path.<br>
+			Create <code>File</code> objects by calling <df-link target="Folder#file"><code>file()</code></df-link> on a <df-class>Folder</df-class>, or by asking the user through a <df-class>cli</df-class> method, using the <code>File</code> <df-link target="TypeDefinition">type definition</df-link>.
 		]]>
 		</discussion>
 		<related>

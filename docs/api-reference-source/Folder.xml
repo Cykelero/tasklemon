@@ -4,8 +4,21 @@
 		<short-description>Describes a folder on the file system</short-description>
 		<discussion>
 		<![CDATA[
-			<code>Folder</code> objects represent a folder on the file system, whether it exists or not.<br>
-			Create <code>Folder</code> objects by calling <df-link target="#folder"><code>folder()</code></df-link> on another <code>Folder</code>, or get them from a <df-class>cli</df-class> method, using the <code>Folder</code> <df-link target="TypeDefinition">type definition</df-link>.
+			<code>Folder</code> objects represent a folder on the file system, whether it exists or not, based on its path.<br>
+			<div class="df-list-with-title">
+				To get or create <code>Folder</code> objects, you can:
+				<ul>
+					<li>
+						use one of the <code><df-class>root</df-class>/<df-class>home</df-class>/<df-class>here</df-class></code> globals
+					</li>
+					<li>
+						call <df-link target="#folder"><code>folder()</code></df-link> on another <code>Folder</code>
+					</li>
+					<li>
+						ask the user through a <df-class>cli</df-class> method, using the <code>Folder</code> <df-link target="TypeDefinition">type definition</df-link>
+					</li>
+				</ul>
+			</div>
 		]]>
 		</discussion>
 		<related>
@@ -84,7 +97,7 @@ const preferences = home.folder('Library/Preferences/'); // returns the ~/Librar
 				<read-only/>
 				<discussion>
 				<![CDATA[
-					The list of items contained inside the folder, as <df-class>File</df-class> and <code>Folder</code> instances.
+					The list of items contained inside the folder, as <df-class>File</df-class> and <code>Folder</code> objects.
 				]]>
 				</discussion>
 				<sample name="Remove items without a specific extension from a folder">
