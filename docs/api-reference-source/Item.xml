@@ -12,7 +12,7 @@
 						use one of the <code><df-class>root</df-class>/<df-class>home</df-class>/<df-class>here</df-class></code> globals
 					</li>
 					<li>
-						call <df-link target="#file"><code>file()</code></df-link> or <df-link target="#folder"><code>folder()</code></df-link> on a <df-class>Folder</df-class>
+						call <df-link target="Folder#file"><code>file()</code></df-link> or <df-link target="Folder#folder"><code>folder()</code></df-link> on a <df-class>Folder</df-class>
 					</li>
 					<li>
 						ask the user through a <df-class>cli</df-class> method, using a corresponding <df-link target="TypeDefinition">type definition</df-link>

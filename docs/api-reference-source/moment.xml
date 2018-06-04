@@ -10,7 +10,7 @@
 		</discussion>
 		<related>
 		<![CDATA[
-			The <code>moment</code> global is a valid <df-link target="#TypeDefinition"><code>TypeDefinition</code></df-link>.
+			The <code>moment</code> global is a valid <df-link target="TypeDefinition"><code>TypeDefinition</code></df-link>.
 		]]>
 		</related>
 	</metadata>

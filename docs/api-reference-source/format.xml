@@ -9,7 +9,7 @@
 		</discussion>
 		<related>
 		<![CDATA[
-		<df-link target="cli"><code>cli</code></df-link> methods such as <df-link target="cli#tell"><code>cli.tell()</code></df-link> are a natural place to use nicely formatted values.
+		<df-link target="cli"><code>cli</code></df-link> methods such as <df-link target="cli#cli.tell"><code>cli.tell()</code></df-link> are a natural place to use nicely formatted values.
 		]]>
 		</related>
 	</metadata>
