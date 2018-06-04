@@ -149,7 +149,11 @@ cli.tell(`Latest version is ${versionData.latest}.`);
 			<method name="cli.ask">
 				<signature>String promptText, [TypeDefinition type = String, [Boolean optional = false]]</signature>
 				<argument name="promptText" type="String">The prompt to display.</argument>
-				<argument name="type" type="TypeDefinition" default="String">The type to apply to the entered value.</argument>
+				<argument name="type" type="TypeDefinition" default="String">
+				<![CDATA[
+					The <df-link target="TypeDefinition">type definition</df-link> to apply to the entered value.
+				]]>
+				</argument>
 				<argument name="optional" type="Boolean" default="false">If <code>true</code>, allows the user to enter an empty string, which will result in the value being <code>null</code>.</argument>
 				<returns>Promise&lt;Any&gt;</returns>
 				<short-description>Asks the user for a value</short-description>

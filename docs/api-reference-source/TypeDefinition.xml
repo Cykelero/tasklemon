@@ -1,0 +1,42 @@
+<Class id="TypeDefinition" public="true">
+	<metadata>
+		<name>TypeDefinition</name>
+		<short-description>Allows validating and casting a string</short-description>
+		<discussion>
+		<![CDATA[
+			<p>
+				A <code>TypeDefinition</code> describes how to validate and cast a string into a given type.<br>
+				Type definitions can be used in methods that read user text, such as <df-link target="cli#cli.ask"><code>cli.ask()</code></df-link>, or <df-link target="File#getContentAs"><code>File.getContentAs()</code></df-link>.
+			</p>
+			<p>
+				You can use one of the classes that have a built-in definition (see list below), or write your own.
+				<div class="df-list-with-title">
+					More specifically, anywhere a type definition is accepted, you can pass:
+					<ul>
+						<li>a class with a type definition</li>
+						<li>a function that accepts a string, returns the cast value, and optionally throws with an error message if the string is not valid</li>
+						<li>an array of type definitions, that will be executed sequentially</li>
+					</ul>
+				</div>
+			</p>
+		]]>
+		</discussion>
+		<related>
+		<![CDATA[
+			The following classes have built-in type definitions:
+			<ul>
+				<li><code>RegExp</code></li>
+				<li><code>Date</code></li>
+				<li><df-class>moment</df-class></li>
+				<li><code>Array</code></li>
+				<li><code>Object</code></li>
+				<li><code>Number</code></li>
+				<li><code>Boolean</code></li>
+				<li><df-class>Item</df-class></li>
+				<li><df-class>File</df-class></li>
+				<li><df-class>Folder</df-class></li>
+			</ul>
+		]]>
+		</related>
+	</metadata>
+</Class>

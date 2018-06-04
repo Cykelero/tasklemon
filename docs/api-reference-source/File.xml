@@ -65,7 +65,11 @@ here.file('package.json').make().content = basicInfo;
 			</property>
 			<method name="getContentAs">
 				<signature>TypeDefinition castType</signature>
-				<argument name="castType" type="TypeDefinition">The type to apply to the text content.</argument>
+				<argument name="castType" type="TypeDefinition">
+				<![CDATA[
+					The <df-link target="TypeDefinition">type definition</df-link> to apply to the text content.
+				]]>
+				</argument>
 				<returns>Any</returns>
 				<short-description>Casts and returns the content of the file</short-description>
 				<discussion>

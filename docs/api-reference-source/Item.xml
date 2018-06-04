@@ -23,6 +23,7 @@
 		</discussion>
 		<related>
 		<![CDATA[
+			There are two kinds of <code>Item</code>:
 			<ul>
 				<li><df-class>File</df-class></li>
 				<li><df-class>Folder</df-class></li>
