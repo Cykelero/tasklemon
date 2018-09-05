@@ -298,25 +298,35 @@ class Item {
 	}
 	
 	static _itemForPath(inputPath) {
-		let result;
+		let normalizedInputPath;
 		let isFolder;
-		let completePath;
 		let name;
-
-		const parentPath = Item._realParentPathForPath(inputPath);
+		let parentPath;
 		
-		// Parse path
-		isFolder = (inputPath.slice(-1) === path.sep);
-		name = path.basename(inputPath);
-		completePath = path.join(parentPath, name) + (isFolder ? path.sep : '');
+		// Normalize path
+		normalizedInputPath = path.normalize(inputPath);
+		const normalizedPathBasename = path.basename(normalizedInputPath);
 		
-		// Find or create item
+		if (normalizedPathBasename === '.' || normalizedPathBasename === '..') {
+			// Path is fully relative: get actual path from current working directory
+			normalizedInputPath = path.normalize(path.join(process.cwd(), normalizedPathBasename));
+		}
+		
+		// Get info from path
+		const lastInputPathComponent = path.basename(inputPath);
+		isFolder = (normalizedInputPath.slice(-1) === path.sep)
+			|| lastInputPathComponent === '.'
+			|| lastInputPathComponent === '..';
+		
+		name = path.basename(normalizedInputPath);
+		parentPath = Item._realParentPathForPath(normalizedInputPath);
+		
+		// Create item instance
 		const itemClass = isFolder ? require('./Folder') : require('./File');
-		result = new itemClass(parentPath, name);
+		let itemInstance = new itemClass(parentPath, name);
+		Item._registerItem(itemInstance, parentPath);
 		
-		Item._registerItem(result, parentPath);
-		
-		return result;
+		return itemInstance;
 	}
 	
 	static _realParentPathForPath(inputPath) {
@@ -335,7 +345,12 @@ class Item {
 				parentPathExistent = parentPathExistent.slice(0, -lastPathPiece.length - 1);
 				parentPathNonexistent = path.sep + lastPathPiece + parentPathNonexistent;
 			}
+
+			if (parentPathExistent === '') {
+				resolvedParentPathExistent = '';
+			}
 		}
+		
 		
 		return resolvedParentPathExistent + parentPathNonexistent + path.sep;
 	}

@@ -8,10 +8,10 @@ const Item = require('../../source/Item');
 const File = require('../../source/File');
 const Folder = require('../../source/Folder');
 const root = require('../../source/injected-modules/root');
+
+const isPosix = os.platform() !== 'win32';
 	
 ifPosixDescribe = function() {
-	const isPosix = os.platform() !== 'win32';
-	
 	if (isPosix) {
 		describe.apply(this, arguments);
 	} else {
@@ -30,6 +30,41 @@ describe('Item', function() {
 		it('should correctly choose between File and Folder', function() {
 			expect(testEnv.itemFor('file') instanceof File).toBeTruthy();
 			expect(testEnv.itemFor('folder/') instanceof Folder).toBeTruthy();
+		});
+		
+		it('should resolve relative path components', function() {
+			const item1 = this.itemForPath('/non-existent/../some-folder/./some-file');
+			expect(item1.path).toBe('/some-folder/some-file');
+			expect(item1.name).toBe('some-file');
+
+			const item2 = this.itemForPath('/non-existent/.');
+			expect(item2.path).toBe('/non-existent/');
+			expect(item2.name).toBe('non-existent');
+
+			const item3 = this.itemForPath('/non-existent/..');
+			if (isPosix) {
+				expect(item3.path).toBe('/');
+			} else {
+				expect(item3.path).toMatch(/^\w+:\/$/);
+			}
+			expect(item3.name).toBe('');
+		});
+		
+		it('should resolve standalone relative path components', function() {
+			const herePath = path.join(process.cwd(), path.sep);
+			const herePathComponents = path.parse(herePath);
+			const hereName = herePathComponents.base;
+			
+			const hereParentPath = herePathComponents.dir + path.sep;
+			const hereParentName = path.basename(hereParentPath);
+			
+			const item1 = this.itemForPath('.');
+			expect(item1.path).toBe(this.toCleanPath(herePath));
+			expect(item1.name).toBe(hereName);
+			
+			const item2 = this.itemForPath('..');
+			expect(item2.path).toBe(this.toCleanPath(hereParentPath));
+			expect(item2.name).toBe(hereParentName);
 		});
 	});
 	
