@@ -5,11 +5,11 @@ const childProcess = require('child_process');
 
 const Item = require('../../source/Item');
 
-function toClean(nativePath) {
+function toCleanPath(nativePath) {
 	return nativePath.split(path.sep).join('/');
 }
 
-function toNative(cleanPath) {
+function toNativePath(cleanPath) {
 	return cleanPath.split('/').join(path.sep);
 }
 
@@ -22,7 +22,7 @@ beforeEach(function() {
 		
 		// Return environment object
 		return {
-			path: toClean(environmentPath),
+			path: toCleanPath(environmentPath),
 			_nativePath: environmentPath,
 			
 			pathFor: function(itemPath) {
@@ -32,24 +32,24 @@ beforeEach(function() {
 				return path.join(this._nativePath, nativeItemPath);
 			},
 			itemFor: function(itemPath) {
-				return Item._itemForPath(this.nativePathFor(toNative(itemPath)));
+				return Item._itemForPath(this.nativePathFor(toNativePath(itemPath)));
 			},
 			
 			createFile: function(filePath) {
-				const nativeFilePath = toNative(filePath);
+				const nativeFilePath = toNativePath(filePath);
 				const completeFilePath = this.nativePathFor(nativeFilePath);
 				
 				fs.closeSync(fs.openSync(completeFilePath, 'w'));
 				
-				return toClean(completeFilePath);
+				return toCleanPath(completeFilePath);
 			},
 			createFolder: function(folderPath) {
-				const nativeFolderPath = toNative(folderPath);
+				const nativeFolderPath = toNativePath(folderPath);
 				const completeFolderPath = this.nativePathFor(nativeFolderPath);
 				
 				fs.mkdirSync(completeFolderPath);
 				
-				return toClean(path.join(completeFolderPath, path.sep));
+				return toCleanPath(path.join(completeFolderPath, path.sep));
 			},
 			
 			runLemonScript: function(source, args = []) {
