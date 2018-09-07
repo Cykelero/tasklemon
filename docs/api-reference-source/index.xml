@@ -1,0 +1,68 @@
+<Class id="index" public="true">
+	<metadata>
+		<name></name>
+		<short-description></short-description>
+		<discussion>
+		<![CDATA[
+			Here is a list of all Tasklemon classes, grouped by topic.<br>
+			For an introduction to scripting with Tasklemon, see the <a href="https://github.com/Cykelero/tasklemon">project page</a>.
+		]]>
+		</discussion>
+	</metadata>
+	<details>
+		<detail name="Files and folders" id="files-and-folders">
+			<discussion>
+			<![CDATA[
+				<ul>
+					<li>
+						<df-class>Item</df-class>
+						<ul>
+							<li><df-class>File</df-class></li>
+							<li><df-class>Folder</df-class></li>
+						</ul>
+					</li>
+					<li>
+						Permission access
+						<ul>
+							<li><df-class>ItemUserPermissions</df-class></li>
+							<li><df-class>ItemGroupPermissions</df-class></li>
+							<li><df-class>ItemOtherPermissions</df-class></li>
+						</ul>
+					</li>
+					<li>
+						Well-known folders
+						<ul>
+						<li><df-class>here</df-class></li>
+							<li><df-class>home</df-class></li>
+							<li><df-class>root</df-class></li>
+						</ul>
+					</li>
+				</ul>
+			]]>
+			</discussion>
+		</detail>
+		
+		<detail name="User interaction" id="user-interaction">
+			<discussion>
+			<![CDATA[
+				<ul>
+					<li><df-class>cli</df-class></li>
+					<li><df-class>format</df-class></li>
+					<li><df-class>TypeDefinition</df-class></li>
+				</ul>
+			]]>
+			</discussion>
+		</detail>
+		
+		<detail name="Other" id="other">
+			<discussion>
+			<![CDATA[
+				<ul>
+					<li><df-class>net</df-class></li>
+					<li><df-class>moment</df-class></li>
+				</ul>
+			]]>
+			</discussion>
+		</detail>
+	</details>
+</Class>
