@@ -56,7 +56,7 @@ cli.tell(`The readme file has ${format.number.integer(readmeLineCount, 'line')}.
 				<![CDATA[
 const basicInfo = {
 	name: await cli.ask('Project name?'),
-	description:  await cli.ask('Project description?')
+	description: await cli.ask('Project description?')
 };
 
 here.file('package.json').make().content = basicInfo;

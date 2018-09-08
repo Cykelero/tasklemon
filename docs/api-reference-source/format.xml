@@ -58,7 +58,7 @@ cli.tell(format(new Date('June 29, 2007 09:42'))); // “07-06-29 09:42:00”
 				</discussion>
 				<sample name="Format with a string unit">
 				<![CDATA[
-cli.tell(format.number(1, 'carrot')); // “1 carrot”
+cli.tell(format.number(1, 'carrot')); // “1.00 carrot”
 cli.tell(format.number(4528.5, 'carrot')); // “4,528.50 carrots”
 				]]>
 				</sample>
