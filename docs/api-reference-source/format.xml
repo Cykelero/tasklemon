@@ -93,7 +93,7 @@ cli.tell(format.number.integer(67.82, 'donut')); // “68 donuts”
 				<short-description>Formats a date (alias)</short-description>
 				<discussion>
 				<![CDATA[
-					Aliases <df-link target="#format.number.float"><code>format.number.float()</code></df-link>.
+					Aliases <df-link target="#format.date.short"><code>format.date.short()</code></df-link>.
 				]]>
 				</discussion>
 			</method>
