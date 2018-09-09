@@ -46,13 +46,13 @@ class Folder extends Item {
 	}
 	
 	file(path) {
-		if (path.slice(-1) === '/') throw Error(`“${path}” is not a file path`);
+		if (path.slice(-1) === '/') throw Error(`“${path}” is not a file path (ends with a slash)`);
 			
 		return Item._itemForPath(this._path + Item._toNativePath(path));
 	}
 	
 	folder(path) {
-		if (path.slice(-1) !== '/') throw Error(`“${path}” is not a folder path`);
+		if (path.slice(-1) !== '/') throw Error(`“${path}” is not a folder path (does not end with a slash)`);
 			
 		return Item._itemForPath(this._path + Item._toNativePath(path));
 	}

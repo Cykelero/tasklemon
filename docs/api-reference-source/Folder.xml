@@ -56,7 +56,8 @@
 				<short-description>Gets a file by path</short-description>
 				<discussion>
 				<![CDATA[
-					Returns a new <df-class>File</df-class> instance for <df-arg>relativePath</df-arg>.
+					Returns a new <df-class>File</df-class> instance for <df-arg>relativePath</df-arg>.<br>
+					Throws if <df-arg>relativePath</df-arg> ends with a slash.
 				]]>
 				</discussion>
 				<sample name="Get a file by name">
@@ -77,7 +78,8 @@ const hosts = root.file('etc/hosts'); // returns the /etc/hosts file
 				<short-description>Gets a folder by path</short-description>
 				<discussion>
 				<![CDATA[
-					Returns a new <df-class>Folder</df-class> instance for <df-arg>relativePath</df-arg>.
+					Returns a new <df-class>Folder</df-class> instance for <df-arg>relativePath</df-arg>.<br>
+					Throws if <df-arg>relativePath</df-arg> doesn't end with a slash.
 				]]>
 				</discussion>
 				<sample name="Get a folder by name">
