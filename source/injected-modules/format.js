@@ -18,15 +18,24 @@ format.number.integer = function(value, unit) {
 
 format.number.float = function(value, unit, decimalPlaces = 2) {
 	let result = '';
+	let roundedValue, integerPart, fractionalPart;
 	
-	let [, integerPart, , fractionalPart] = /(\d+)(\.(\d+))?/.exec(value);
+	decimalPlaces = Math.max(0, Math.round(decimalPlaces));
+	
+	// Round number
+	const roundingOffset = Math.pow(10, decimalPlaces);
+	roundedValue = Math.round(value * roundingOffset) / roundingOffset;
+	
+	// Separate components
+	[, integerPart, , fractionalPart] = /(\d+)(\.(\d+))?/.exec(roundedValue);
+	
+	// Add minus sign
+	if (value < 0) result += '-';
 
 	// Build comma-separated integer part
-	const extraZeroCount = 3 - integerPart.length % 3;
-	integerPart = '0'.repeat(extraZeroCount) + integerPart;
-	integerPart = integerPart.replace(/\d\d\d/g, ',$&').slice(1 + extraZeroCount);
+	integerPartWithCommas = integerPart.replace(/(?<!^)(?=(.{3})+$)/g, ',');
 	
-	result += integerPart;
+	result += integerPartWithCommas;
 	
 	// Pad and truncate fractional part
 	if (decimalPlaces > 0) {
@@ -37,8 +46,9 @@ format.number.float = function(value, unit, decimalPlaces = 2) {
 	// Add and pluralize unit
 	if (unit) {
 		if (!Array.isArray(unit)) unit = [unit, unit + 's'];
-		result += ' ';
-		result += (value === 1 ? unit[0] : unit[1]);
+		const isPlural =  value === 0 || Math.abs(value) > 1;
+		
+		result += ' ' + (isPlural ? unit[1] : unit[0]);
 	}
 	
 	// Return
