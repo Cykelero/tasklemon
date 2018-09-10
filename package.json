@@ -1,7 +1,7 @@
 {
  "name": "tasklemon",
  "version": "1.0.0",
- "description": "Painlessly automate in JavaScript",
+ "description": "Painless automation in JavaScript",
  "main": "source/tasklemon.js",
  "bin": {
   "lemon": "source/tasklemon.js"
