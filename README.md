@@ -31,7 +31,7 @@ And with Tasklemon installed, you can just save this code into a file (say, `cle
 lemon clean.js some-folder
 ````
 
-(you can also add a hashbang to your scripts to make them directly executable, if you want)
+(you can also add a hashbang to your scripts to make them directly executable, if you want; see below in Usage)
 
 ## Usage
 
