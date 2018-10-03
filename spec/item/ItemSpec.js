@@ -32,6 +32,12 @@ describe('Item', function() {
 			expect(testEnv.itemFor('folder/') instanceof Folder).toBeTruthy();
 		});
 		
+		it('should resolve relative paths to non-existent items', function() {
+			const item = this.itemForPath('non-existent/some-folder/some-file');
+			expect(item.path).toBe(path.join(process.cwd(), 'non-existent/some-folder/some-file'));
+			expect(item.name).toBe('some-file');
+		});
+		
 		it('should resolve relative path components', function() {
 			const item1 = this.itemForPath('/non-existent/../some-folder/./some-file');
 			expect(item1.path).toBe('/some-folder/some-file');

@@ -305,11 +305,10 @@ class Item {
 		
 		// Normalize path
 		normalizedInputPath = path.normalize(inputPath);
-		const normalizedPathBasename = path.basename(normalizedInputPath);
 		
-		if (normalizedPathBasename === '.' || normalizedPathBasename === '..') {
-			// Path is fully relative: get actual path from current working directory
-			normalizedInputPath = path.normalize(path.join(process.cwd(), normalizedPathBasename));
+		if (normalizedInputPath[0] !== path.sep) {
+			// Path is relative: prepend current working directory
+			normalizedInputPath = path.join(process.cwd(), normalizedInputPath);
 		}
 		
 		// Get info from path
