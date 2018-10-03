@@ -1,13 +1,30 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
-const Item = require('../../source/Item');
+const File = require('../../source/File');
+const TypeDefinition = require('../../source/TypeDefinition');
+
+const isPosix = os.platform() !== 'win32';
 
 describe('File', function() {
 	let testEnv;
 	
 	beforeEach(function() {
 		testEnv = this.getTestEnv();
+	});
+	
+	describe('TypeDefinition', function() {
+		it('should accept a path', function() {
+			const userPath = isPosix
+				? 'folder/file'
+				: 'folder\\file';
+			
+			const file = TypeDefinition.execute(File, userPath);
+			
+			expect(file.valid).toBeTruthy();
+			expect(file.value.path).toBe(path.join(process.cwd(), 'folder/file'));
+		});
 	});
 	
 	describe('#content', function() {

@@ -1,15 +1,31 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
-const Item = require('../../source/Item');
 const File = require('../../source/File');
 const Folder = require('../../source/Folder');
+const TypeDefinition = require('../../source/TypeDefinition');
+
+const isPosix = os.platform() !== 'win32';
 
 describe('Folder', function() {
 	let testEnv;
 	
 	beforeEach(function() {
 		testEnv = this.getTestEnv();
+	});
+	
+	describe('TypeDefinition', function() {
+		it('should accept a path', function() {
+			const userPath = isPosix
+				? 'parent-folder/folder'
+				: 'parent-folder\\folder';
+			
+			const folder = TypeDefinition.execute(Folder, userPath);
+			
+			expect(folder.valid).toBeTruthy();
+			expect(folder.value.path).toBe(path.join(process.cwd(), 'parent-folder/folder/'));
+		});
 	});
 	
 	describe('#children', function() {

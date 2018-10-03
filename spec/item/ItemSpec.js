@@ -74,6 +74,12 @@ describe('Item', function() {
 		});
 	});
 	
+	describe('TypeDefinition', function() {
+		xit('should accept a path', function() {
+			// TODO: we need a more sensible TypeDefinition
+		});
+	});
+	
 	describe('#exists', function() {
 		it('should be true for an existing item', function() {
 			let fileItem = this.itemForPath(testEnv.createFile('file'));
