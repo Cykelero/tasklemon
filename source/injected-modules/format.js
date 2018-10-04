@@ -72,7 +72,9 @@ format.date.long = function(value, noTime) {
 };
 
 format.date.relative = function(value) {
-	return moment(value).fromNow();
+	const dateIsFuture = moment().isBefore(value);
+	const durationString = format.duration.between(moment(), value);
+	return dateIsFuture ? 'in ' + durationString : durationString + ' ago';
 };
 
 format.duration = function() {
@@ -80,5 +82,21 @@ format.duration = function() {
 };
 
 format.duration.between = function(value1, value2) {
-	return moment(value1).to(value2, true);
+	const interval = moment(value1).diff(value2, 'milliseconds');
+	const absoluteInterval = Math.abs(interval);
+	
+	if (absoluteInterval < 60000) {
+		// Under a minute: build the string ourselves
+		if (absoluteInterval < 1000) {
+			// Display milliseconds
+			return format.number.integer(absoluteInterval, 'millisecond');
+		} else {
+			// Display seconds
+			const secondAbsoluteInterval = Math.round(absoluteInterval / 1000);
+			return format.number.integer(secondAbsoluteInterval, 'second');
+		}
+	} else {
+		// Over a minute: have Moment build the string
+		return moment(value1).to(value2, true);
+	}
 };
