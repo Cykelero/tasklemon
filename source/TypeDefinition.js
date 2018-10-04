@@ -134,8 +134,30 @@ Date[symbol] = function(value) {
 };
 
 RegExp[symbol] = function(value) {
+	let source = '';
+	let flags = '';
+	
+	// Parse string (optional slash at the start, backslashes escape, optional slash then flags at the end)
+	let currentIndex = value[0] === '/' ? 1 : 0;
+	
+	while (currentIndex < value.length) {
+		const currentCharacter = value[currentIndex++];
+		if (currentCharacter === '\\') {
+			// Next character is escaped
+			source += value[currentIndex++];
+		} else if (currentCharacter === '/') {
+			// Arrived at flags
+			flags = value.slice(currentIndex);
+			break;
+		} else {
+			// Regular character
+			source += currentCharacter;
+		}
+	}
+	
+	// Create regexp
 	try {
-		return new RegExp(value);
+		return new RegExp(source, flags);
 	} catch (error) {
 		const truncatedMessage = / ?([^:]*)$/.exec(error.message)[1];
 		throw 'is not a valid regular expression: ' + truncatedMessage;
