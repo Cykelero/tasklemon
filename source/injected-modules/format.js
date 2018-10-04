@@ -12,10 +12,6 @@ format.number = function() {
 	return format.number.float.apply(this, arguments);
 };
 
-format.number.integer = function(value, unit) {
-	return format.number.float(value, unit, 0);
-};
-
 format.number.float = function(value, unit, decimalPlaces = 2) {
 	let result = '';
 	let roundedValue, integerPart, fractionalPart;
@@ -53,6 +49,10 @@ format.number.float = function(value, unit, decimalPlaces = 2) {
 	
 	// Return
 	return result;
+};
+
+format.number.integer = function(value, unit) {
+	return format.number.float(value, unit, 0);
 };
 
 format.date = function() {
