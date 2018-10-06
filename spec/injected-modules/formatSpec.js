@@ -81,7 +81,6 @@ describe('format', function() {
 		
 		describe('.relative', function() {
 			it('should format a future date relatively', function() {
-				expect(format.date.relative(moment().add(750, 'milliseconds'))).toBe('in 749 milliseconds'); // time passes
 				expect(format.date.relative(moment().add(5, 'seconds'))).toBe('in 5 seconds');
 				expect(format.date.relative(moment().add(60, 'seconds'))).toBe('in a minute');
 				expect(format.date.relative(moment().add(120, 'seconds'))).toBe('in 2 minutes');
@@ -89,7 +88,6 @@ describe('format', function() {
 			});
 
 			it('should format a past date relatively', function() {
-				expect(format.date.relative(moment().subtract(750, 'milliseconds'))).toBe('750 milliseconds ago');
 				expect(format.date.relative(moment().subtract(5, 'seconds'))).toBe('5 seconds ago');
 				expect(format.date.relative(moment().subtract(60, 'seconds'))).toBe('a minute ago');
 				expect(format.date.relative(moment().subtract(120, 'seconds'))).toBe('2 minutes ago');
