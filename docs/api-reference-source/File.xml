@@ -119,6 +119,7 @@ cli.tell('The two files are ' + (contentIdentical ? 'the same' : 'different') + 
 			<method name="appendLine">
 				<signature>Any content</signature>
 				<argument name="content" type="Any">The content to be appended.</argument>
+				<returns>self</returns>
 				<returns></returns>
 				<short-description>Appends content as a new line</short-description>
 				<discussion>
@@ -135,6 +136,7 @@ here.file('events.log').appendLine('Operation complete.');
 			<method name="prependLine">
 				<signature>Any content</signature>
 				<argument name="content" type="Any">The content to be prepended.</argument>
+				<returns>self</returns>
 				<returns></returns>
 				<short-description>Prepends content as a new line</short-description>
 				<discussion>
@@ -156,6 +158,7 @@ here.file('events.log').prependLine('Operation complete.');
 						The method will still throw if the parent doesn't exist.
 					]]>
 				</argument>
+				<returns>self</returns>
 				<returns></returns>
 				<short-description>Empties the file</short-description>
 				<discussion>

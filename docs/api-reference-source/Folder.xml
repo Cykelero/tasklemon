@@ -148,6 +148,7 @@ buildFolder.glob('*.js').forEach(child => child.delete());
 			<method name="empty">
 				<signature>[Boolean immediately]</signature>
 				<argument name="immediately" type="Boolean" default="false">If true, the children are deleted right away instead of being placed in the trash.</argument>
+				<returns>self</returns>
 				<returns></returns>
 				<short-description>Deletes the folder's children</short-description>
 				<discussion>

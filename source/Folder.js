@@ -66,11 +66,13 @@ class Folder extends Item {
 	empty(immediately) {
 		this._throwIfNonexistent(`delete children of`);
 		
-		return fs.readdirSync(this._path)
+		fs.readdirSync(this._path)
 			.forEach(childName => {
 				const childPath = path.join(this._path, childName);
 				Item._deleteItem(childPath, immediately);
 			});
+		
+		return this;
 	}
 	
 	get _path() {

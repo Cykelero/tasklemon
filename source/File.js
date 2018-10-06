@@ -44,6 +44,8 @@ class File extends Item {
 	appendLine(value) {
 		this._throwIfNonexistent(`append line to`);
 		fs.appendFileSync(this._path, this._stringify(value) + '\n');
+		
+		return this;
 	}
 	
 	prependLine(value) {
@@ -53,12 +55,16 @@ class File extends Item {
 		
 		fs.writeFileSync(this._path, this._stringify(value) + '\n');
 		fs.appendFileSync(this._path, existingContentBuffer);
+		
+		return this;
 	}
 	
 	clear(forgiving) {
 		if (!forgiving) this._throwIfNonexistent(`clear content of`);
 		
 		fs.writeFileSync(this._path, '');
+		
+		return this;
 	}
 	
 	get _path() {
