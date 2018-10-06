@@ -1,0 +1,60 @@
+/* Generic */
+
+.page {
+	margin-top: 22px;
+	margin-bottom: 27px;
+	
+	font-size: 17px;
+}
+
+.page h1 {
+	margin-bottom: 12px;
+	
+	font-size: 33px;
+}
+
+.page h2 {
+	margin-top: 20px;
+	
+	font-size: 28px;
+}
+
+.page h3 {
+	margin-top: 23px;
+	margin-bottom: 9px;
+	
+	font-size: 22px;
+}
+
+.page :first-child h3 {
+	margin-top: 18px;
+}
+
+table {
+	margin: 13px 0 17px;
+}
+
+/* Specific */
+
+.class-member {
+	padding-bottom: 23px;
+}
+
+h3 + .class-member {
+	margin-top: 20px;
+}
+
+.class-method-arguments {
+	margin-bottom: 15px;
+}
+
+.class-method-arguments td {
+	padding-top: 1px;
+	padding-bottom: 1px;
+}
+
+.class-member h4 {
+	padding-left: 38px;
+
+	text-indent: -38px;
+}
