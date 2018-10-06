@@ -53,7 +53,7 @@ class ItemPermissionsSlice {
 			newEncodedPermissions = ~(~encodedPermissions | changeMask);
 		}
 		
-		fs.lchmodSync(this._item.path, newEncodedPermissions);
+		fs.chmodSync(this._item.path, newEncodedPermissions);
 	}
 }
 
