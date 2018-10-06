@@ -267,6 +267,14 @@ class Item {
 		return this;
 	}
 	
+	equals(other) {
+		if (!other) return false;
+		
+		return other._isFolder === this._isFolder
+			&& other._parentPath === this._parentPath
+			&& other._name === this._name;
+	}
+	
 	get _path() {}
 	
 	get _isRoot() {

@@ -158,6 +158,32 @@ if (!keepLog) here.file('events.log').delete();
 				]]>
 				</sample>
 			</method>
+			<method name="equals">
+				<signature>Item other</signature>
+				<argument name="other" type="Item">The item to compare with.</argument>
+				<returns>Boolean</returns>
+				<short-description>Compares the item with another</short-description>
+				<discussion>
+				<![CDATA[
+					Returns true if <df-arg>item</df-arg> is the same (is also a {df:commonName}, and has the same path).
+				]]>
+				</discussion>
+				<sample name="Ask for two different folders">
+				<![CDATA[
+const sourceFolder = await cli.ask('From?', Folder);
+const destinationFolder = await cli.ask('To?', [Folder, function(value) {
+		if (value.equals(sourceFolder)) {
+			throw 'is the same as the source';
+		}
+		return value;
+	}
+]);
+
+console.log(sourceFolder.path);
+console.log(destinationFolder.path);
+				]]>
+				</sample>
+			</method>
 		</export>
 		<export id="path">
 			<property name="name">

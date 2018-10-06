@@ -790,4 +790,34 @@ describe('Item', function() {
 			expect(fileItem.delete()).toBe(fileItem);
 		});
 	});
+	
+	describe('#equals', function() {
+		describe('{other}', function() {
+			it('should be true for identical items', function() {
+				const fileItem1 = testEnv.itemFor('file');
+				const fileItem2 = testEnv.itemFor('file');
+			
+				expect(fileItem1.equals(fileItem2)).toBeTruthy();
+
+				const folderItem1 = testEnv.itemFor('folder/');
+				const folderItem2 = testEnv.itemFor('folder/');
+			
+				expect(folderItem1.equals(folderItem2)).toBeTruthy();
+			});
+		
+			it('should be false for items with a different path', function() {
+				const file1Item = testEnv.itemFor('file');
+				const file2Item = testEnv.itemFor('parent/file');
+			
+				expect(file1Item.equals(file2Item)).toBeFalsy();
+			});
+		
+			it('should be false for items with a different type', function() {
+				const fileItem = testEnv.itemFor('item');
+				const folderItem = testEnv.itemFor('item/');
+			
+				expect(fileItem.equals(folderItem)).toBeFalsy();
+			});
+		});
+	});
 });

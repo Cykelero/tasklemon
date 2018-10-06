@@ -39,7 +39,7 @@
 		</placeholder-values>
 	</metadata>
 	<members>
-		<group name="Creating and deleting, checking existence">
+		<group name="Creating, deleting, checking existence and comparing">
 			<import from="Item" id="existence" />
 		</group>
 		<group name="Name and path">
