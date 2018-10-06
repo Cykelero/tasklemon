@@ -105,6 +105,10 @@ class Item {
 	set dateCreated(value) {
 		this._throwIfNonexistent(`set creation date of`);
 		
+		if (process.platform !== 'darwin') {
+			throw Error(`Can't set creation date of “${this.name}”: operation is only supported on macOS`);
+		}
+		
 		const momentDate = moment(value);
 		const formattedDate = momentDate.format('MM/DD/YY HH:mm:ss'); // ewwww
 		
@@ -112,7 +116,7 @@ class Item {
 			childProcess.execFileSync('SetFile', ['-d', formattedDate, this._path]);
 		} catch (error) {
 			if (error.message.indexOf('error: invalid active developer path') > -1) {
-				throw Error(`Can't redate “${this.name}”: command line tools are not installed. Please run \`xcode-select --install\` (macOS only).`);
+				throw Error(`Can't set creation date of “${this.name}”: command line tools are not installed. Please run \`xcode-select --install\``);
 			} else {
 				throw error;
 			}
