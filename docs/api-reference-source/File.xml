@@ -117,14 +117,21 @@ cli.tell('The two files are ' + (contentIdentical ? 'the same' : 'different') + 
 				</discussion>
 			</property>
 			<method name="appendLine">
-				<signature>Any content</signature>
+				<signature>Any content, Boolean forgiving</signature>
 				<argument name="content" type="Any">The content to be appended.</argument>
+				<argument name="forgiving" type="Boolean">
+					<![CDATA[
+						If true, if the file doesn't exist, <code>appendLine()</code> doesn't throw and creates the file.<br>
+						The method will still throw if the parent doesn't exist.
+					]]>
+				</argument>
 				<returns>self</returns>
 				<returns></returns>
 				<short-description>Appends content as a new line</short-description>
 				<discussion>
 				<![CDATA[
-					Serializes <df-arg>content</df-arg> using <code>JSON.stringify()</code> if it is not already a string, then adds it at the end of the file, followed by a newline character.
+					Serializes <df-arg>content</df-arg> using <code>JSON.stringify()</code> if it is not already a string, then adds it at the end of the file, followed by a newline character.<br>
+					Throws if the file doesn't exist.
 				]]>
 				</discussion>
 				<sample name="Add text at the end of a file">
@@ -134,14 +141,21 @@ here.file('events.log').appendLine('Operation complete.');
 				</sample>
 			</method>
 			<method name="prependLine">
-				<signature>Any content</signature>
+				<signature>Any content, Boolean forgiving</signature>
 				<argument name="content" type="Any">The content to be prepended.</argument>
+				<argument name="forgiving" type="Boolean">
+					<![CDATA[
+						If true, if the file doesn't exist, <code>appendLine()</code> doesn't throw and creates the file.<br>
+						The method will still throw if the parent doesn't exist.
+					]]>
+				</argument>
 				<returns>self</returns>
 				<returns></returns>
 				<short-description>Prepends content as a new line</short-description>
 				<discussion>
 				<![CDATA[
-					Serializes <df-arg>content</df-arg> using <code>JSON.stringify()</code> if it is not already a string, then adds it at the beginning of the file, followed by a newline character.
+					Serializes <df-arg>content</df-arg> using <code>JSON.stringify()</code> if it is not already a string, then adds it at the beginning of the file, followed by a newline character..<br>
+					Throws if the file doesn't exist.
 				]]>
 				</discussion>
 				<sample name="Add text at the beginning of a file">

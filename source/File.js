@@ -41,20 +41,24 @@ class File extends Item {
 		return castResult.valid ? castResult.value : null;
 	}
 	
-	appendLine(value) {
-		this._throwIfNonexistent(`append line to`);
+	appendLine(value, forgiving) {
+		if (!forgiving) this._throwIfNonexistent(`append line to`);
 		fs.appendFileSync(this._path, this._stringify(value) + '\n');
 		
 		return this;
 	}
 	
-	prependLine(value) {
-		this._throwIfNonexistent(`prepend line to`);
+	prependLine(value, forgiving) {
+		let existingContentBuffer;
 		
-		const existingContentBuffer = fs.readFileSync(this._path);
+		if (this.exists) {
+			existingContentBuffer = fs.readFileSync(this._path);
+		} else if (!forgiving) {
+			throw Error(`Can't prepend line to “${this.name}”: ${this._typeName} does not exist`);
+		}
 		
 		fs.writeFileSync(this._path, this._stringify(value) + '\n');
-		fs.appendFileSync(this._path, existingContentBuffer);
+		if (existingContentBuffer) fs.appendFileSync(this._path, existingContentBuffer);
 		
 		return this;
 	}

@@ -98,6 +98,26 @@ describe('File', function() {
 			
 			expect(fileItem.content).toBe('first-line\n' + JSON.stringify(savedObject) + '\n');
 		});
+		
+		describe('{forgiving: false}', function() {
+			it('should fail if the file does not exist', function() {
+				const fileItem = testEnv.itemFor('file');
+				
+				expect(() => fileItem.appendLine('some-text')).toThrow();
+				expect(fileItem.exists).toBe(false);
+			});
+		});
+		
+		describe('{forgiving: true}', function() {
+			it('should create the file if it does not exist', function() {
+				const fileItem = testEnv.itemFor('file');
+				
+				fileItem.appendLine('some-text', true);
+				
+				expect(fileItem.exists).toBe(true);
+				expect(fileItem.content).toBe('some-text\n');
+			});
+		});
 	});
 	
 	describe('#prependLine() {content}', function() {
@@ -118,6 +138,26 @@ describe('File', function() {
 			fileItem.prependLine(savedObject);
 			
 			expect(fileItem.content).toBe(JSON.stringify(savedObject) + '\nsecond-line');
+		});
+		
+		describe('{forgiving: false}', function() {
+			it('should fail if the file does not exist', function() {
+				const fileItem = testEnv.itemFor('file');
+				
+				expect(() => fileItem.prependLine('some-text')).toThrow();
+				expect(fileItem.exists).toBe(false);
+			});
+		});
+		
+		describe('{forgiving: true}', function() {
+			it('should create the file if it does not exist', function() {
+				const fileItem = testEnv.itemFor('file');
+				
+				fileItem.prependLine('some-text', true);
+				
+				expect(fileItem.exists).toBe(true);
+				expect(fileItem.content).toBe('some-text\n');
+			});
 		});
 	});
 	
