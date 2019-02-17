@@ -77,9 +77,9 @@ describe('TypeDefinition', function() {
 
 	describe('for Date', function() {
 		it('should accept date strings', function() {
-			expect(execType(Date, '18-03-20').toString()).toEqual('Tue Mar 20 2018 00:00:00 GMT+0100 (CET)');
-			expect(execType(Date, '2018-03-20').toString()).toEqual('Tue Mar 20 2018 00:00:00 GMT+0100 (CET)');
-			expect(execType(Date, '2018-03-20 12:30').toString()).toEqual('Tue Mar 20 2018 12:30:00 GMT+0100 (CET)');
+			expect(execType(Date, '18-03-20').toString()).toEqual(new Date('2018-03-20T00:00:00').toString());
+			expect(execType(Date, '2018-03-20').toString()).toEqual(new Date('2018-03-20T00:00:00').toString());
+			expect(execType(Date, '2018-03-20 12:30').toString()).toEqual(new Date('2018-03-20T12:30:00').toString());
 		});
 	});
 
