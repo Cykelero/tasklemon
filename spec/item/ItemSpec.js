@@ -10,6 +10,7 @@ const Folder = require('../../source/Folder');
 const root = require('../../source/injected-modules/root');
 
 const isPosix = os.platform() !== 'win32';
+const driveId = isPosix ? '' : /[^\\]+/.exec(process.cwd())[0];
 	
 ifPosixDescribe = function() {
 	if (isPosix) {
@@ -40,18 +41,18 @@ describe('Item', function() {
 		
 		it('should resolve relative path components', function() {
 			const item1 = this.itemForPath('/non-existent/../some-folder/./some-file');
-			expect(item1.path).toBe('/some-folder/some-file');
+			expect(item1.path).toBe(driveId + '/some-folder/some-file');
 			expect(item1.name).toBe('some-file');
 
 			const item2 = this.itemForPath('/non-existent/.');
-			expect(item2.path).toBe('/non-existent/');
+			expect(item2.path).toBe(driveId + '/non-existent/');
 			expect(item2.name).toBe('non-existent');
 
 			const item3 = this.itemForPath('/non-existent/..');
 			if (isPosix) {
 				expect(item3.path).toBe('/');
 			} else {
-				expect(item3.path).toMatch(/^\w+:\/$/);
+				expect(item3.path).toBe(driveId + '/');
 			}
 			expect(item3.name).toBe('');
 		});

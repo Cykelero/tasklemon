@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const childProcess = require('child_process');
+const isPosix = process.platform !== 'win32';
 
 const moment = require('moment');
 const trash = require('trash');
@@ -318,8 +319,19 @@ class Item {
 		// Normalize path
 		normalizedInputPath = path.normalize(inputPath);
 		
-		if (normalizedInputPath[0] !== path.sep) {
-			// Path is relative: prepend current working directory
+		// // Windows: Add drive identifier
+		if (!isPosix && normalizedInputPath[0] === path.sep) {
+			const driveIdentifier = /[^\\]+/.exec(process.cwd())[0];
+			normalizedInputPath = driveIdentifier + normalizedInputPath;
+		}
+		
+		// // Make absolute
+		const isAbsolute = isPosix
+			? normalizedInputPath[0] === path.sep
+			: /^\w+:\\/.test(normalizedInputPath);
+		
+		if (!isAbsolute) {
+			// Prepend current working directory
 			normalizedInputPath = path.join(process.cwd(), normalizedInputPath);
 		}
 		
@@ -347,9 +359,9 @@ class Item {
 		
 		while (resolvedParentPathExistent === null) {
 			try {
-				resolvedParentPathExistent = fs.realpathSync(parentPathExistent);
+				resolvedParentPathExistent = fs.realpathSync(parentPathExistent + path.sep);
 				if (resolvedParentPathExistent.slice(-1) === path.sep) {
-					resolvedParentPathExistent = resolvedParentPathExistent.slice(0, resolvedParentPathExistent.length - 1);
+					resolvedParentPathExistent = resolvedParentPathExistent.slice(0, -1);
 				}
 			} catch (e) {
 				const lastPathPiece = path.basename(parentPathExistent);
