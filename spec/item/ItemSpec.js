@@ -19,6 +19,14 @@ ifPosixDescribe = function() {
 		xdescribe.apply(this, arguments);
 	}
 };
+	
+ifPosixIt = function() {
+	if (isPosix) {
+		it.apply(this, arguments);
+	} else {
+		xit.apply(this, arguments);
+	}
+};
 
 describe('Item', function() {
 	let testEnv;
@@ -135,15 +143,14 @@ describe('Item', function() {
 			expect(fileItem.path).toBe(filePath);
 		});
 
-		it('should return the actual path of a symlink target', function() {
+		ifPosixIt('should return the actual path of a symlink target', function() {
 			const linkTargetPath = testEnv.createFolder('link-target/');
 			const linkTargetChildPath = testEnv.createFile('link-target/child');
 
 			const linkContainerPath = testEnv.createFolder('link-container/');
 			this.execFileSync('ln', ['-s', linkTargetPath, 'link'], {cwd: linkContainerPath});
 			
-			let linkTargetChildItem = this.itemForPath(linkTargetChildPath);
-			
+			let linkTargetChildItem = this.itemForPath(linkTargetChildPath)
 			expect(linkTargetChildItem.path).toBe(linkTargetChildPath);
 		});
 	});
