@@ -179,8 +179,8 @@ const destinationFolder = await cli.ask('To?', [Folder, function(value) {
 	}
 ]);
 
-console.log(sourceFolder.path);
-console.log(destinationFolder.path);
+cli.tell('Will copy from: ' + sourceFolder.name);
+cli.tell('Will copy to: ' + destinationFolder.name);
 				]]>
 				</sample>
 			</method>
