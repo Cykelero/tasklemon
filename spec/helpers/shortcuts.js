@@ -16,6 +16,10 @@ beforeEach(function() {
 		return cleanPath.split('/').join(path.sep);
 	};
 	
+	this.getCleanCWD = function() {
+		return this.toCleanPath(process.cwd());
+	};
+	
 	this.itemForPath = function(cleanPath) {
 		return Item._itemForPath(this.toNativePath(cleanPath));
 	};

@@ -34,7 +34,7 @@ describe('Item', function() {
 		
 		it('should resolve relative paths to non-existent items', function() {
 			const item = this.itemForPath('non-existent/some-folder/some-file');
-			expect(item.path).toBe(path.join(process.cwd(), 'non-existent/some-folder/some-file'));
+			expect(item.path).toBe(path.posix.join(this.getCleanCWD(), 'non-existent/some-folder/some-file'));
 			expect(item.name).toBe('some-file');
 		});
 		

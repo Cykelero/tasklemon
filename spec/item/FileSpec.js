@@ -23,7 +23,7 @@ describe('File', function() {
 			const file = TypeDefinition.execute(File, userPath);
 			
 			expect(file.valid).toBeTruthy();
-			expect(file.value.path).toBe(path.join(process.cwd(), 'folder/file'));
+			expect(file.value.path).toBe(path.posix.join(this.getCleanCWD(), 'folder/file'));
 		});
 	});
 	

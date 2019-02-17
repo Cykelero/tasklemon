@@ -24,7 +24,7 @@ describe('Folder', function() {
 			const folder = TypeDefinition.execute(Folder, userPath);
 			
 			expect(folder.valid).toBeTruthy();
-			expect(folder.value.path).toBe(path.join(process.cwd(), 'parent-folder/folder/'));
+			expect(folder.value.path).toBe(path.posix.join(this.getCleanCWD(), 'parent-folder/folder/'));
 		});
 	});
 	
