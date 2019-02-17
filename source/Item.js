@@ -164,6 +164,8 @@ class Item {
 				}
 			} else if (this.exists) {
 				return this;
+			} else {
+				throw new Error(`Can't make “${this.name}”: non-${this._typeName} already exists in “${this.parent.path}”`);
 			}
 		}
 		
