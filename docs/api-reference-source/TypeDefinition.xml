@@ -10,15 +10,15 @@
 			</p>
 			<p>
 				You can use one of the classes that have a built-in definition (see list below), or write your own.
-				<div class="df-list-with-title">
-					More specifically, anywhere a type definition is accepted, you can pass:
-					<ul>
-						<li>a class with a type definition</li>
-						<li>a function that accepts a string, returns the cast value, and optionally throws with an error message if the string is not valid</li>
-						<li>an array of type definitions, that will be executed sequentially</li>
-					</ul>
-				</div>
 			</p>
+			<div class="df-list-with-title">
+				More specifically, anywhere a type definition is accepted, you can pass:
+				<ul>
+					<li>a class with a type definition</li>
+					<li>a function that accepts a string, returns the cast value, and optionally throws with an error message if the string is not valid</li>
+					<li>an array of type definitions, that will be executed sequentially</li>
+				</ul>
+			</div>
 		]]>
 		</discussion>
 		<related>
