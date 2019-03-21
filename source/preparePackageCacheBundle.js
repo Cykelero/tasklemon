@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const autopromise = require('./autopromise');
 const path = require('path');
 const fs = autopromise(require('fs'));
