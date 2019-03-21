@@ -51,7 +51,15 @@ module.exports = {
 	
 	// Internal
 	_prepareBundleForList(packageList) {
-		childProcess.spawn('node', this._nodeArgumentsForList(packageList));
+		const preparationProcess = childProcess.spawn(
+			'node',
+			this._nodeArgumentsForList(packageList),
+			{
+				detached: true,
+				stdio: 'ignore'
+			}
+		);
+		preparationProcess.unref();
 	},
 	
 	_prepareBundleForListSync(packageList) {
