@@ -1,4 +1,4 @@
-const moduleNames = ['root', 'home', 'here', 'cli', 'format', 'net', 'moment', 'Item', 'File', 'Folder'];
+const moduleNames = ['root', 'home', 'here', 'cli', 'format', 'net', 'moment', 'npm', 'Item', 'File', 'Folder'];
 
 module.exports = function(scope) {
 	moduleNames.forEach(moduleName => {

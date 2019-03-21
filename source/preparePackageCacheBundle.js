@@ -1,0 +1,171 @@
+const autopromise = require('./autopromise');
+const path = require('path');
+const fs = autopromise(require('fs'));
+const childProcess = require('child_process');
+
+const rimraf = require('rimraf');
+
+const PackageCache = require('./PackageCache');
+
+const PULSE_FILE_NAME = 'pulse';
+const PULSE_REFRESH_INTERVAL = 1000;
+const PULSE_AGE_TOLERANCE = 500;
+const PULSE_FILE_MAXIMUM_CREATION_DELAY = 500;
+
+let packageList;
+let bundlePath;
+
+let isPulsing = false;
+let currentPulseTimeout = null;
+let firstPulseCheckDate = null;
+
+// Functions
+// // Tools
+async function sleep(time) {
+	return new Promise(resolve => {
+		setTimeout(() => resolve(), time);
+	});
+}
+
+async function doesItemExist(path) {
+	return fs.lstat(path).then(() => true, () => false);
+}
+
+// // Installation process
+async function prepareBundle() {
+	if (await tryStartingInstallation()) {
+		console.info(`Starting installation of ${packageList.join(', ')}.`);
+		
+		startPulse();
+		
+		await generatePackageFile();
+		await runNpmInstall();
+		await createIndexFile();
+		
+		stopPulse();
+		
+		console.info('Installation done.');
+	} else {
+		console.info('Other installation already exists.');
+		await waitForOtherInstallationProgress();
+	}
+}
+
+async function tryStartingInstallation() {
+	return fs.mkdir(bundlePath)
+		.then(() => true, () => false);
+}
+
+async function waitForOtherInstallationProgress() {
+	switch (await getOtherInstallationStatus()) {
+		case 'success':
+			console.info('Other installation was successful.');
+			break;
+		case 'aborted':
+			console.info('Other installation stopped.');
+			rimraf.sync(bundlePath);
+			await prepareBundle();
+			break;
+		case 'pending':
+			await sleep(PULSE_REFRESH_INTERVAL);
+			await waitForOtherInstallationProgress();
+			break;
+	}
+}
+
+async function getOtherInstallationStatus() {
+	if (await doesItemExist(bundlePath + PackageCache.INDEX_FILE_NAME)) {
+		return 'success';
+	} else if (await isPulseOld()) {
+		return 'aborted';
+	} else {
+		return 'pending';
+	}
+}
+
+async function generatePackageFile() {
+	// Generate content
+	const packageFileData = {
+		optionalDependencies: {}
+	};
+	packageList.forEach(moduleName => {
+		packageFileData.optionalDependencies[moduleName] = '*';
+	});
+	
+	// Write content
+	const packageFileContent = JSON.stringify(packageFileData);
+	await fs.writeFile(bundlePath + 'package.json', packageFileContent);
+}
+
+async function runNpmInstall() {
+	const installProcess = childProcess.spawn('npm', ['install'], {cwd: bundlePath});
+	
+	return new Promise((resolve, reject) => {
+		installProcess.on('exit', code => {
+			if (code === 0) {
+				resolve();
+			} else {
+				throw Error('`npm install` failed.');
+			}
+		});
+	});
+}
+
+async function createIndexFile() {
+	const templatePath = path.join(__dirname, 'packageCacheBundleIndexFile.template.js');
+	await fs.copyFile(templatePath, bundlePath + PackageCache.INDEX_FILE_NAME);
+}
+
+// // Pulse
+function startPulse() {
+	isPulsing = true;
+	
+	function schedulePulse() {
+		currentPulseTimeout = setTimeout(() => {
+			if (isPulsing) {
+				fs.writeFile(bundlePath + PULSE_FILE_NAME, Date.now());
+				schedulePulse();
+			}
+		}, PULSE_REFRESH_INTERVAL);
+	}
+	
+	schedulePulse();
+}
+
+function stopPulse() {
+	isPulsing = false;
+	clearInterval(currentPulseTimeout);
+	fs.unlink(bundlePath + PULSE_FILE_NAME);
+}
+
+async function isPulseOld() {
+	const pulseFilePath = bundlePath + PULSE_FILE_NAME;
+	
+	if (firstPulseCheckDate === null) {
+		firstPulseCheckDate = Date.now();
+	}
+	
+	// Try reading pulse
+	try {
+		const pulseDateString = await fs.readFile(pulseFilePath, {encoding: 'utf8'});
+		const pulseDate = Number(pulseDateString);
+		
+		return Date.now() > pulseDate + PULSE_REFRESH_INTERVAL + PULSE_AGE_TOLERANCE;
+	} catch(e) {
+		// Pulse file doesn't exist
+		if (Date.now() > firstPulseCheckDate + PULSE_FILE_MAXIMUM_CREATION_DELAY) {
+			// Pulse file wasn't created in time: assume installation stopped
+			return true;
+		} else {
+			// Maybe the installation has only recently started
+			return false;
+		}
+	}
+}
+
+// Run
+packageList = process.argv.slice(2);
+bundlePath = PackageCache.bundlePathForList(packageList);
+
+prepareBundle()
+	.catch(() => process.exit(1));

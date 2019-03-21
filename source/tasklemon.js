@@ -5,6 +5,8 @@ const os = require('os');
 const path = require('path');
 const childProcess = require('child_process');
 
+const PackageCache = require('./PackageCache');
+
 const moduleInjectorPath = path.join(__dirname, 'injected-modules', 'injector');
 
 let lemonArguments;
@@ -42,11 +44,11 @@ scriptArguments = process.argv.slice(currentArgumentIndex);
 // Prepare execution stage
 // // Read script
 try {
-	sourceScriptContent = fs.readFileSync(scriptPath);
+	sourceScriptContent = fs.readFileSync(scriptPath, {encoding: 'utf8'});
 } catch (error) {
 	const errorParts = /Error: (.+), /.exec(error.toString());
 	const formattedErrorDetails = errorParts ? errorParts[1] : error.code;
-	process.stdout.write(`Couldn't load “${scriptName}” because of error: “${formattedErrorDetails}”. \n`);
+	process.stdout.write(`Couldn't read “${scriptName}” because of error: “${formattedErrorDetails}”. \n`);
 	process.exit(1);
 }
 
@@ -54,6 +56,10 @@ const scriptShebangParts = /^#!.+\n/.exec(sourceScriptContent);
 if (scriptShebangParts) {
 	sourceScriptContent = sourceScriptContent.slice(scriptShebangParts[0].length);
 }
+
+// // Extract required package list
+const packageNameRegexp = /(?<=npm\.)[\w$_]+/g;
+const requiredPackages = sourceScriptContent.match(packageNameRegexp) || [];
 
 // // Create stage folder
 const stagePath = fs.mkdtempSync(os.tmpdir() + path.sep);
@@ -69,6 +75,9 @@ preparedScriptContent += sourceScriptContent;
 preparedScriptContent += '\n})();';
 
 fs.writeFileSync(preparedScriptPath, preparedScriptContent);
+
+// Load packages asynchronously
+PackageCache.preloadPackageList(requiredPackages);
 
 // Execute script
 let nodeArguments = [];
