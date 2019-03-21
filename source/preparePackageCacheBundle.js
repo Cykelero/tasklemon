@@ -44,10 +44,10 @@ async function prepareBundle() {
 		
 		stopPulse();
 		
-		console.info('Installation done.');
+		console.info('Installation successful!');
 	} else {
 		console.info('Other installation already exists.');
-		await waitForOtherInstallationProgress();
+		await checkOtherInstallationProgress(true);
 	}
 }
 
@@ -56,19 +56,31 @@ async function tryStartingInstallation() {
 		.then(() => true, () => false);
 }
 
-async function waitForOtherInstallationProgress() {
+async function checkOtherInstallationProgress(firstCheck) {
 	switch (await getOtherInstallationStatus()) {
 		case 'success':
-			console.info('Other installation was successful.');
+			if (firstCheck) {
+				console.info('Other installation was successful!');
+			} else {
+				console.info('Other installation successfully finished!');
+			}
 			break;
 		case 'aborted':
-			console.info('Other installation stopped.');
+			if (firstCheck) {
+				console.info('Other installation is incomplete. Cleaning it up.');
+			} else {
+				console.info('Other installation was aborted. Cleaning it up.');
+			}
+			
 			rimraf.sync(bundlePath);
 			await prepareBundle();
 			break;
 		case 'pending':
+			if (firstCheck) {
+				console.info('Waiting for installation to finish...');
+			}
 			await sleep(PULSE_REFRESH_INTERVAL);
-			await waitForOtherInstallationProgress();
+			await checkOtherInstallationProgress();
 			break;
 	}
 }
