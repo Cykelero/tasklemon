@@ -87,10 +87,15 @@ if (lemonArguments.includes('--inspect-brk')) nodeArguments.push('--inspect-brk'
 
 if (nodeArguments.length > 0) {
 	// Run as separate process
-	const inspectableProcess = childProcess.spawn('node', [...nodeArguments, __filename, scriptPath, ...scriptArguments]);
-	process.stdin.pipe(inspectableProcess.stdin);
-	inspectableProcess.stdout.pipe(process.stdout);
-	inspectableProcess.stderr.pipe(process.stderr);
+	const inspectableProcess = childProcess.spawn(
+		'node',
+		[...nodeArguments, __filename, scriptPath, ...scriptArguments],
+		{ stdio: 'inherit' }
+	);
+	
+	inspectableProcess.on('exit', code => {
+		process.exit(code);
+	});
 } else {
 	// Execute directly
 	require('./injected-modules/cli')._rawArguments = scriptArguments;
