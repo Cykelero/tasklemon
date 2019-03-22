@@ -5,6 +5,8 @@ const os = require('os');
 const path = require('path');
 const childProcess = require('child_process');
 
+const crossSpawn = require('cross-spawn');
+
 const PackageCache = require('./PackageCache');
 
 const moduleInjectorPath = path.join(__dirname, 'injected-modules', 'injector');
@@ -87,7 +89,7 @@ if (lemonArguments.includes('--inspect-brk')) nodeArguments.push('--inspect-brk'
 
 if (nodeArguments.length > 0) {
 	// Run as separate process
-	const inspectableProcess = childProcess.spawn(
+	const inspectableProcess = crossSpawn(
 		'node',
 		[...nodeArguments, __filename, scriptPath, ...scriptArguments],
 		{ stdio: 'inherit' }

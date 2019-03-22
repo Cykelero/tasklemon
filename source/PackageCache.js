@@ -3,6 +3,8 @@ const fs = require('fs');
 const childProcess = require('child_process');
 const crypto = require('crypto');
 
+const crossSpawn = require('cross-spawn');
+
 module.exports = {
 	PACKAGE_CACHE_PATH: '..' + path.sep + 'package-cache' + path.sep,
 	INDEX_FILE_NAME: 'index.js',
@@ -53,7 +55,7 @@ module.exports = {
 	
 	// Internal
 	_prepareBundleForList(packageList) {
-		const preparationProcess = childProcess.spawn(
+		const preparationProcess = crossSpawn(
 			'node',
 			this._nodeArgumentsForList(packageList),
 			{

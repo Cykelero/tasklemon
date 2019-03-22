@@ -24,6 +24,7 @@
   "node": ">=8.7.0"
  },
  "dependencies": {
+  "cross-spawn": "^6.0.5",
   "glob": "^7.1.2",
   "jsdom": "^11.3.0",
   "md5-file": "^3.2.3",
