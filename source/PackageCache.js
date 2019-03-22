@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const childProcess = require('child_process');
 const crypto = require('crypto');
 
@@ -31,7 +32,8 @@ module.exports = {
 		
 		// Couldn't load bundle
 		if (!package) {
-			throw Error(`Package ${packageName} can not be retrieved. Make sure its name is correct and that you are connected to the Internet.`);
+			this._markBundleForDeletion([packageName]);
+			throw Error(`Package “${packageName}” could not be retrieved. Make sure its name is correct and that you are connected to the Internet.`);
 		}
 		
 		return package;
@@ -82,11 +84,18 @@ module.exports = {
 			try {
 				bundleIndex = require(bundleIndexPath);
 			} catch(e) {
-				throw Error(`Package ${packageName} could not be retrieved: the package cache bundle preparation process is failing.`);
+				throw Error(`Package “${packageName}” could not be retrieved: the package cache bundle preparation process is failing.`);
 			}
 		}
 		
 		return bundleIndex(packageName);
+	},
+	
+	_markBundleForDeletion(packageList) {
+		const bundleIndexPath = this.bundlePathForList(packageList) + this.INDEX_FILE_NAME;
+		try {
+			fs.unlink(bundleIndexPath, () => {});
+		} catch(e) {}
 	},
 	
 	// // Tools
