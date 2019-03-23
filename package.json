@@ -1,42 +1,42 @@
 {
- "name": "tasklemon",
- "version": "0.1.1",
- "description": "Painless automation in JavaScript",
- "main": "source/tasklemon.js",
- "bin": {
-  "lemon": "source/tasklemon.js"
- },
- "repository": {
-  "type": "git",
-  "url": "git+https://github.com/cykelero/tasklemon.git"
- },
- "author": "Nathan Manceaux-Panot",
- "license": "MIT",
- "scripts": {
-  "install": "mkdir -p package-cache",
-  "test": "jasmine",
-  "watch:test": "jasmine; chokidar 'source/**/*.js' 'spec/**/*.js' -c 'jasmine'",
-  "build-docs": "docfish --source=docs/api-reference-source --destination=docs/api-reference-build",
-  "watch:build-docs": "npm run build-docs; chokidar 'docs/api-reference-source/*' -c 'npm run build-docs'"
- },
- "homepage": "https://github.com/cykelero/tasklemon#readme",
- "engines": {
-  "node": ">=8.7.0"
- },
- "dependencies": {
-  "cross-spawn": "^6.0.5",
-  "glob": "^7.1.2",
-  "jsdom": "^11.3.0",
-  "md5-file": "^3.2.3",
-  "moment": "^2.19.1",
-  "node-fetch": "^1.7.3",
-  "rimraf": "^2.6.2",
-  "trash": "^4.2.1"
- },
- "devDependencies": {
-  "chokidar-cli": "^1.2.2",
-  "docfish": "^1.3.0",
-  "jasmine": "^2.99.0",
-  "jasmine-spec-reporter": "^4.2.1"
- }
+  "name": "tasklemon",
+  "version": "0.1.1",
+  "description": "Painless automation in JavaScript",
+  "main": "source/tasklemon.js",
+  "bin": {
+    "lemon": "source/tasklemon.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cykelero/tasklemon.git"
+  },
+  "author": "Nathan Manceaux-Panot",
+  "license": "MIT",
+  "scripts": {
+    "install": "mkdir -p package-cache",
+    "test": "jasmine",
+    "watch:test": "jasmine; chokidar 'source/**/*.js' 'spec/**/*.js' -c 'jasmine'",
+    "build-docs": "docfish --source=docs/api-reference-source --destination=docs/api-reference-build",
+    "watch:build-docs": "npm run build-docs; chokidar 'docs/api-reference-source/*' -c 'npm run build-docs'"
+  },
+  "homepage": "https://github.com/cykelero/tasklemon#readme",
+  "engines": {
+    "node": ">=8.7.0"
+  },
+  "dependencies": {
+    "cross-spawn": "^6.0.5",
+    "glob": "^7.1.2",
+    "jsdom": "^11.3.0",
+    "md5-file": "^3.2.3",
+    "moment": "^2.19.1",
+    "node-fetch": "^1.7.3",
+    "rimraf": "^2.6.2",
+    "trash": "^4.2.1"
+  },
+  "devDependencies": {
+    "chokidar-cli": "^1.2.2",
+    "docfish": "^1.3.0",
+    "jasmine": "^2.99.0",
+    "jasmine-spec-reporter": "^4.2.1"
+  }
 }
