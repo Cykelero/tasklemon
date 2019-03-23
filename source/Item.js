@@ -234,13 +234,12 @@ class Item {
 		
 		// Settle on name
 		if (!newName) {
-			const currentExtension = /((\.[^.]+)?)$/.exec(this.name)[1];
-			const currentBasename = this.name.slice(0, -currentExtension.length || undefined);
-			newName = `${currentBasename} copy${currentExtension}`;
+			const extension = this.extension ? ('.' + this.extension) : '';
+			newName = `${this.bareName} copy${extension}`;
 			
 			let nameSuffix = 2;
 			while (fs.existsSync(this._parentPath + newName)) {
-				newName = `${currentBasename} copy ${nameSuffix}${currentExtension}`;
+				newName = `${this.bareName} copy ${nameSuffix}${extension}`;
 				nameSuffix++;
 			}
 		}
