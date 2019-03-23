@@ -5,6 +5,7 @@ const os = require('os');
 const path = require('path');
 
 const crossSpawn = require('cross-spawn');
+const rimraf = require('rimraf');
 
 const ScriptParser = require('./ScriptParser');
 const PackageCache = require('./PackageCache');
@@ -64,16 +65,24 @@ if (nodeArgs.length > 0) {
 } else {
 	// Execute in place
 	const parser = new ScriptParser(scriptSource);
+
+	let stagePath;
+	let preparedScriptPath;
 	
 	// // Preload packages asynchronously
 	PackageCache.preloadPackageBundle(parser.requiredPackages);
 	
 	// // Write script to stage
-	const stagePath = fs.mkdtempSync(os.tmpdir() + path.sep);
-	const preparedScriptPath = path.join(stagePath, programArgs.scriptName);
+	stagePath = fs.mkdtempSync(os.tmpdir() + path.sep);
+	preparedScriptPath = path.join(stagePath, programArgs.scriptName);
 	fs.writeFileSync(preparedScriptPath, parser.preparedSource);
 
-	// Execute script
+	// // Execute script
 	require('./injected-modules/cli')._rawArguments = programArgs.scriptArguments;
 	require(preparedScriptPath);
+
+	// // Delete stage once script has run
+	process.on('exit', () => {
+		rimraf.sync(stagePath);
+	});
 }
