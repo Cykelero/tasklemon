@@ -12,7 +12,7 @@ module.exports = {
 	_defaultBundlePackageList: null,
 	
 	// Exposed
-	preloadPackageList(packageList) {
+	preloadPackageBundle(packageList) {
 		if (packageList.length > 0) {
 			this._defaultBundlePackageList = packageList;
 			this._prepareBundleForList(packageList);
@@ -78,7 +78,7 @@ module.exports = {
 		try {
 			bundleIndex = require(bundleIndexPath);
 		} catch(e) {
-			console.log('Preparing packages...');
+			process.stdout.write('Preparing packages...\n');
 			this._prepareBundleForListSync(packageList);
 		}
 		

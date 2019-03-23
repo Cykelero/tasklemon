@@ -3,103 +3,77 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const childProcess = require('child_process');
 
 const crossSpawn = require('cross-spawn');
 
+const ScriptParser = require('./ScriptParser');
 const PackageCache = require('./PackageCache');
 
-const moduleInjectorPath = path.join(__dirname, 'injected-modules', 'injector');
-
-let lemonArguments;
-let scriptArguments;
-
-const workingDirectory = process.cwd();
-let scriptPath;
-let scriptName;
-
-let sourceScriptContent;
-let preparedScriptPath;
-
-// Parse arguments
-// // Lemon arguments
-lemonArguments = [];
-let currentArgumentIndex = 2; // skip node path and tasklemon path
-let currentArgument;
-while (currentArgument = process.argv[currentArgumentIndex]) {
-	if (!currentArgument) break;
-	if (currentArgument[0] !== '-') break;
-
-	lemonArguments.push(currentArgument);
-	currentArgumentIndex++;
+function parseProgramArguments(argumentList) {
+	const rawArguments = argumentList.slice(2); // skip node and tasklemon
+	const scriptPathIndex = rawArguments.findIndex(arg => (arg[0] !== '-'));
+	const scriptPath = rawArguments[scriptPathIndex];
+	
+	return {
+		scriptPath,
+		scriptName: path.basename(scriptPath),
+		lemonArguments: rawArguments.slice(0, scriptPathIndex),
+		scriptArguments: rawArguments.slice(scriptPathIndex + 1)
+	};
 }
 
-// // Script path
-scriptPath = process.argv[currentArgumentIndex];
-scriptName = path.basename(scriptPath);
+function parseNodeArguments(lemonArguments) {
+	const validNodeArguments = ['--inspect', '--inspect-brk'];
+	return lemonArguments.filter(arg => validNodeArguments.includes(arg));
+}
 
-currentArgumentIndex++;
+function readScriptSource(scriptPath) {
+	try {
+		return fs.readFileSync(scriptPath, {encoding: 'utf8'});
+	} catch (error) {
+		const scriptName = path.basename(scriptPath);
+		const parsedError = parseNodeError(error);
+		process.stdout.write(`Couldn't read “${scriptName}” because of error: “${parsedError}”. \n`);
+		process.exit(1);
+	}
+}
 
-// // Script arguments
-scriptArguments = process.argv.slice(currentArgumentIndex);
-
-// Prepare execution stage
-// // Read script
-try {
-	sourceScriptContent = fs.readFileSync(scriptPath, {encoding: 'utf8'});
-} catch (error) {
+function parseNodeError(error) {
 	const errorParts = /Error: (.+), /.exec(error.toString());
-	const formattedErrorDetails = errorParts ? errorParts[1] : error.code;
-	process.stdout.write(`Couldn't read “${scriptName}” because of error: “${formattedErrorDetails}”. \n`);
-	process.exit(1);
+	return errorParts ? errorParts[1] : error.code;
 }
 
-const scriptShebangParts = /^#!.+\n/.exec(sourceScriptContent);
-if (scriptShebangParts) {
-	sourceScriptContent = sourceScriptContent.slice(scriptShebangParts[0].length);
-}
+// Run
+const programArgs = parseProgramArguments(process.argv);
+const nodeArgs = parseNodeArguments(programArgs.lemonArguments);
+const scriptSource = readScriptSource(programArgs.scriptPath);
 
-// // Extract required package list
-const packageNameRegexp = /(?<=npm\.)[\w$_]+/g;
-const requiredPackages = sourceScriptContent.match(packageNameRegexp) || [];
-
-// // Create stage folder
-const stagePath = fs.mkdtempSync(os.tmpdir() + path.sep);
-preparedScriptPath = path.join(stagePath, scriptName);
-
-// // Generate script
-let preparedScriptContent = '';
-
-preparedScriptContent += `require(${JSON.stringify(moduleInjectorPath)})(global);`;
-
-preparedScriptContent += '(async function() {';
-preparedScriptContent += sourceScriptContent;
-preparedScriptContent += '\n})();';
-
-fs.writeFileSync(preparedScriptPath, preparedScriptContent);
-
-// Load packages asynchronously
-PackageCache.preloadPackageList(requiredPackages);
-
-// Execute script
-let nodeArguments = [];
-
-if (lemonArguments.includes('--inspect')) nodeArguments.push('--inspect');
-if (lemonArguments.includes('--inspect-brk')) nodeArguments.push('--inspect-brk');
-
-if (nodeArguments.length > 0) {
+if (nodeArgs.length > 0) {
 	// Run as separate process
+	const tasklemonPath = __filename;
+	
 	const inspectableProcess = crossSpawn(
 		'node',
-		[...nodeArguments, __filename, scriptPath, ...scriptArguments],
+		[...nodeArgs, tasklemonPath, programArgs.scriptPath, ...programArgs.scriptArguments],
 		{ stdio: 'inherit' }
 	);
-	
+
 	inspectableProcess.on('exit', code => {
 		process.exit(code);
 	});
 } else {
-	// Execute directly
-	require('./injected-modules/cli')._rawArguments = scriptArguments;
+	// Execute in place
+	const parser = new ScriptParser(scriptSource);
+	
+	// // Preload packages asynchronously
+	PackageCache.preloadPackageBundle(parser.requiredPackages);
+	
+	// // Write script to stage
+	const stagePath = fs.mkdtempSync(os.tmpdir() + path.sep);
+	const preparedScriptPath = path.join(stagePath, programArgs.scriptName);
+	fs.writeFileSync(preparedScriptPath, parser.preparedSource);
+
+	// Execute script
+	require('./injected-modules/cli')._rawArguments = programArgs.scriptArguments;
 	require(preparedScriptPath);
 }
