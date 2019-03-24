@@ -3,6 +3,8 @@ const os = require('os');
 const path = require('path');
 const childProcess = require('child_process');
 
+const rimraf = require('rimraf');
+
 const Item = require('../../source/Item');
 
 function toCleanPath(nativePath) {
@@ -13,12 +15,17 @@ function toNativePath(cleanPath) {
 	return cleanPath.split('/').join(path.sep);
 }
 
+let testEnvironments = [];
+
 beforeEach(function() {
 	this.getTestEnv = function() {
 		// Create environment
 		const environmentParentPath = fs.realpathSync(fs.mkdtempSync(os.tmpdir() + path.sep));
 		const environmentPath = path.join(environmentParentPath, 'tasklemon-test-env');
 		fs.mkdirSync(environmentPath);
+		
+		// Register environment for cleanup
+		testEnvironments.push(environmentPath);
 		
 		// Return environment object
 		return {
@@ -62,4 +69,10 @@ beforeEach(function() {
 			}
 		};
 	};
+});
+
+afterAll(function() {
+	testEnvironments.forEach(testEnv => {
+		rimraf.sync(testEnv);
+	});
 });
