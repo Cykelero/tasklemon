@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs');
-const childProcess = require('child_process');
 const crypto = require('crypto');
 
 const crossSpawn = require('cross-spawn');
@@ -14,13 +13,17 @@ module.exports = {
 	
 	// Exposed
 	preloadPackageBundle(packageList) {
+		const normalizedPackageList = this._normalizePackageList(packageList);
+		
 		if (packageList.length > 0) {
-			this._defaultBundlePackageList = packageList;
-			this._prepareBundleForList(packageList);
+			this._defaultBundlePackageList = normalizedPackageList;
+			this._prepareBundleForList(normalizedPackageList);
 		}
 	},
 	
 	get(packageName) {
+		const dedicatedBundlePackageList = this._dedicatedBundlePackageListFor(packageName);
+		
 		let package;
 		
 		// Try loading package from default bundle
@@ -30,12 +33,12 @@ module.exports = {
 		
 		// Try loading package from dedicated bundle
 		if (!package) {
-			package = this._getFromBundle(packageName, [packageName]);
+			package = this._getFromBundle(packageName, dedicatedBundlePackageList);
 		}
 		
 		// Couldn't load bundle
 		if (!package) {
-			this._markBundleForDeletion([packageName]);
+			this._markBundleForDeletion(dedicatedBundlePackageList);
 			throw Error(`Package “${packageName}” could not be retrieved. Make sure its name is correct and that you are connected to the Internet.`);
 		}
 		
@@ -43,7 +46,8 @@ module.exports = {
 	},
 	
 	bundlePathForList(packageList) {
-		return this.bundlePathForHash(this._bundleHashForList(packageList));
+		const normalizedPackageList = this._normalizePackageList(packageList);
+		return this.bundlePathForHash(this._bundleHashForList(normalizedPackageList));
 	},
 	
 	bundlePathForHash(packageHash) {
@@ -68,7 +72,7 @@ module.exports = {
 	},
 	
 	_prepareBundleForListSync(packageList) {
-		childProcess.spawnSync('node', this._nodeArgumentsForList(packageList));
+		crossSpawn.sync('node', this._nodeArgumentsForList(packageList));
 	},
 	
 	_getFromBundle(packageName, packageList) {
@@ -90,7 +94,7 @@ module.exports = {
 			try {
 				bundleIndex = require(bundleIndexPath);
 			} catch(e) {
-				throw Error(`Package “${packageName}” could not be retrieved: the package cache bundle preparation process is failing.`);
+				throw Error(`Package “${packageName}” could not be retrieved: the package cache bundle preparation process is failing. Make sure the names of your packages are correct.`);
 			}
 		}
 		
@@ -105,6 +109,16 @@ module.exports = {
 	},
 	
 	// // Tools
+	_normalizePackageList(packageList) {
+		const normalized = packageList.map(packageName => /[^\/]+/.exec(packageName)[0])
+		const deduplicated = Array.from(new Set(normalized));
+		return deduplicated;
+	},
+	
+	_dedicatedBundlePackageListFor(packageName) {
+		return this._normalizePackageList([packageName]);
+	},
+	
 	_bundleHashForList(packageList) {
 		const sortedList = packageList.slice(0).sort();
 		const result = crypto.createHash('sha256').update(sortedList.join()).digest('hex');

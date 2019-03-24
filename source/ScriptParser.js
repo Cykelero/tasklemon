@@ -9,7 +9,16 @@ module.exports = class ScriptParser {
 	}
 	
 	get requiredPackages() {
-		return this._sourceWithoutHeaders.match(/(?<=npm\.)[\w$_]+/g) || [];
+		const regexps = [
+			/(?<=npm\.)[\w$_]+/g,
+			/(?<=npm\[')[^']+(?='\])/g,
+			/(?<=npm\[")[^"]+(?="\])/g
+		];
+		
+		return regexps.reduce((currentValue, regexp) => {
+			const matches = this._sourceWithoutHeaders.match(regexp) || [];
+			return currentValue.concat(matches);
+		}, []);
 	}
 	
 	get preparedSource() {
