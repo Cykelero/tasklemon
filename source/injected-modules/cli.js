@@ -141,7 +141,7 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 		const argumentDefinition = argumentDefinitions.find(ad => ad.alternatives.some(a => a === userString));
 			
 		if (failIfAbsent && !argumentDefinition) {
-			throw Error(`Argument error: “${userString}” unexpected`);
+			exitWithError(`Argument error: “${userString}” unexpected`);
 		}
 		
 		return argumentDefinition;
@@ -151,7 +151,7 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 		const castResult = TypeDefinition.execute(type, value);
 		
 		if (!castResult.valid) {
-			throw Error(`Argument error: “${value}” ${castResult.errorText}`);
+			exitWithError(`Argument error: “${value}” ${castResult.errorText}`);
 		}
 		
 		return castResult.value;
@@ -192,7 +192,7 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 	function rememberOccurence({name: argumentName}, userString) {
 		const priorUsageString = firstOccurences[argumentName];
 		if (priorUsageString) {
-			throw Error(`Argument error: “${userString}” already specified as “${priorUsageString}”`);
+			exitWithError(`Argument error: “${userString}” already specified as “${priorUsageString}”`);
 		}
 		
 		firstOccurences[argumentName] = userString;
@@ -245,8 +245,13 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 	if (expectValueFor !== null) {
 		// Last argument didn't get its value
 		const userString = firstOccurences[expectValueFor.name];
-		throw Error(`Argument error: “${userString}” requires a value`);
+		exitWithError(`Argument error: “${userString}” requires a value`);
 	}
 	
 	return result;
+}
+
+function exitWithError(message) {
+	process.stdout.write(message + '\n');
+	process.exit(1);
 }
