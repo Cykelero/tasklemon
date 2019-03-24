@@ -311,7 +311,7 @@ class Item {
 		return cleanPath.split('/').join(path.sep);
 	}
 	
-	static _itemForPath(inputPath) {
+	static _itemForPath(inputPath, detectTypeFromFilesystem) {
 		let normalizedInputPath;
 		let isFolder;
 		let name;
@@ -337,13 +337,23 @@ class Item {
 		}
 		
 		// Get info from path
-		const lastInputPathComponent = path.basename(inputPath);
-		isFolder = (normalizedInputPath.slice(-1) === path.sep)
-			|| lastInputPathComponent === '.'
-			|| lastInputPathComponent === '..';
-		
 		name = path.basename(normalizedInputPath);
 		parentPath = Item._realParentPathForPath(normalizedInputPath);
+		
+		// Decide if item is folder or not
+		if (detectTypeFromFilesystem) {
+			// Look at filesystem
+			const isFile = this._isActualItemAFile(normalizedInputPath);
+			if (isFile === null) return null;
+			
+			isFolder = !isFile;
+		} else {
+			// Look at input path
+			const lastInputPathComponent = path.basename(inputPath);
+			isFolder = (normalizedInputPath.slice(-1) === path.sep)
+				|| lastInputPathComponent === '.'
+				|| lastInputPathComponent === '..';
+		}
 		
 		// Create item instance
 		const itemClass = isFolder ? require('./Folder') : require('./File');
@@ -377,6 +387,14 @@ class Item {
 		
 		
 		return resolvedParentPathExistent + parentPathNonexistent + path.sep;
+	}
+	
+	static _isActualItemAFile(path) {
+		try {
+			return fs.lstatSync(path).isFile();
+		} catch (e) {
+			return null;
+		}
 	}
 	
 	static _registerItem(item) {
@@ -462,4 +480,10 @@ Item._itemsByPath = {};
 
 module.exports = Item;
 
-Item[TypeDefinition.symbol] = value => Item._itemForPath(value);
+Item[TypeDefinition.symbol] = function(value) {
+	const item = Item._itemForPath(value, true);
+	
+	if (!item) throw 'is not a path to an existing item';
+	
+	return item;
+};

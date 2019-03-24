@@ -30,13 +30,13 @@ beforeEach(function() {
 		// Return environment object
 		return {
 			path: toCleanPath(environmentPath),
-			_nativePath: environmentPath,
+			nativePath: environmentPath,
 			
 			pathFor: function(itemPath) {
 				return path.posix.join(this.path, itemPath);
 			},
 			nativePathFor: function(nativeItemPath) {
-				return path.join(this._nativePath, nativeItemPath);
+				return path.join(this.nativePath, nativeItemPath);
 			},
 			itemFor: function(itemPath) {
 				return Item._itemForPath(this.nativePathFor(toNativePath(itemPath)));
@@ -65,7 +65,7 @@ beforeEach(function() {
 				const nativeScriptPath = this.nativePathFor('script.lem.js');
 				fs.writeFileSync(nativeScriptPath, source);
 				
-				return childProcess.execFileSync('node', [tasklemonPath, nativeScriptPath, ...args], {cwd: this._nativePath});
+				return childProcess.execFileSync('node', [tasklemonPath, nativeScriptPath, ...args], {cwd: this.nativePath});
 			}
 		};
 	};

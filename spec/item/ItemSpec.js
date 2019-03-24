@@ -8,6 +8,7 @@ const Item = require('../../source/Item');
 const File = require('../../source/File');
 const Folder = require('../../source/Folder');
 const root = require('../../source/injected-modules/root');
+const TypeDefinition = require('../../source/TypeDefinition');
 
 const isPosix = os.platform() !== 'win32';
 const driveId = isPosix ? '' : /[^\\]+/.exec(process.cwd())[0];
@@ -84,8 +85,50 @@ describe('Item', function() {
 	});
 	
 	describe('TypeDefinition', function() {
-		xit('should accept a path', function() {
-			// TODO: we need a more sensible TypeDefinition
+		it('should accept a path to an existing file', function() {
+			process.chdir(testEnv.nativePath);
+			
+			testEnv.createFile('file');
+			const userPath = 'file';
+			
+			const file = TypeDefinition.execute(Item, userPath);
+			
+			expect(file.valid).toBeTruthy();
+			expect(file.value instanceof File).toBeTruthy();
+			expect(file.value.path).toBe(testEnv.nativePathFor(userPath));
+		});
+		
+		it('should accept a path to an existing folder', function() {
+			process.chdir(testEnv.nativePath);
+			
+			testEnv.createFolder('folder');
+			const userPath = 'folder';
+			
+			const file = TypeDefinition.execute(Item, userPath);
+			
+			expect(file.valid).toBeTruthy();
+			expect(file.value instanceof Folder).toBeTruthy();
+			expect(file.value.path).toBe(testEnv.nativePathFor(userPath + path.sep));
+		});
+		
+		it('should fail if the item does not exist', function() {
+			process.chdir(testEnv.nativePath);
+			
+			const userPath = 'folder';
+			
+			const file = TypeDefinition.execute(Item, userPath);
+			
+			expect(file.valid).toBeFalsy();
+		});
+		
+		let currentCWD;
+		
+		beforeEach(function() {
+			currentCWD = process.cwd();
+		});
+		
+		afterEach(function() {
+			process.chdir(currentCWD);
 		});
 	});
 	
