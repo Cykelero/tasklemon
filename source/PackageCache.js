@@ -10,6 +10,7 @@ module.exports = {
 	INDEX_FILE_NAME: 'index.js',
 	
 	_defaultBundlePackageList: null,
+	_synchronouslyPreparedPackages: new Set(),
 	
 	// Exposed
 	preloadPackageBundle(packageList) {
@@ -78,7 +79,10 @@ module.exports = {
 		try {
 			bundleIndex = require(bundleIndexPath);
 		} catch(e) {
-			process.stdout.write('Preparing packages...\n');
+			if (!this._synchronouslyPreparedPackages.has(packageName)) {
+				this._synchronouslyPreparedPackages.add(packageName);
+				process.stdout.write('Preparing packages...\n');
+			}
 			this._prepareBundleForListSync(packageList);
 		}
 		
