@@ -1,4 +1,5 @@
 const TypeDefinition = require('../TypeDefinition');
+const Tools = require('../Tools');
 
 let cli = module.exports;
 
@@ -94,7 +95,7 @@ function parseArgumentDefinitions(argumentDefinitions) {
 }
 
 function checkArgumentDefinitionSyntax(argumentDefinitions) {
-	let firstOccurences = {};
+	let firstOccurrences = {};
 	
 	argumentDefinitions.forEach(argumentDefinition => {
 		function throwForThisDefinition(reason) {
@@ -103,12 +104,12 @@ function checkArgumentDefinitionSyntax(argumentDefinitions) {
 		
 		argumentDefinition.alternatives.forEach(alternative => {
 			// Check for redundant usage of a name
-			const priorUsageName = firstOccurences[alternative];
+			const priorUsageName = firstOccurrences[alternative];
 			if (priorUsageName) {
 				throwForThisDefinition(`“${alternative}” is already used for \`${priorUsageName}\``);
 			}
 			
-			firstOccurences[alternative] = argumentDefinition.name;
+			firstOccurrences[alternative] = argumentDefinition.name;
 			
 			// Check for syntax-specific errors
 			const firstCharacter = alternative[0];
@@ -141,7 +142,7 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 		const argumentDefinition = argumentDefinitions.find(ad => ad.alternatives.some(a => a === userString));
 			
 		if (failIfAbsent && !argumentDefinition) {
-			exitWithError(`Argument error: “${userString}” unexpected`);
+			Tools.exitWithError(`Argument error: “${userString}” unexpected`);
 		}
 		
 		return argumentDefinition;
@@ -151,7 +152,7 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 		const castResult = TypeDefinition.execute(type, value);
 		
 		if (!castResult.valid) {
-			exitWithError(`Argument error: “${value}” ${castResult.errorText}`);
+			Tools.exitWithError(`Argument error: “${value}” ${castResult.errorText}`);
 		}
 		
 		return castResult.value;
@@ -185,17 +186,17 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 	});
 	
 	// Read arguments
-	let firstOccurences = {};
+	let firstOccurrences = {};
 	let nextPositionalIndex = 0;
 	let expectValueFor = null;
 
-	function rememberOccurence({name: argumentName}, userString) {
-		const priorUsageString = firstOccurences[argumentName];
+	function rememberOccurrence({name: argumentName}, userString) {
+		const priorUsageString = firstOccurrences[argumentName];
 		if (priorUsageString) {
-			exitWithError(`Argument error: “${userString}” already specified as “${priorUsageString}”`);
+			Tools.exitWithError(`Argument error: “${userString}” already specified as “${priorUsageString}”`);
 		}
 		
-		firstOccurences[argumentName] = userString;
+		firstOccurrences[argumentName] = userString;
 	}
 	
 	expandedArguments.forEach(expandedArgument => {
@@ -212,7 +213,7 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 		if (expandedArgument[0] === '-') {
 			// Shorthand or named argument
 			const argumentDefinition = definitionFor(expandedArgument, true);
-			rememberOccurence(argumentDefinition, expandedArgument);
+			rememberOccurrence(argumentDefinition, expandedArgument);
 			
 			if (argumentDefinition.type === Boolean) {
 				result[argumentDefinition.name] = true;
@@ -226,7 +227,7 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 			let argumentDefinition;
 			if (argumentDefinition = definitionFor(positionalIdentity, false)) {
 				// Indexed
-				rememberOccurence(argumentDefinition, positionalIdentity);
+				rememberOccurrence(argumentDefinition, positionalIdentity);
 				const castValue = castForDefinition(argumentDefinition, expandedArgument);
 				result[argumentDefinition.name] = castValue;
 			} else if (restDefinition) {
@@ -244,14 +245,10 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 	
 	if (expectValueFor !== null) {
 		// Last argument didn't get its value
-		const userString = firstOccurences[expectValueFor.name];
-		exitWithError(`Argument error: “${userString}” requires a value`);
+		const userString = firstOccurrences[expectValueFor.name];
+		Tools.exitWithError(`Argument error: “${userString}” requires a value`);
 	}
 	
 	return result;
 }
 
-function exitWithError(message) {
-	process.stdout.write(message + '\n');
-	process.exit(1);
-}
