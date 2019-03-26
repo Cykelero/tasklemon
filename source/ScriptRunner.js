@@ -9,13 +9,12 @@ const ScriptParser = require('./ScriptParser');
 const PackageCache = require('./PackageCache');
 const Tools = require('./Tools');
 
-const TASKLEMON_PATH = __filename;
+const TASKLEMON_PATH = path.join(__dirname, 'tasklemon.js');
 
 module.exports = {
 	// Exposed
-	run(scriptPath, args) {
-		const source = this._readSource(scriptPath);
-		const parser = new ScriptParser(source);
+	run(scriptSource, scriptName, args) {
+		const parser = new ScriptParser(scriptSource);
 
 		let stagePath;
 		let preparedScriptPath;
@@ -25,7 +24,7 @@ module.exports = {
 	
 		// Write script to stage
 		stagePath = fs.mkdtempSync(os.tmpdir() + path.sep);
-		preparedScriptPath = path.join(stagePath, path.basename(scriptPath));
+		preparedScriptPath = path.join(stagePath, scriptName);
 		fs.writeFileSync(preparedScriptPath, parser.preparedSource);
 
 		// Execute script
@@ -38,26 +37,15 @@ module.exports = {
 		});
 	},
 	
-	runInNewProcess(scriptPath, args, nodeArgs) {
+	runInNewProcess(scriptPath, scriptArgs, nodeArgs) {
 		const inspectableProcess = crossSpawn(
 			'node',
-			[...nodeArgs, TASKLEMON_PATH, scriptPath, ...args],
+			[...nodeArgs, TASKLEMON_PATH, scriptPath, ...scriptArgs],
 			{ stdio: 'inherit' }
 		);
 
 		inspectableProcess.on('exit', code => {
 			process.exit(code);
 		});
-	},
-	
-	// Internal
-	_readSource(scriptPath) {
-		try {
-			return fs.readFileSync(scriptPath, {encoding: 'utf8'});
-		} catch (error) {
-			const scriptName = path.basename(scriptPath);
-			const parsedError = Tools.parseNodeError(error);
-			Tools.exitWithError(`Couldn't read “${scriptName}” because of error: “${parsedError}”.`);
-		}
 	}
 };

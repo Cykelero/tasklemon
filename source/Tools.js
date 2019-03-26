@@ -6,6 +6,6 @@ module.exports = {
 	
 	parseNodeError(error) {
 		const errorParts = /Error: (.+), /.exec(error.toString());
-		return errorParts ? errorParts[1] : error.code;
+		return errorParts ? errorParts[1] : error.message;
 	}
 };

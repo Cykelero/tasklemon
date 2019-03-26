@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const ScriptFile = require('./ScriptFile');
 const ScriptRunner = require('./ScriptRunner');
 const Tools = require('./Tools');
 
@@ -48,15 +49,20 @@ function exitIfContainsInvalidArguments(args) {
 
 // Run
 const programArgs = parseProgramArguments(process.argv);
+const scriptFile = new ScriptFile(programArgs.scriptPath);
 
-if (programArgs.nodeArguments.length === 0) {
-	// Execute in place
-	ScriptRunner.run(programArgs.scriptPath, programArgs.scriptArguments);
-} else {
+if (programArgs.nodeArguments.length > 0) {
 	// Run as separate process
 	ScriptRunner.runInNewProcess(
 		programArgs.scriptPath,
 		programArgs.scriptArguments,
 		programArgs.nodeArguments
+	);
+} else {
+	// Execute in place
+	ScriptRunner.run(
+		scriptFile.source,
+		scriptFile.name, 
+		programArgs.scriptArguments
 	);
 }
