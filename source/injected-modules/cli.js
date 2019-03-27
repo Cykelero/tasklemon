@@ -1,3 +1,4 @@
+const Environment = require('./Environment');
 const TypeDefinition = require('../TypeDefinition');
 const Tools = require('../Tools');
 
@@ -5,12 +6,10 @@ let cli = module.exports;
 
 cli.args = null;
 
-cli._rawArguments = null;
-
 cli.accept = function(argumentDefinitions) {
 	const parsedArgumentDefinitions = parseArgumentDefinitions(argumentDefinitions);
 	checkArgumentDefinitionSyntax(parsedArgumentDefinitions);
-	cli.args = applyArgumentDefinitions(parsedArgumentDefinitions, cli._rawArguments);
+	cli.args = applyArgumentDefinitions(parsedArgumentDefinitions, Environment.rawArguments);
 };
 
 cli.tell = function(text) {

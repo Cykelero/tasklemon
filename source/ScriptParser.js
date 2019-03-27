@@ -1,6 +1,6 @@
 const path = require('path');
 
-const MODULE_INJECTOR_PATH = path.join(__dirname, 'injected-modules', 'injector');
+const MODULE_INJECTOR_PATH = path.join(__dirname, 'injected-modules', 'Injector');
 
 module.exports = class ScriptParser {
 	// Exposed

@@ -8,6 +8,7 @@ const crossSpawn = require('cross-spawn');
 const ScriptParser = require('./ScriptParser');
 const PackageCache = require('./PackageCache');
 const Tools = require('./Tools');
+const Environment = require('./injected-modules/Environment')
 
 const TASKLEMON_PATH = path.join(__dirname, 'tasklemon.js');
 
@@ -20,7 +21,7 @@ module.exports = {
 		let preparedScriptPath;
 	
 		// Preload packages asynchronously
-		PackageCache.preloadPackageBundle(parser.requiredPackages);
+		PackageCache.loadPackageBundle(parser.requiredPackages);
 	
 		// Write script to stage
 		stagePath = fs.mkdtempSync(os.tmpdir() + path.sep);
@@ -28,7 +29,8 @@ module.exports = {
 		fs.writeFileSync(preparedScriptPath, parser.preparedSource);
 
 		// Execute script
-		require('./injected-modules/cli')._rawArguments = args;
+		Environment.rawArguments = args;
+		Environment.defaultBundlePackageList = parser.requiredPackages;
 		require(preparedScriptPath);
 
 		// Delete stage once script has run

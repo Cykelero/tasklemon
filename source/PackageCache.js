@@ -8,27 +8,26 @@ module.exports = {
 	PACKAGE_CACHE_PATH: '..' + path.sep + 'package-cache' + path.sep,
 	INDEX_FILE_NAME: 'index.js',
 	
-	_defaultBundlePackageList: null,
 	_synchronouslyPreparedPackages: new Set(),
 	
 	// Exposed
-	preloadPackageBundle(packageList) {
+	loadPackageBundle(packageList) {
 		const normalizedPackageList = this._normalizePackageList(packageList);
 		
 		if (packageList.length > 0) {
-			this._defaultBundlePackageList = normalizedPackageList;
 			this._prepareBundleForList(normalizedPackageList);
 		}
 	},
 	
-	get(packageName) {
+	get(packageName, bundlePackageList) {
+		const requestedBundlePackageList = this._normalizePackageList(bundlePackageList);
 		const dedicatedBundlePackageList = this._dedicatedBundlePackageListFor(packageName);
 		
 		let package;
 		
-		// Try loading package from default bundle
-		if (this._defaultBundlePackageList) {
-			package = this._getFromBundle(packageName, this._defaultBundlePackageList);
+		// Try loading package from requested bundle
+		if (requestedBundlePackageList) {
+			package = this._getFromBundle(packageName, requestedBundlePackageList);
 		}
 		
 		// Try loading package from dedicated bundle
