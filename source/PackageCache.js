@@ -11,17 +11,17 @@ module.exports = {
 	_synchronouslyPreparedPackages: new Set(),
 	
 	// Exposed
-	loadPackageBundle(packageList) {
-		const normalizedPackageList = this._normalizePackageList(packageList);
+	loadPackageBundle(rawPackageList, packageVersions) {
+		const packageList = this._normalizePackageList(rawPackageList, packageVersions);
 		
 		if (packageList.length > 0) {
-			this._prepareBundleForList(normalizedPackageList);
+			this._prepareBundleForList(packageList);
 		}
 	},
 	
-	get(packageName, bundlePackageList) {
-		const requestedBundlePackageList = this._normalizePackageList(bundlePackageList);
-		const dedicatedBundlePackageList = this._dedicatedBundlePackageListFor(packageName);
+	get(packageName, rawRequestedBundlePackageList, packageVersions) {
+		const requestedBundlePackageList = this._normalizePackageList(rawRequestedBundlePackageList, packageVersions);
+		const dedicatedBundlePackageList = this._dedicatedBundlePackageListFor(packageName, packageVersions);
 		
 		let package;
 		
@@ -42,11 +42,6 @@ module.exports = {
 		}
 		
 		return package;
-	},
-	
-	bundlePathForList(packageList) {
-		const normalizedPackageList = this._normalizePackageList(packageList);
-		return this.bundlePathForHash(this._bundleHashForList(normalizedPackageList));
 	},
 	
 	bundlePathForHash(packageHash) {
@@ -75,7 +70,7 @@ module.exports = {
 	},
 	
 	_getFromBundle(packageName, packageList) {
-		const bundleIndexPath = this.bundlePathForList(packageList) + this.INDEX_FILE_NAME;
+		const bundleIndexPath = this._bundlePathForList(packageList) + this.INDEX_FILE_NAME;
 		
 		let bundleIndex;
 		
@@ -101,27 +96,42 @@ module.exports = {
 	},
 	
 	_markBundleForDeletion(packageList) {
-		const bundleIndexPath = this.bundlePathForList(packageList) + this.INDEX_FILE_NAME;
+		const bundleIndexPath = this._bundlePathForList(packageList) + this.INDEX_FILE_NAME;
 		try {
 			fs.unlink(bundleIndexPath, () => {});
 		} catch(e) {}
 	},
 	
 	// // Tools
-	_normalizePackageList(packageList) {
-		const normalized = packageList.map(packageName => /[^\/]+/.exec(packageName)[0])
+	_normalizePackageList(packageList, packageVersions = {}) {
+		const normalized = packageList
+			.map(packageName => /[^\/]+/.exec(packageName)[0])
+			.map(packageName => {
+				const packageVersion = packageVersions[packageName];
+				
+				if (packageVersion) {
+					return packageName + '@' + packageVersion;
+				} else {
+					return packageName;
+				}
+			});
 		const deduplicated = Array.from(new Set(normalized));
+		
 		return deduplicated;
 	},
 	
-	_dedicatedBundlePackageListFor(packageName) {
-		return this._normalizePackageList([packageName]);
+	_dedicatedBundlePackageListFor(packageName, packageVersions) {
+		return this._normalizePackageList([packageName], packageVersions);
 	},
 	
 	_bundleHashForList(packageList) {
 		const sortedList = packageList.slice(0).sort();
 		const result = crypto.createHash('sha256').update(sortedList.join()).digest('hex');
 		return result;
+	},
+	
+	_bundlePathForList(packageList) {
+		return this.bundlePathForHash(this._bundleHashForList(packageList));
 	},
 	
 	_nodeArgumentsForList(packageList) {

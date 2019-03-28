@@ -16,21 +16,27 @@ module.exports = {
 	// Exposed
 	run(scriptSource, scriptName, args) {
 		const parser = new ScriptParser(scriptSource);
+		
+		const requiredPackages = parser.requiredPackages;
+		const requiredPackageVersions = parser.requiredPackageVersions;
 
 		let stagePath;
 		let preparedScriptPath;
-	
-		// Preload packages asynchronously
-		PackageCache.loadPackageBundle(parser.requiredPackages);
+
+		// Set environment variables
+		Environment.rawArguments = args;
+		Environment.defaultBundlePackageList = requiredPackages;
+		Environment.requiredPackageVersions = requiredPackageVersions;
 	
 		// Write script to stage
 		stagePath = fs.mkdtempSync(os.tmpdir() + path.sep);
 		preparedScriptPath = path.join(stagePath, scriptName);
 		fs.writeFileSync(preparedScriptPath, parser.preparedSource);
+	
+		// Preload packages asynchronously
+		PackageCache.loadPackageBundle(requiredPackages, requiredPackageVersions);
 
 		// Execute script
-		Environment.rawArguments = args;
-		Environment.defaultBundlePackageList = parser.requiredPackages;
 		require(preparedScriptPath);
 
 		// Delete stage once script has run

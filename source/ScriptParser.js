@@ -15,23 +15,46 @@ module.exports = class ScriptParser {
 			/(?<=npm\[")[^"]+(?="\])/g
 		];
 		
-		return regexps.reduce((currentValue, regexp) => {
+		const usedPackages = regexps.reduce((currentValue, regexp) => {
 			const matches = this._sourceWithoutHeaders.match(regexp) || [];
-			return currentValue.concat(matches);
+			return [...currentValue, ...matches];
 		}, []);
+		
+		const requestedPackages = Object.keys(this.requiredPackageVersions);
+		
+		return [...usedPackages, ...requestedPackages];
+	}
+	
+	get requiredPackageVersions() {
+		let result = {};
+		
+		const headerLineRegex = /(?<=\n)#require ([^@ \n]+)@([^ \n]+)/g;
+		
+		let match;
+		while (match = headerLineRegex.exec(this._headers)) {
+			const [, packageName, packageVersion] = match;
+			
+			result[packageName] = packageVersion;
+		}
+		
+		return result;
 	}
 	
 	get preparedSource() {
+		const headerNewlineCount = (this._headers.match(/\n/g) || []).length;
+		const replacementNewlines = '\n'.repeat(headerNewlineCount);
+		
 		return `require(${JSON.stringify(MODULE_INJECTOR_PATH)})(global);`
 			+ '(async function() {'
+			+ replacementNewlines
 			+ this._sourceWithoutHeaders
 			+ '\n})();';
 	}
 	
 	// Internal
 	get _headers() {
-		const headerParts = /^#!.+\n/.exec(this.source);
-		return headerParts ? headerParts[0] : '';
+		const headerParts = /^((#.*|\s*)\n)*/.exec(this.source);
+		return headerParts[0];
 	}
 	
 	get _sourceWithoutHeaders() {

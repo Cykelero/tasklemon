@@ -15,7 +15,7 @@ const PULSE_REFRESH_INTERVAL = 1000;
 const PULSE_AGE_TOLERANCE = 500;
 const PULSE_FILE_MAXIMUM_CREATION_DELAY = 500;
 
-let packageList;
+let packages;
 let bundlePath;
 
 let isPulsing = false;
@@ -35,9 +35,18 @@ async function doesItemExist(path) {
 }
 
 // // Installation process
+function parsePackageList(rawPackageList) {
+	return rawPackageList.reduce((result, packageString) => {
+		const [, name, version] = /([^@]+)@?(.*)/.exec(packageString);
+		result[name] = version ? version : '*';
+		return result;
+	}, {});
+}
+
 async function prepareBundle() {
 	if (await tryStartingInstallation()) {
-		console.info(`Starting installation of ${packageList.join(', ')}.`);
+		const readablePackageList = Object.keys(packages).join(', ');
+		console.info(`Starting installation of ${readablePackageList}.`);
 		
 		startPulse();
 		
@@ -101,11 +110,8 @@ async function getOtherInstallationStatus() {
 async function generatePackageFile() {
 	// Generate content
 	const packageFileData = {
-		optionalDependencies: {}
+		optionalDependencies: packages
 	};
-	packageList.forEach(moduleName => {
-		packageFileData.optionalDependencies[moduleName] = '*';
-	});
 	
 	// Write content
 	const packageFileContent = JSON.stringify(packageFileData);
@@ -179,8 +185,10 @@ async function isPulseOld() {
 }
 
 // Run
-packageList = process.argv.slice(2);
-bundlePath = PackageCache.bundlePathForList(packageList);
+const packageList = process.argv.slice(2);
+packages = parsePackageList(packageList);
+
+bundlePath = PackageCache._bundlePathForList(packageList);
 
 prepareBundle()
 	.catch(() => process.exit(1));
