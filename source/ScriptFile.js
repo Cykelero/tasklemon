@@ -1,5 +1,4 @@
 const path = require('path');
-const fs = require('fs');
 
 const Tools = require('./Tools');
 
@@ -14,11 +13,19 @@ module.exports = class Script {
 	}
 	
 	get source() {
-		try {
-			return fs.readFileSync(this.path, {encoding: 'utf8'});
-		} catch (error) {
-			const parsedError = Tools.parseNodeError(error);
-			Tools.exitWithError(`Couldn't read “${this.name}” because of error: “${parsedError}”.`);
-		}
+		return Tools.readFileOrExitWithErrorSync(
+			this.path,
+			{ encoding: 'utf8' },
+			`Couldn't read “${this.name}” because of error: “$0”`
+		);
+	}
+	
+	set source(value) {
+		return Tools.writeFileOrExitWithErrorSync(
+			this.path,
+			value,
+			{ encoding: 'utf8' },
+			`Couldn't write “${this.name}” because of error: “$0”`
+		);
 	}
 };

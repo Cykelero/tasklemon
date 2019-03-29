@@ -52,6 +52,11 @@ module.exports = {
 		) + path.sep;
 	},
 	
+	bundlePathForList(rawPackageList, packageVersions) {
+		const packageList = this._normalizePackageList(rawPackageList, packageVersions);
+		return this.bundlePathForHash(this._bundleHashForList(packageList));
+	},
+	
 	// Internal
 	_prepareBundleForList(packageList) {
 		const preparationProcess = crossSpawn(

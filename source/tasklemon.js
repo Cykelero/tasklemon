@@ -2,9 +2,10 @@
 
 const ScriptFile = require('./ScriptFile');
 const ScriptRunner = require('./ScriptRunner');
+const ScriptParser = require('./ScriptParser');
 const Tools = require('./Tools');
 
-const validLemonArguments = [];
+const validLemonArguments = ['--pin-packages'];
 const validNodeArguments = ['--inspect', '--inspect-brk'];
 
 function parseProgramArguments(argumentList) {
@@ -51,7 +52,12 @@ function exitIfContainsInvalidArguments(args) {
 const programArgs = parseProgramArguments(process.argv);
 const scriptFile = new ScriptFile(programArgs.scriptPath);
 
-if (programArgs.nodeArguments.length > 0) {
+if (programArgs.lemonArguments.includes('--pin-packages')) {
+	// Pin package versions
+	const parser = new ScriptParser(scriptFile.source);
+	parser.pinPackageVersions();
+	scriptFile.source = parser.source;
+} else if (programArgs.nodeArguments.length > 0) {
 	// Run as separate process
 	ScriptRunner.runInNewProcess(
 		programArgs.scriptPath,
