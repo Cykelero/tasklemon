@@ -19,6 +19,14 @@ module.exports = {
 			this._prepareBundleForList(packageList);
 		}
 	},
+
+	loadPackageBundleSync(rawPackageList, packageVersions) {
+		const packageList = this._normalizePackageList(rawPackageList, packageVersions);
+		
+		if (packageList.length > 0) {
+			this._prepareBundleForListSync(packageList);
+		}
+	},
 	
 	clearAll() {
 		rimraf.sync(this.PACKAGE_CACHE_PATH + '*');

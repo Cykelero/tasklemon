@@ -55,8 +55,8 @@ module.exports = class ScriptParser {
 	}
 	
 	pinPackageVersions() {
-		// Run a synchronous install for the detected pacakges
-		PackageCache.loadPackageBundle(this.requiredPackages, this.requiredPackageVersions);
+		// Run a synchronous install for the detected packages
+		PackageCache.loadPackageBundleSync(this.requiredPackages, this.requiredPackageVersions);
 		
 		// Load package lock file; parse it for the versions
 		const bundlePath = PackageCache.bundlePathForList(this.requiredPackages, this.requiredPackageVersions);
