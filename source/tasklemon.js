@@ -27,6 +27,15 @@ function parseProgramArguments(argumentList) {
 	};
 }
 
+function getActionsForForArguments(args) {
+	const actions = {};
+	
+	if (!args.includes('--pin-pkg')) actions.runScript = true;
+	if (args.includes('--pin-pkg')) actions.pinPackageVersions = true;
+	
+	return actions;
+}
+
 function exitIfContainsInvalidArguments(args) {
 	const invalidArguments = args.filter(arg =>
 		!validLemonArguments.includes(arg)
@@ -50,25 +59,31 @@ function exitIfContainsInvalidArguments(args) {
 
 // Run
 const programArgs = parseProgramArguments(process.argv);
+const actionsToPerform = getActionsForForArguments(programArgs.lemonArguments);
 const scriptFile = new ScriptFile(programArgs.scriptPath);
 
-if (programArgs.lemonArguments.includes('--pin-pkg')) {
+if (actionsToPerform.pinPackageVersions) {
 	// Pin package versions
 	const parser = new ScriptParser(scriptFile.source);
 	parser.pinPackageVersions();
 	scriptFile.source = parser.source;
-} else if (programArgs.nodeArguments.length > 0) {
-	// Run as separate process
-	ScriptRunner.runInNewProcess(
-		programArgs.scriptPath,
-		programArgs.scriptArguments,
-		programArgs.nodeArguments
-	);
-} else {
-	// Execute in place
-	ScriptRunner.run(
-		scriptFile.source,
-		scriptFile.name, 
-		programArgs.scriptArguments
-	);
+}
+
+if (actionsToPerform.runScript) {
+	// Run script
+	if (programArgs.nodeArguments.length > 0) {
+		// As separate process
+		ScriptRunner.runInNewProcess(
+			programArgs.scriptPath,
+			programArgs.scriptArguments,
+			programArgs.nodeArguments
+		);
+	} else {
+		// In place
+		ScriptRunner.run(
+			scriptFile.source,
+			scriptFile.name, 
+			programArgs.scriptArguments
+		);
+	}
 }
