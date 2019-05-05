@@ -5,7 +5,7 @@ const ScriptRunner = require('./ScriptRunner');
 const ScriptParser = require('./ScriptParser');
 const Tools = require('./Tools');
 
-const validLemonArguments = ['--pin-packages'];
+const validLemonArguments = ['--pin-pkg'];
 const validNodeArguments = ['--inspect', '--inspect-brk'];
 
 function parseProgramArguments(argumentList) {
@@ -52,7 +52,7 @@ function exitIfContainsInvalidArguments(args) {
 const programArgs = parseProgramArguments(process.argv);
 const scriptFile = new ScriptFile(programArgs.scriptPath);
 
-if (programArgs.lemonArguments.includes('--pin-packages')) {
+if (programArgs.lemonArguments.includes('--pin-pkg')) {
 	// Pin package versions
 	const parser = new ScriptParser(scriptFile.source);
 	parser.pinPackageVersions();
