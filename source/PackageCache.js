@@ -3,9 +3,10 @@ const fs = require('fs');
 const crypto = require('crypto');
 
 const crossSpawn = require('cross-spawn');
+const rimraf = require('rimraf');
 
 module.exports = {
-	PACKAGE_CACHE_PATH: '..' + path.sep + 'package-cache' + path.sep,
+	PACKAGE_CACHE_PATH: path.join(__dirname, '..', 'package-cache') + path.sep,
 	INDEX_FILE_NAME: 'index.js',
 	
 	_synchronouslyPreparedPackages: new Set(),
@@ -17,6 +18,10 @@ module.exports = {
 		if (packageList.length > 0) {
 			this._prepareBundleForList(packageList);
 		}
+	},
+	
+	clearAll() {
+		rimraf.sync(this.PACKAGE_CACHE_PATH + '*');
 	},
 	
 	get(packageName, rawRequestedBundlePackageList, packageVersions) {
@@ -45,11 +50,7 @@ module.exports = {
 	},
 	
 	bundlePathForHash(packageHash) {
-		return path.join(
-			__dirname,
-			this.PACKAGE_CACHE_PATH,
-			packageHash
-		) + path.sep;
+		return this.PACKAGE_CACHE_PATH + packageHash + path.sep;
 	},
 	
 	bundlePathForList(rawPackageList, packageVersions) {

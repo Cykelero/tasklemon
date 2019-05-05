@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
+const PackageCache = require('./PackageCache');
 const ScriptFile = require('./ScriptFile');
 const ScriptRunner = require('./ScriptRunner');
 const ScriptParser = require('./ScriptParser');
 const Tools = require('./Tools');
 
-const validLemonArguments = ['--pin-pkg'];
+const validLemonArguments = ['--clear-pkg-cache', '--pin-pkg'];
 const validNodeArguments = ['--inspect', '--inspect-brk'];
 
 function parseProgramArguments(argumentList) {
@@ -30,7 +31,8 @@ function parseProgramArguments(argumentList) {
 function getActionsForForArguments(args) {
 	const actions = {};
 	
-	if (!args.includes('--pin-pkg')) actions.runScript = true;
+	if (!args.includes('--pin-pkg') && !args.includes('--clear-pkg-cache')) actions.runScript = true;
+	if (args.includes('--clear-pkg-cache')) actions.clearPackageCache = true;
 	if (args.includes('--pin-pkg')) actions.pinPackageVersions = true;
 	
 	return actions;
@@ -62,15 +64,20 @@ const programArgs = parseProgramArguments(process.argv);
 const actionsToPerform = getActionsForForArguments(programArgs.lemonArguments);
 const scriptFile = new ScriptFile(programArgs.scriptPath);
 
+// Clear package cache
+if (actionsToPerform.clearPackageCache) {
+	PackageCache.clearAll();
+}
+
+// Pin package versions
 if (actionsToPerform.pinPackageVersions) {
-	// Pin package versions
 	const parser = new ScriptParser(scriptFile.source);
 	parser.pinPackageVersions();
 	scriptFile.source = parser.source;
 }
 
+// Run script
 if (actionsToPerform.runScript) {
-	// Run script
 	if (programArgs.nodeArguments.length > 0) {
 		// As separate process
 		ScriptRunner.runInNewProcess(
