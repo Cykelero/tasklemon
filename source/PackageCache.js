@@ -66,6 +66,10 @@ module.exports = {
 		return this.bundlePathForHash(this._bundleHashForList(packageList));
 	},
 	
+	readableRequiredPackageListFor(rawPackageList, packageVersions) {
+		return this._normalizePackageList(rawPackageList, packageVersions).join(', ');
+	},
+	
 	// Internal
 	_prepareBundleForList(packageList) {
 		const preparationProcess = crossSpawn(

@@ -6,7 +6,7 @@ const ScriptRunner = require('./ScriptRunner');
 const ScriptParser = require('./ScriptParser');
 const Tools = require('./Tools');
 
-const validLemonArguments = ['--clear-pkg-cache', '--pin-pkg'];
+const validLemonArguments = ['--clear-pkg-cache', '--pin-pkg', '--preload-pkg'];
 const validNodeArguments = ['--inspect', '--inspect-brk'];
 
 function parseProgramArguments(argumentList) {
@@ -31,9 +31,15 @@ function parseProgramArguments(argumentList) {
 function getActionsForForArguments(args) {
 	const actions = {};
 	
-	if (!args.includes('--pin-pkg') && !args.includes('--clear-pkg-cache')) actions.runScript = true;
+	if (
+		!args.includes('--pin-pkg')
+		&& !args.includes('--clear-pkg-cache')
+		&& !args.includes('--preload-pkg')
+		) actions.runScript = true;
+	
 	if (args.includes('--clear-pkg-cache')) actions.clearPackageCache = true;
 	if (args.includes('--pin-pkg')) actions.pinPackageVersions = true;
+	if (args.includes('--preload-pkg')) actions.preloadPackages = true;
 	
 	return actions;
 }
@@ -74,6 +80,19 @@ if (actionsToPerform.pinPackageVersions) {
 	const parser = new ScriptParser(scriptFile.source);
 	parser.pinPackageVersions();
 	scriptFile.source = parser.source;
+}
+
+// Preload packages
+if (actionsToPerform.preloadPackages) {
+	const parser = new ScriptParser(scriptFile.source);
+	if (parser.requiredPackages.length > 0) {
+		PackageCache.loadPackageBundleSync(parser.requiredPackages, parser.requiredPackageVersions);
+		
+		const readablePackageList = PackageCache.readableRequiredPackageListFor(parser.requiredPackages, parser.requiredPackageVersions);
+		process.stdout.write(`Preloaded ${readablePackageList}.\n`);
+	} else {
+		process.stdout.write('Preloaded nothing: script requires no package.\n');
+	}
 }
 
 // Run script
