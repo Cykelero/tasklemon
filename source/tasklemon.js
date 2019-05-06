@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+const fs = require('fs');
+
 const PackageCache = require('./PackageCache');
 const ScriptFile = require('./ScriptFile');
 const ScriptRunner = require('./ScriptRunner');
@@ -73,14 +75,35 @@ const scriptFile = new ScriptFile(programArgs.scriptPath);
 
 // Clear package cache
 if (actionsToPerform.clearPackageCache) {
-	PackageCache.clearAll();
+	const bundleCount = fs.readdirSync(PackageCache.PACKAGE_CACHE_PATH)
+		.filter(path => path.charAt(0) !== '.')
+		.length;
+	
+	if (bundleCount > 0) {
+		PackageCache.clearAll();
+
+		const bundleCountString = (bundleCount > 1) ? bundleCount + ' bundles' : '1 bundle';
+		process.stdout.write(`Cleared package cache (deleted ${bundleCountString}).\n`);
+	} else {
+		process.stdout.write('Package cache is already empty.\n');
+	}
 }
 
 // Pin package versions
 if (actionsToPerform.pinPackageVersions) {
 	const parser = new ScriptParser(scriptFile.source);
-	parser.pinPackageVersions();
+	const pinnedInfo = parser.pinPackageVersions();
 	scriptFile.source = parser.source;
+	
+	if (pinnedInfo.length > 0) {
+		const pinnedList = pinnedInfo
+			.map(info => info.name + '@' + info.version)
+			.join(', ');
+
+		process.stdout.write(`Pinned ${pinnedList}.\n`);
+	} else {
+		process.stdout.write(`Pinned nothing.\n`);
+	}
 }
 
 // Preload packages

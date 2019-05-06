@@ -102,6 +102,8 @@ module.exports = class ScriptParser {
 			this.source.slice(0, linesInsertionPoint)
 			+ newHeaderLines.join('')
 			+ this.source.slice(linesInsertionPoint);
+		
+		return versionsForPackages;
 	}
 	
 	// Internal
