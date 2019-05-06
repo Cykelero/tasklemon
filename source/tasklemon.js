@@ -11,7 +11,8 @@ const validNodeArguments = ['--inspect', '--inspect-brk'];
 
 function parseProgramArguments(argumentList) {
 	const rawArguments = argumentList.slice(2); // skip node and tasklemon
-	const scriptPathIndex = rawArguments.findIndex(arg => (arg[0] !== '-'));
+	let scriptPathIndex = rawArguments.findIndex(arg => (arg[0] !== '-'));
+	if (scriptPathIndex === -1) scriptPathIndex = rawArguments.length;
 	
 	const ourArguments = rawArguments.slice(0, scriptPathIndex);
 	
