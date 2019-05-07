@@ -7,6 +7,8 @@ let cli = module.exports;
 cli.args = null;
 
 cli.accept = function(argumentDefinitions) {
+	if (cli.args) throw Error(`cli.accept() was called twice`);
+	
 	const parsedArgumentDefinitions = parseArgumentDefinitions(argumentDefinitions);
 	checkArgumentDefinitionSyntax(parsedArgumentDefinitions);
 	cli.args = applyArgumentDefinitions(parsedArgumentDefinitions, Environment.rawArguments);
