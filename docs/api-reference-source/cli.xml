@@ -4,7 +4,7 @@
 		<short-description>Allows user interaction through the command-line</short-description>
 		<discussion>
 		<![CDATA[
-			The <code>cli</code> object exposes methods for reading command-line arguments, displaying messages to the user, and asking for input from the user.
+			The <code>cli</code> object exposes methods for reading command-line arguments, displaying messages to the user, and asking the user for input.
 		]]>
 		</discussion>
 		<related>
@@ -25,7 +25,7 @@
 				<![CDATA[
 					<p>
 						Reads and parses program arguments according to <df-arg>definitions</df-arg>, and populates <df-link target="#cli.args"><code>cli.args</code></df-link> with the resulting values.<br>
-						For each definition that matches a program argument, the processed value is stored in <code>args</code>, named after the definition's key in <df-arg>definitions</df-arg>.
+						For each definition that matches a program argument, the processed value is stored in <code>cli.args</code>, named after the definition's key in <df-arg>definitions</df-arg>.
 					</p>
 					<div class="df-list-with-title">
 						A definition is an <code>Array</code> with the following values:
@@ -42,12 +42,31 @@
 					</p>
 					<div class="df-list-with-title">
 						An argument identifier can be:
-						<ul>
-							<li>Named: two dashes followed by a string, such as <code>--name</code>. Matches an argument if it is exactly the identifier string.</li>
-							<li>Shorthand: one dash followed by a letter, such as <code>-n</code>. Matches an argument if it is exactly identifier string, or if it is part of a dash-prefixed group, such as <code>-vn</code>.</li>
-							<li>Positional: a dollar sign followed by a zero-indexed position P, such as <code>#0</code>. Matches an argument that doesn't match named or shorthand identifiers, if it is the Pth such one.</li>
-							<li>Rest: the string <code>#+</code>. Matches all arguments that doesn't match any other identifier, collected in an array.</li>
-						</ul>
+						<dl>
+							<dt>Named</dt>
+							<dd>
+								Two dashes followed by a string, such as <code>--name</code>.<br>
+								Matches an argument if it is exactly the identifier string.
+							</dd>
+						
+							<dt>Shorthand</dt>
+							<dd>
+								One dash followed by a letter, such as <code>-n</code>.<br>
+								Matches an argument if it is exactly identifier string, or if it is part of a dash-prefixed group, such as <code>-vn</code>.
+							</dd>
+						
+							<dt>Positional</dt>
+							<dd>
+								A hash sign followed by a zero-indexed position P, such as <code>#0</code>.<br>
+								Matches an argument that doesn't match named or shorthand identifiers, if it is the Pth such one.
+							</dd>
+						
+							<dt>Rest</dt>
+							<dd>
+								The string <code>#+</code>.<br>
+								Matches all arguments that didn't match any other identifier, collected in an array.
+							</dd>
+						</dl>
 					</div>
 					<p>
 						If there is no definition using a rest identifier, the rest values are implicitely collected in a value named <code>rest</code>.
