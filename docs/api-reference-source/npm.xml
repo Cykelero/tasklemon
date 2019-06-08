@@ -1,0 +1,95 @@
+<Class id="npm" public="true">
+	<metadata>
+		<name>npm</name>
+		<short-description>Provides direct access to npm packages</short-description>
+		<discussion>
+		<![CDATA[
+			<p>
+				The <code>npm</code> object provides access to all <a href="https://www.npmjs.com">npm</a> packages.
+			</p>	
+		]]>
+		</discussion>
+		<related>
+		<![CDATA[
+			To fetch arbitrary data from the Internet, use <df-class>net</df-class>.
+		]]>
+		</related>
+	</metadata>
+	<details>
+		<detail name="Using packages" id="using-packages">
+			<discussion>
+			<![CDATA[
+				<p>
+					To use a package, simply get it by name from <code>npm</code>'s properties.
+				</p>
+			
+				<df-sample name="Use the dedupe package">
+const friendNames = await cli.ask('What are your friends called?', Array);
+const uniqueFriendNames = npm.dedupe(friendNames);
+
+cli.tell('Total count of unique friend names: ' + uniqueFriendNames.length);
+				</df-sample>
+			
+				<p>
+					You do not need to import or install the packages you use in any way; Tasklemon will automatically install and inject any package you use.
+				</p>
+				
+				<p>
+					To access a package with special characters in its name, use bracket notation.
+				</p>
+			
+				<df-sample name="Use the uuid package">
+const uuid = npm['uuid/v4'];
+cli.tell('New unique identifier: ' + uuid());
+				</df-sample>
+			]]>
+			</discussion>
+		</detail>
+		<detail name="Requiring specific versions" id="specifying-versions">
+			<discussion>
+			<![CDATA[
+				<p>
+					If your script needs a specific version of a package, you can add a package version directive at the top of your script.<br>
+					Add the directive below the hashbang, if any, and above the script's code.
+				</p>
+			
+				<df-sample name="Specify which version of username to use">
+#require username@5.0.0
+
+cli.tell('Hello, ' + await npm.username() + '!');
+				</df-sample>
+				
+				<p>
+					To have Tasklemon automatically add <code>#require</code> statements for all the packages used by your script, setting them to their latest available version, you can use the <code>--pin-packages</code> command-line action.<br>
+					It's a good idea to do this, to ensure your script keeps the same behavior despite any possible package updates.
+				</p>
+				
+				<df-sample name="Automatically add version directives to a script">
+$ lemon --pin-packages script.js
+				</df-sample>
+			]]>
+			</discussion>
+		</detail>
+		<detail name="Managing the cache" id="managing-the-cache">
+			<discussion>
+			<![CDATA[
+				<p>
+					In order to make sure a script can execute offline, and without any download delays, you can ask Tasklemon to preload all of the script's required packages. These include packages you implicitely require, not just the packages pinned by version directives.
+				</p>
+				
+				<df-sample name="Preload the packages used by a script">
+$ lemon --preload-pkg script.js
+				</df-sample>
+				
+				<p>
+					Tasklemon's package cache is generally very resilient, and can recover from most download and installation issues. If something seems broken, however, you can try emptying the package cache.
+				</p>
+				
+				<df-sample name="Empty the package cache">
+$ lemon --clear-pkg-cache
+				</df-sample>
+			]]>
+			</discussion>
+		</detail>
+	</details>
+</Class>

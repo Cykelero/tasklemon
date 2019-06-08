@@ -60,6 +60,7 @@
 				<ul>
 					<li><df-class>net</df-class></li>
 					<li><df-class>moment</df-class></li>
+					<li><df-class>npm</df-class></li>
 				</ul>
 			]]>
 			</discussion>
