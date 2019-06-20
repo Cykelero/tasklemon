@@ -108,6 +108,17 @@ const lastReleaseDate = tasklemonNpmDetails.time.modified;
 cli.tell('Last tasklemon release was ' + format.date.relative(lastReleaseDate) + '.');
 ````
 
+### Use the `dedupe` npm package
+
+There is no need to ever install, or even import packages prior to using them.
+
+````js
+const friendNames = await cli.ask('What are your friends called?', Array);
+const uniqueFriendNames = npm.dedupe(friendNames);
+
+cli.tell('Total count of unique friend names: ' + uniqueFriendNames.length);
+````
+
 ## Caveats
 
 I really want Tasklemon to be awesome, but here are a few ways in which it's not.
