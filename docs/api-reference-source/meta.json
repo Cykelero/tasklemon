@@ -1,3 +1,6 @@
 {
-	"name": "Tasklemon reference"
+	"name": "Tasklemon API",
+	"version": "0.2.0",
+	"themeColor": "#63C917",
+	"logoPath": "nav-logo@3x.png"
 }
