@@ -1,5 +1,12 @@
 /* Generic */
 
+nav {
+	line-height: 3.3;
+	text-align: center;
+	
+	transform: scale(0.9);
+}
+
 .page {
 	margin-top: 22px;
 	margin-bottom: 27px;

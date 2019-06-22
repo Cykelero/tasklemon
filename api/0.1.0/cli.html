@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>
+			cli — Tasklemon API
+		</title>
+		<meta name="viewport" content="width = device-width, initial-scale = 1, user-scalable = no" />
+		<link href="resources/main.css" type="text/css" rel="stylesheet" />
+		<link href="resources/580-.css" type="text/css" rel="stylesheet" media="(max-width: 580px)" />
+		<link href="resources/highlightjs.css" type="text/css" rel="stylesheet" />
+		<script src="resources/main.js" type="text/javascript"></script>
+	</head>
+	<body>
+		<nav>
+			<a href="./" style="color: #63C917">
+				<img class="product-logo" src="resources/nav-logo@3x.png" alt="" />
+				<span class="product-name">Tasklemon API</span>
+				<span class="product-version">0.1.0</span>
+			</a>
+		</nav>
+
+		<div class="page">
+			<div class="class">
+				<h1>cli</h1>
+				<h2 id="overview">Overview</h2>
+				<div class="discussion class-discussion">The <code>cli</code> object exposes methods for reading command-line arguments, displaying messages to the user, and asking for input from the user.</div>
+				<h2 id="members">Methods and properties</h2>
+				<div class="class-member-groups">
+					<div class="class-member-group">
+						<h3>Reading program arguments</h3>
+						<div class="class-member class-method" id="cli.accept">
+							<h4 class="class-method-signatures" title="Defines accepted arguments">
+								<code class="class-method-signature"
+									>cli.accept(<span class="class-method-signature-argument-block"><span class="df-kind-object">Object</span> <span class="class-method-argument">definitions</span></span
+									>)</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-undefined">
+								<div class="discussion class-method-discussion">
+									<p>
+										Reads and parses program arguments according to <span class="class-method-argument">definitions</span>, and populates <a href="#cli.args" title="Holds program arguments"><code>cli.args</code></a> with the resulting values.<br />
+										For each definition that matches a program argument, the processed value is stored in <code>args</code>, named after the definition's key in <span class="class-method-argument">definitions</span>.
+									</p>
+									<div class="df-list-with-title">
+										A definition is an <code>Array</code> with the following values:
+										<ul>
+											<li>Identifier list: A space-separated string of possible names or indices that identify the argument. At least one identifier is required. See below for identifier syntax.</li>
+											<li>Type (optional): A <a href="TypeDefinition.html" title="Allows validating and casting a string">type definition</a> to apply to the argument value. Defaults to <code>String</code>.</li>
+											<li>Description (optional): A description of the argument, to be displayed to the user when requested.</li>
+										</ul>
+									</div>
+									<p>
+										The argument value is sourced differently depending on the definition's type.<br />
+										If the type is <code>Boolean</code>, the value is set to true if the argument is present, or false.<br />
+										If the type is other than <code>Boolean</code>, the next program argument is consumed as a value.
+									</p>
+									<div class="df-list-with-title">
+										An argument identifier can be:
+										<ul>
+											<li>Named: two dashes followed by a string, such as <code>--name</code>. Matches an argument if it is exactly the identifier string.</li>
+											<li>Shorthand: one dash followed by a letter, such as <code>-n</code>. Matches an argument if it is exactly identifier string, or if it is part of a dash-prefixed group, such as <code>-vn</code>.</li>
+											<li>Positional: a dollar sign followed by a zero-indexed position P, such as <code>#0</code>. Matches an argument that doesn't match named or shorthand identifiers, if it is the Pth such one.</li>
+											<li>Rest: the string <code>#+</code>. Matches all arguments that doesn't match any other identifier, collected in an array.</li>
+										</ul>
+									</div>
+									<p>If there is no definition using a rest identifier, the rest values are implicitely collected in a value named <code>rest</code>.</p>
+								</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-object">
+												<span class="class-method-argument">definitions</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													A map of argument definitions, by value name.
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Named argument and shorthand argument</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-comment">// $ lemon adduser.js -a --name Rose</span>
+
+cli.accept({
+	<span class="hljs-attr">username</span>: [<span class="hljs-string">'--name'</span>, <span class="hljs-built_in">String</span>, <span class="hljs-string">'Name of user to add'</span>],
+	<span class="hljs-attr">isAdmin</span>: [<span class="hljs-string">'-a'</span>, <span class="hljs-built_in">Boolean</span>, <span class="hljs-string">'Make user an admin'</span>]
+});
+
+<span class="hljs-keyword">return</span> cli.args; <span class="hljs-comment">// {username: 'Rose', isAdmin: true}</span></code></pre>
+								<h5><span class="caption">sample</span> Positional arguments</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-comment">// $ lemon transpile.js -x app.ts build.js</span>
+
+cli.accept({
+	<span class="hljs-attr">sourcePath</span>: [<span class="hljs-string">'#0'</span>, File, <span class="hljs-string">'Source file'</span>],
+	<span class="hljs-attr">destinationPath</span>: [<span class="hljs-string">'#1'</span>, File, <span class="hljs-string">'Where to write the transpiled file'</span>],
+	<span class="hljs-attr">overrideExisting</span>: [<span class="hljs-string">'-x'</span>, <span class="hljs-built_in">Boolean</span>, <span class="hljs-string">'Silently override the destination'</span>]
+});
+
+<span class="hljs-keyword">return</span> cli.args; <span class="hljs-comment">// {sourcePath: File('app.ts'), destinationPath: File('build.js'), overrideExisting: true}</span></code></pre>
+								<h5><span class="caption">sample</span> Rest argument and multiple identifiers</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-comment">// $ lemon check.js -v --strict catfacts.txt dogfacts.txt</span>
+
+cli.accept({
+	<span class="hljs-attr">paths</span>: [<span class="hljs-string">'#+'</span>, File, <span class="hljs-string">'Files to check for errors'</span>],
+	<span class="hljs-attr">verbose</span>: [<span class="hljs-string">'-v --verbose'</span>, <span class="hljs-built_in">Boolean</span>, <span class="hljs-string">'Shows all errors'</span>],
+	<span class="hljs-attr">strictMode</span>: [<span class="hljs-string">'-s --strict'</span>, <span class="hljs-built_in">Boolean</span>, <span class="hljs-string">'Enable strict checks'</span>]
+});
+
+<span class="hljs-keyword">return</span> cli.args; <span class="hljs-comment">// {paths: [File('catfacts.txt'), File('dogfacts.txt')], verbose: true, strictMode: true}</span></code></pre>
+							</div>
+						</div>
+						<div class="class-member class-property" id="cli.args">
+							<h4 title="Holds program arguments">
+								<code class="class-property-name">cli.args</code>
+								<code class="class-property-type"><span class="df-kind-object">Object</span></code>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-property-discussion">
+									Holds the processed program arguments. See <a href="#cli.accept" title="Defines accepted arguments"><code>cli.accept()</code></a
+									>.
+								</div>
+								<span class="is-read-only">Read-only.</span>
+							</div>
+						</div>
+					</div>
+					<div class="class-member-group">
+						<h3>Displaying messages</h3>
+						<div class="class-member class-method" id="cli.tell">
+							<h4 class="class-method-signatures" title="Displays text to the user">
+								<code class="class-method-signature"
+									>cli.tell(<span class="class-method-signature-argument-block"><span class="df-kind-string">String</span> <span class="class-method-argument">text</span></span
+									>)</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-undefined">
+								<div class="discussion class-method-discussion">Displays <span class="class-method-argument">text</span> to the user by outputting it to <code>stdout</code>.</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-string">
+												<span class="class-method-argument">text</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The text to display.
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Say hi</h5>
+								<pre class="sample class-method-sample hljs"><code>cli.tell(<span class="hljs-string">'Hello there!'</span>); <span class="hljs-comment">// displays “Hello there!”</span></code></pre>
+							</div>
+						</div>
+						<div class="class-member class-method" id="cli.tellWhile">
+							<h4 class="class-method-signatures" title="Displays text until a Promise resolves">
+								<code class="class-method-returntype"><span class="df-kind-object">Promise</span><<span class="df-kind-object">Any</span>></code>
+								<code class="class-method-signature"
+									>cli.tellWhile(<span class="class-method-signature-argument-block"><span class="df-kind-string">String</span> <span class="class-method-argument">text</span>,</span> <span class="class-method-signature-argument-block"><span class="df-kind-object">Promise</span> <span class="class-method-argument">asyncOperation</span></span
+									>)</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-method-discussion">
+									Displays <span class="class-method-argument">text</span> to the user by outputting it to <code>stdout</code>, then erases it once <span class="class-method-argument">asyncOperation</span> resolves.<br />
+									Returns the resolved value of <span class="class-method-argument">asyncOperation</span> as a <code>Promise</code>.
+								</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-string">
+												<span class="class-method-argument">text</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The text to display while awaiting.
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td class="df-kind-object">
+												<span class="class-method-argument">asyncOperation</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The Promise to wait for.
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Wait for a network request to complete</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> versionData = <span class="hljs-keyword">await</span> cli.tellWhile(
+	<span class="hljs-string">'Loading version data.'</span>,
+	net.getJSON(<span class="hljs-string">'http://example.org/versions.json'</span>)
+);
+
+cli.tell(<span class="hljs-string">`Latest version is <span class="hljs-subst">${versionData.latest}</span>.`</span>);</code></pre>
+							</div>
+						</div>
+					</div>
+					<div class="class-member-group">
+						<h3>Asking for input</h3>
+						<div class="class-member class-method" id="cli.ask">
+							<h4 class="class-method-signatures" title="Asks the user for a value">
+								<code class="class-method-returntype"><span class="df-kind-object">Promise</span><<span class="df-kind-object">Any</span>></code>
+								<code class="class-method-signature"
+									>cli.ask(<span class="class-method-signature-argument-block"><span class="df-kind-string">String</span> <span class="class-method-argument">promptText</span>,</span> [<span class="class-method-signature-argument-block"><span class="df-kind-object">TypeDefinition</span> <span class="class-method-argument">type</span> = String,</span> [<span class="class-method-signature-argument-block"><span class="df-kind-boolean">Boolean</span> <span class="class-method-argument">optional</span> = false</span>]])</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-method-discussion">
+									Displays <span class="class-method-argument">prompt</span> to the user then waits for input.<br />
+									Once a value is entered, it is cast and validated with <span class="class-method-argument">type</span>. If the value is valid, the method returns it as a <code>Promise</code>. If it is invalid, the user is asked again.
+								</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-string">
+												<span class="class-method-argument">promptText</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The prompt to display.
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td class="df-kind-object">
+												<span class="class-method-argument">type</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">The <a href="TypeDefinition.html" title="Allows validating and casting a string">type definition</a> to apply to the entered value.</div>
+												<span class="default-value">Defaults to <code>String</code>.</span>
+											</td>
+										</tr>
+										<tr>
+											<td class="df-kind-boolean">
+												<span class="class-method-argument">optional</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													If true, allows the user to enter an empty string, which will result in the value being null.
+												</div>
+												<span class="default-value">Defaults to <code>false</code>.</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Ask for a number</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> balloonCount = <span class="hljs-keyword">await</span> cli.ask(<span class="hljs-string">'How many balloons do you want?'</span>, <span class="hljs-built_in">Number</span>);
+cli.tell(<span class="hljs-string">`Number of balloons requested: <span class="hljs-subst">${balloonCount}</span>`</span>);</code></pre>
+							</div>
+						</div>
+						<div class="class-member class-method" id="cli.askMany">
+							<h4 class="class-method-signatures" title="Asks the user for multiple values">
+								<code class="class-method-returntype"><span class="df-kind-object">Promise</span><<span class="df-kind-object">Object</span>></code>
+								<code class="class-method-signature"
+									>cli.askMany(<span class="class-method-signature-argument-block"><span class="df-kind-object">Object</span> <span class="class-method-argument">definitions</span></span
+									>)</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-method-discussion">
+									Calls <a href="#cli.ask" title="Asks the user for a value"><code>cli.ask()</code></a> for each item in <span class="class-method-argument">definitions</span>, using the item's values for arguments.<br />
+									Returns a map of all the entered values as a <code>Promise</code>.
+								</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-object">
+												<span class="class-method-argument">definitions</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													A map of argument arrays for ask(), by value name.
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Ask for two values</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> responses = <span class="hljs-keyword">await</span> cli.askMany({
+	<span class="hljs-attr">flavor</span>: [<span class="hljs-string">'What flavor should the cake be?'</span>, <span class="hljs-built_in">String</span>],
+	<span class="hljs-attr">deliveryDate</span>: [<span class="hljs-string">'When should it be delivered?'</span>, moment]
+});
+
+<span class="hljs-keyword">const</span> formattedDeliveryDate = format.date(responses.deliveryDate, <span class="hljs-literal">true</span>);
+cli.tell(<span class="hljs-string">`Your <span class="hljs-subst">${responses.flavor}</span> cake will be delivered <span class="hljs-subst">${formattedDeliveryDate}</span>.`</span>);</code></pre>
+							</div>
+						</div>
+					</div>
+				</div>
+				<h2 id="related">Related classes</h2>
+				<div class="discussion class-related">
+					To format values nicely for display, use <a href="format.html" title="Formats value nicely for user display"><code>format</code></a> methods.<br />
+					User input is validated and cast using <a href="TypeDefinition.html" title="Allows validating and casting a string"><code>TypeDefinition</code></a> objects.
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
