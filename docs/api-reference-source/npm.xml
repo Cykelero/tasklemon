@@ -50,7 +50,7 @@ cli.tell('New unique identifier: ' + uuid());
 			<![CDATA[
 				<p>
 					If your script needs a specific version of a package, you can add a package version directive at the top of your script.<br>
-					Add the directive below the hashbang, if any, and above the script's code.
+					Add the directive below the shebang, if any, and above the script's code.
 				</p>
 			
 				<df-sample name="Specify which version of username to use">

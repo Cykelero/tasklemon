@@ -12,7 +12,7 @@ const validLemonArguments = ['--clear-pkg-cache', '--pin-pkg', '--preload-pkg'];
 const validNodeArguments = ['--inspect', '--inspect-brk'];
 
 function parseProgramArguments(argumentList) {
-	const rawArguments = argumentList.slice(2); // skip node and tasklemon
+	const rawArguments = argumentList.slice(2); // skip “node” and “tasklemon”
 	let scriptPathIndex = rawArguments.findIndex(arg => (arg[0] !== '-'));
 	if (scriptPathIndex === -1) scriptPathIndex = rawArguments.length;
 	

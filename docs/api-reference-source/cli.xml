@@ -32,7 +32,7 @@
 						<ul>
 							<li>Identifier list: A space-separated string of possible names or indices that identify the argument. At least one identifier is required. See below for identifier syntax.</li>
 							<li>Type (optional): A <df-link target="TypeDefinition">type definition</df-link> to apply to the argument value. Defaults to <code>String</code>.</li>
-							<li>Description (optional): A description of the argument, to be displayed to the user when requested.</li>
+							<li>Description (optional): A description of the argument. Currently unused, but will eventually be displayed to the user when requested.</li>
 						</ul>
 					</div>
 					<p>
@@ -58,7 +58,7 @@
 							<dt>Positional</dt>
 							<dd>
 								A hash sign followed by a zero-indexed position P, such as <code>#0</code>.<br>
-								Matches an argument that doesn't match named or shorthand identifiers, if it is the Pth such one.
+								Matches an argument that doesn't already match named or shorthand identifiers, if it is the Pth such one.
 							</dd>
 						
 							<dt>Rest</dt>
@@ -155,7 +155,7 @@ cli.tell('Hello there!'); // displays “Hello there!”
 				<sample name="Wait for a network request to complete">
 				<![CDATA[
 const versionData = await cli.tellWhile(
-	'Loading version data.',
+	'Loading version data...',
 	net.getJSON('http://example.org/versions.json')
 );
 

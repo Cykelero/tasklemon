@@ -31,7 +31,7 @@ And with Tasklemon installed, you can just save this code into a file (say, `cle
 lemon clean.js some-folder
 ````
 
-(you can also add a hashbang to your scripts to make them directly executable, if you want; see below in Usage)
+(you can also add a shebang to your scripts to make them directly executable, if you want; see below in Usage)
 
 ## Usage
 
@@ -43,7 +43,7 @@ Install Tasklemon globally by running `npm install -g tasklemon`. This will make
 
 To use Tasklemon, just write a script and save it into a file, then execute it by running `lemon your-script.js`. At runtime, Tasklemon exposes its entry points to your script, so you don't have to import anything. It also wraps all your code in an `async` function call, so that you can `await` promises wherever.
 
-Optionally, you can add the `#!/usr/bin/env lemon` hashbang to the very top of your script, and make it executable using `chmod u+x your-script.js`. You'll then be able to directly invoke the script on the command&nbsp;line, without calling `lemon`.
+Optionally, you can add the `#!/usr/bin/env lemon` shebang to the very top of your script, and make it executable using `chmod u+x your-script.js`. You'll then be able to directly invoke the script on the command&nbsp;line, without calling `lemon`.
 
 ## Learning
 
@@ -105,7 +105,7 @@ cli.tell(format.number(4528.5, 'carrot')); // “4,528.50 carrots”
 const tasklemonNpmDetails = await net.getJSON('https://registry.npmjs.org/tasklemon');
 const lastReleaseDate = tasklemonNpmDetails.time.modified;
 
-cli.tell('Last tasklemon release was ' + format.date.relative(lastReleaseDate) + '.');
+cli.tell('Last Tasklemon release was ' + format.date.relative(lastReleaseDate) + '.');
 ````
 
 ### Use the `dedupe` npm package
@@ -134,7 +134,7 @@ Clone Tasklemon and run `npm install`.
 
 You can then:
 
-- **try out your version of tasklemon** by running `source/tasklemon.js some-script.js`
+- **try out your version of Tasklemon** by running `source/tasklemon.js some-script.js`
 - **run the tests** using `npm run test` (or `npm run watch:test` for automatic runs)
 - **build the api docs** using `npm run build-docs` (or `npm run watch:build-docs` for automatic builds)
 

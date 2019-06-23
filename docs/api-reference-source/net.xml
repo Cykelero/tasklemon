@@ -19,7 +19,7 @@
 		<group name="Performing requests">
 			<method name="net.getText">
 				<signature>String url, [Object options]</signature>
-				<argument name="url" type="String">The url to query.</argument>
+				<argument name="url" type="String">The URL to query.</argument>
 				<argument name="options" type="Object">Custom options passed to <code>fetch()</code>.</argument>
 				<returns>Promise&lt;String&gt;</returns>
 				<short-description>Gets text from a URL</short-description>
@@ -38,7 +38,7 @@ cli.tell(trulyRandomNumber);
 			</method>
 			<method name="net.getJSON">
 				<signature>String url, [Object options]</signature>
-				<argument name="url" type="String">The url to query.</argument>
+				<argument name="url" type="String">The URL to query.</argument>
 				<argument name="options" type="Object">Custom options passed to <code>fetch()</code>.</argument>
 				<returns>Promise&lt;Any&gt;</returns>
 				<short-description>Gets JSON from a URL</short-description>
@@ -53,13 +53,13 @@ cli.tell(trulyRandomNumber);
 const tasklemonNpmDetails = await net.getJSON('https://registry.npmjs.org/tasklemon');
 const lastReleaseDate = tasklemonNpmDetails.time.modified;
 
-cli.tell('Last tasklemon release was ' + format.date.relative(lastReleaseDate) + '.');
+cli.tell('Last Tasklemon release was ' + format.date.relative(lastReleaseDate) + '.');
 				]]>
 				</sample>
 			</method>
 			<method name="net.getDOM">
 				<signature>String url, [Object options]</signature>
-				<argument name="url" type="String">The url to query.</argument>
+				<argument name="url" type="String">The URL to query.</argument>
 				<argument name="options" type="Object">Custom options passed to <code>fetch()</code>.</argument>
 				<returns>Promise&lt;JSDOM&gt;</returns>
 				<short-description>Gets a DOM tree from a URL</short-description>
@@ -80,7 +80,7 @@ cli.tell('Is it the weekend yet? ' + weekendEstimation);
 			</method>
 			<method name="net.fetch">
 				<signature>String|Request input, [Object init]</signature>
-				<argument name="input" type="String|Request">The url to query or request to perform.</argument>
+				<argument name="input" type="String|Request">The URL to query or request to perform.</argument>
 				<argument name="init" type="Object">Fetch options.</argument>
 				<returns>Promise&lt;Response&gt;</returns>
 				<short-description>Performs a fetch</short-description>
