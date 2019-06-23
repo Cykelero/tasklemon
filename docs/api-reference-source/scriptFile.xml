@@ -1,0 +1,16 @@
+<Class id="scriptFile" public="true">
+	<metadata>
+		<name>scriptFile</name>
+		<short-description>File object for the script being executed</short-description>
+		<discussion>
+		<![CDATA[
+		The <code>scriptFile</code> global is a <df-class>File</df-class> object representing the file of the script being executed.
+		]]>
+		</discussion>
+		<related>
+		<![CDATA[
+			See <df-link target="index"><code>the index</code></df-link> for a list of other globals representing useful filesystem locations.
+		]]>
+		</related>
+	</metadata>
+</Class>

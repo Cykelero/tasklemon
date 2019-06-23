@@ -147,7 +147,7 @@ if (actionsToPerform.runScript) {
 		// In place
 		ScriptRunner.run(
 			scriptFile.source,
-			scriptFile.name, 
+			scriptFile.path, 
 			programArgs.scriptArguments
 		);
 	}

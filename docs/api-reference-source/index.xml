@@ -30,11 +30,13 @@
 						</ul>
 					</li>
 					<li>
-						Well-known folders
+						Well-known files and folders
 						<ul>
-						<li><df-class>here</df-class></li>
+							<li><df-class>here</df-class></li>
 							<li><df-class>home</df-class></li>
 							<li><df-class>root</df-class></li>
+							<li><df-class>scriptFile</df-class></li>
+							<li><df-class>scriptFolder</df-class></li>
 						</ul>
 					</li>
 				</ul>

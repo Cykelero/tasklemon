@@ -7,5 +7,10 @@
 		The <code>home</code> global is a <df-link target="Folder"><code>Folder</code></df-link> object representing the home folder of the current user. This is <code>/Users/&lt;username&gt;/</code> on macOS, usually <code>/home/&lt;username&gt;/</code> on Linux, and usually <code>C:/Users/&lt;username&gt;/</code> on Windows.
 		]]>
 		</discussion>
+		<related>
+		<![CDATA[
+			See <df-link target="index"><code>the index</code></df-link> for a list of other globals representing useful filesystem locations.
+		]]>
+		</related>
 	</metadata>
 </Class>

@@ -14,7 +14,7 @@ const TASKLEMON_PATH = path.join(__dirname, 'tasklemon.js');
 
 module.exports = {
 	// Exposed
-	run(scriptSource, scriptName, args) {
+	run(scriptSource, scriptPath, args) {
 		const parser = new ScriptParser(scriptSource);
 		
 		const requiredPackages = parser.requiredPackages;
@@ -24,13 +24,14 @@ module.exports = {
 		let preparedScriptPath;
 
 		// Set environment variables
+		Environment.sourceScriptPath = scriptPath;
 		Environment.rawArguments = args;
 		Environment.defaultBundlePackageList = requiredPackages;
 		Environment.requiredPackageVersions = requiredPackageVersions;
 	
 		// Write script to stage
 		stagePath = fs.mkdtempSync(os.tmpdir() + path.sep);
-		preparedScriptPath = path.join(stagePath, scriptName);
+		preparedScriptPath = path.join(stagePath, path.basename(scriptPath));
 		fs.writeFileSync(preparedScriptPath, parser.preparedSource);
 	
 		// Preload packages asynchronously

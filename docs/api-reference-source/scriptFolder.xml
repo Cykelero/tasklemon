@@ -1,0 +1,16 @@
+<Class id="scriptFolder" public="true">
+	<metadata>
+		<name>scriptFolder</name>
+		<short-description>Folder object for the parent of the script being executed</short-description>
+		<discussion>
+		<![CDATA[
+		The <code>scriptFolder</code> global is a <df-class>Folder</df-class> object representing the parent folder of the script being executed.
+		]]>
+		</discussion>
+		<related>
+		<![CDATA[
+			See <df-link target="index"><code>the index</code></df-link> for a list of other globals representing useful filesystem locations.
+		]]>
+		</related>
+	</metadata>
+</Class>

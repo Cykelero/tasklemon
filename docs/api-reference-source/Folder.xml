@@ -24,7 +24,7 @@
 		<related>
 		<![CDATA[
 			<code>Folder</code> objects are a type of <df-class>Item</df-class>.<br>
-			<df-class>root</df-class>, <df-class>home</df-class> and <df-class>here</df-class> are <code>Folder</code> globals representing useful filesystem locations.
+			See <df-link target="index"><code>the index</code></df-link> for a list of globals representing useful filesystem locations.
 		]]>
 		</related>
 		<placeholder-values>
