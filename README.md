@@ -1,4 +1,4 @@
-# Tasklemon 🍋
+# <img alt="Tasklemon" src="docs/readme-logo.png" width=250 height=42>
 
 *Painlessly automate in JavaScript.*
 
@@ -51,7 +51,7 @@ To get started, I recommend you look at [the examples](#samples) below. They'll 
 
 After that, you can use the [API reference](http://cykelero.github.io/tasklemon/api/) to find what you need. The reference is approachable, straightforward, and replete with clear examples. Here's a sample of what it looks like:
 
-<a href="http://cykelero.github.io/tasklemon/api/File.html"><img src="docs/api-reference-sample-screenshot.png" alt width=838></a>
+<a href="http://cykelero.github.io/tasklemon/api/File.html"><img src="docs/readme-api-reference-screenshot.png" alt width=838></a>
 
 ## Samples
 
