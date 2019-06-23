@@ -83,7 +83,7 @@ function parseArgumentDefinitions(argumentDefinitions) {
 				[syntax, type, description] = definition;
 			}
 			
-			if (!type) type = Boolean;
+			if (!type) type = String;
 			if (!description) description = 'Also called “${name}”';
 			
 			const alternatives = syntax
