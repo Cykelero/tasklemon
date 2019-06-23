@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const path = require('path');
 
 const PackageCache = require('./PackageCache');
 const ScriptFile = require('./ScriptFile');
@@ -12,19 +13,33 @@ const validLemonArguments = ['--clear-pkg-cache', '--pin-pkg', '--preload-pkg'];
 const validNodeArguments = ['--inspect', '--inspect-brk'];
 
 function parseProgramArguments(argumentList) {
+	// Separate script argument from ours
 	const rawArguments = argumentList.slice(2); // skip “node” and “tasklemon”
 	let scriptPathIndex = rawArguments.findIndex(arg => (arg[0] !== '-'));
 	if (scriptPathIndex === -1) scriptPathIndex = rawArguments.length;
 	
 	const ourArguments = rawArguments.slice(0, scriptPathIndex);
 	
+	// Check for unrecognized arguments
 	exitIfContainsInvalidArguments(ourArguments);
 	
+	// Separate arguments
 	const lemonArguments = ourArguments.filter(arg => validLemonArguments.includes(arg));
 	const nodeArguments = ourArguments.filter(arg => validNodeArguments.includes(arg));
 	
+	// Get absolute script path
+	let absoluteScriptPath;
+	
+	const relativeScriptPath = rawArguments[scriptPathIndex];
+	const scriptName = path.basename(relativeScriptPath);
+	
+	Tools.tryOrExitWithError(() => {
+		absoluteScriptPath = fs.realpathSync(relativeScriptPath);
+	}, `Couldn't execute “${scriptName}” because of error: “$0”`);
+	
+	// Return
 	return {
-		scriptPath: rawArguments[scriptPathIndex],
+		scriptPath: absoluteScriptPath,
 		lemonArguments,
 		nodeArguments,
 		scriptArguments: rawArguments.slice(scriptPathIndex + 1)

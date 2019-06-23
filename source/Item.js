@@ -39,7 +39,7 @@ class Item {
 		
 		// Feasibility checks
 		if (value.indexOf('/') > -1) {
-			throw Error(`Can't rename “${this.name}”: “${value}” is not a valid name`);
+			throw Error(`Can't rename “${this.name}”: “${value}” is not a valid name (contains a slash)`);
 		}
 
 		if (fs.existsSync(targetPath)) {
@@ -248,7 +248,7 @@ class Item {
 		
 		// Feasibility checks
 		if (newName.indexOf('/') > -1) {
-			throw Error(`Can't rename “${this.name}”: “${value}” is not a valid name`);
+			throw Error(`Can't duplicate “${this.name}”: “${value}” is not a valid name (contains a slash)`);
 		}
 
 		if (fs.existsSync(targetPath)) {

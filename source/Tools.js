@@ -11,21 +11,24 @@ module.exports = {
 		return errorParts ? errorParts[1] : error.message;
 	},
 	
-	readFileOrExitWithErrorSync(filePath, options, message) {
+	tryOrExitWithError(callback, message) {
 		try {
-			return fs.readFileSync(filePath, options);
+			return callback();
 		} catch (error) {
 			const messageWithError = message.replace('$0', this.parseNodeError(error));
 			this.exitWithError(messageWithError);
 		}
 	},
 	
+	readFileOrExitWithErrorSync(filePath, options, message) {
+		return this.tryOrExitWithError(() => {
+			return fs.readFileSync(filePath, options);
+		}, message);
+	},
+	
 	writeFileOrExitWithErrorSync(filePath, fileContent, options, message) {
-		try {
+		return this.tryOrExitWithError(() => {
 			return fs.writeFileSync(filePath, fileContent, options);
-		} catch (error) {
-			const messageWithError = message.replace('$0', this.parseNodeError(error));
-			this.exitWithError(messageWithError);
-		}
+		}, message);
 	}
 };
