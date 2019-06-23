@@ -93,6 +93,7 @@ module.exports = {
 		let bundleIndex;
 		
 		try {
+			if (!fs.existsSync(bundleIndexPath)) throw false;
 			bundleIndex = require(bundleIndexPath);
 		} catch(e) {
 			if (!this._synchronouslyPreparedPackages.has(packageName)) {
@@ -104,6 +105,7 @@ module.exports = {
 		
 		if (!bundleIndex) {
 			try {
+				delete(require.cache[bundleIndexPath]);
 				bundleIndex = require(bundleIndexPath);
 			} catch(e) {
 				throw Error(`Package “${packageName}” could not be retrieved: the package cache bundle preparation process is failing. Make sure the names of your packages are correct.`);
