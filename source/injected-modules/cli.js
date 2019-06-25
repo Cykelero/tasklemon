@@ -84,7 +84,7 @@ function parseArgumentDefinitions(argumentDefinitions) {
 			}
 			
 			if (!type) type = String;
-			if (!description) description = 'Also called “${name}”';
+			if (!description) description = `Also called “${name}”`;
 			
 			const alternatives = syntax
 				.split(' ')
