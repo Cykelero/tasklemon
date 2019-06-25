@@ -5,13 +5,27 @@
 		<discussion>
 		<![CDATA[
 			<code>File</code> objects represent a file on the file system, whether it exists or not, based on its path.<br>
-			Create <code>File</code> objects by calling <df-link target="Folder#file"><code>file()</code></df-link> on a <df-class>Folder</df-class>, or by asking the user through a <df-class>cli</df-class> method, using the <code>File</code> <df-link target="TypeDefinition">type definition</df-link>.
+			<div class="df-list-with-title">
+				To get or create <code>File</code> objects, you can:
+				<ul>
+					<li>
+						call <df-link target="Folder#file"><code>file()</code></df-link> on a <df-class>Folder</df-class>
+					</li>
+					<li>
+						ask the user through a <df-class>cli</df-class> method, using the <code>File</code> <df-link target="TypeDefinition">type definition</df-link>
+					</li>
+					<li>
+						use the <code><df-class>scriptFile</df-class></code> global
+					</li>
+				</ul>
+			</div>
+			
 		]]>
 		</discussion>
 		<related>
 		<![CDATA[
 			<code>File</code> objects are a type of <df-class>Item</df-class>.<br>
-			See <df-link target="index"><code>the index</code></df-link> for a list of other globals representing useful filesystem locations.
+			See <df-link target="index"><code>the index</code></df-link> for a list of other globals representing useful file system locations.
 		]]>
 		</related>
 		<placeholder-values>

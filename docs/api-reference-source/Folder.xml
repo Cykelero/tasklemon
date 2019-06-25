@@ -9,7 +9,7 @@
 				To get or create <code>Folder</code> objects, you can:
 				<ul>
 					<li>
-						use one of the <code><df-class>root</df-class>/<df-class>home</df-class>/<df-class>here</df-class></code> globals
+						use one of the <code><df-class>root</df-class>/<df-class>home</df-class>/<df-class>here</df-class></code> or <code><df-class>scriptFolder</df-class></code> globals
 					</li>
 					<li>
 						call <df-link target="#folder"><code>folder()</code></df-link> on another <code>Folder</code>
@@ -24,7 +24,7 @@
 		<related>
 		<![CDATA[
 			<code>Folder</code> objects are a type of <df-class>Item</df-class>.<br>
-			See <df-link target="index"><code>the index</code></df-link> for a list of globals representing useful filesystem locations.
+			See <df-link target="index"><code>the index</code></df-link> for a list of globals representing useful file system locations.
 		]]>
 		</related>
 		<placeholder-values>

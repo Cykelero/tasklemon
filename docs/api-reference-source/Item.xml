@@ -9,7 +9,7 @@
 				To get or create <code>Item</code> objects, you can:
 				<ul>
 					<li>
-						use one of the <code><df-class>root</df-class>/<df-class>home</df-class>/<df-class>here</df-class></code> globals
+						use one of the <code><df-class>root</df-class>/<df-class>home</df-class>/<df-class>here</df-class></code> or <code><df-class>scriptFile</df-class>/<df-class>scriptFolder</df-class></code> globals
 					</li>
 					<li>
 						call <df-link target="Folder#file"><code>file()</code></df-link> or <df-link target="Folder#folder"><code>folder()</code></df-link> on a <df-class>Folder</df-class>
