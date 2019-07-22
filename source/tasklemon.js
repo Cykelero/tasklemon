@@ -12,6 +12,12 @@ const Tools = require('./Tools');
 const validLemonArguments = ['--clear-pkg-cache', '--pin-pkg', '--preload-pkg'];
 const validNodeArguments = ['--inspect', '--inspect-brk'];
 
+function createPackageCacheFolder() {
+	try {
+		fs.mkdirSync(PackageCache.PACKAGE_CACHE_PATH);
+	} catch (e) {}
+}
+
 function parseProgramArguments(argumentList) {
 	// Separate script argument from ours
 	const rawArguments = argumentList.slice(2); // skip “node” and “tasklemon”
@@ -82,6 +88,9 @@ function exitIfContainsInvalidArguments(args) {
 		Tools.exitWithError(message);
 	}
 }
+
+// Init
+createPackageCacheFolder();
 
 // Run
 const programArgs = parseProgramArguments(process.argv);

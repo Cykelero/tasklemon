@@ -29,7 +29,7 @@ module.exports = {
 	},
 	
 	clearAll() {
-		rimraf.sync(this.PACKAGE_CACHE_PATH + '*');
+		rimraf.sync(this.PACKAGE_CACHE_PATH);
 	},
 	
 	get(packageName, rawRequestedBundlePackageList, packageVersions) {
