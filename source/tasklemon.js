@@ -42,11 +42,13 @@ function parseProgramArguments(argumentList) {
 	let absoluteScriptPath;
 	
 	const relativeScriptPath = rawArguments[scriptPathIndex];
-	const scriptName = path.basename(relativeScriptPath);
+	if (relativeScriptPath) {
+		const scriptName = path.basename(relativeScriptPath);
 	
-	Tools.tryOrExitWithError(() => {
-		absoluteScriptPath = fs.realpathSync(relativeScriptPath);
-	}, `Couldn't execute “${scriptName}” because of error: “$0”`);
+		Tools.tryOrExitWithError(() => {
+			absoluteScriptPath = fs.realpathSync(relativeScriptPath);
+		}, `Couldn't execute “${scriptName}” because of error: “$0”`);
+	}
 	
 	// Return
 	return {
