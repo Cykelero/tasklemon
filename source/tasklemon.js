@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const Constants = require('./Constants');
 const PackageCache = require('./PackageCache');
 const ScriptFile = require('./ScriptFile');
 const ScriptRunner = require('./ScriptRunner');
@@ -13,6 +14,10 @@ const validLemonArguments = ['--clear-pkg-cache', '--pin-pkg', '--preload-pkg'];
 const validNodeArguments = ['--inspect', '--inspect-brk'];
 
 function createPackageCacheFolder() {
+	try {
+		fs.mkdirSync(Constants.CACHE_PATH);
+	} catch (e) {}
+
 	try {
 		fs.mkdirSync(PackageCache.PACKAGE_CACHE_PATH);
 	} catch (e) {}

@@ -5,8 +5,10 @@ const crypto = require('crypto');
 const crossSpawn = require('cross-spawn');
 const rimraf = require('rimraf');
 
+const Constants = require('./Constants');
+
 module.exports = {
-	PACKAGE_CACHE_PATH: path.join(__dirname, '..', 'package-cache') + path.sep,
+	PACKAGE_CACHE_PATH: path.join(Constants.CACHE_PATH, 'npm-packages', path.sep),
 	INDEX_FILE_NAME: 'index.js',
 	
 	_synchronouslyPreparedPackages: new Set(),
@@ -29,7 +31,7 @@ module.exports = {
 	},
 	
 	clearAll() {
-		rimraf.sync(this.PACKAGE_CACHE_PATH);
+		rimraf.sync(this.PACKAGE_CACHE_PATH + '*');
 	},
 	
 	get(packageName, rawRequestedBundlePackageList, packageVersions) {
