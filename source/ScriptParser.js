@@ -2,6 +2,9 @@ const path = require('path');
 const Tools = require('./Tools');
 
 const PackageCache = require('./PackageCache');
+const HeaderLine = require('./HeaderLine/HeaderLine');
+const RequireHeaderLine = require('./HeaderLine/RequireHeaderLine');
+const EmptyHeaderLine = require('./HeaderLine/EmptyHeaderLine');
 
 const MODULE_INJECTOR_PATH = path.join(__dirname, 'injected-modules', 'Injector');
 
@@ -31,20 +34,17 @@ module.exports = class ScriptParser {
 	get requiredPackageVersions() {
 		let result = {};
 		
-		const headerLineRegex = /(?<=\n)#require ([^@ \n]+)@([^ \n]+)/g;
-		
-		let match;
-		while (match = headerLineRegex.exec(this._headers)) {
-			const [, packageName, packageVersion] = match;
-			
-			result[packageName] = packageVersion;
-		}
+		this._getHeaderLines()
+			.filter(line => line instanceof RequireHeaderLine)
+			.forEach(requireLine => {
+				result[requireLine.packageName] = requireLine.packageVersion;
+			});
 		
 		return result;
 	}
 	
 	get preparedSource() {
-		const headerNewlineCount = (this._headers.match(/\n/g) || []).length;
+		const headerNewlineCount = this._getHeaderLines().length;
 		const replacementNewlines = '\n'.repeat(headerNewlineCount);
 		
 		return `require(${JSON.stringify(MODULE_INJECTOR_PATH)})(global);`
@@ -84,35 +84,104 @@ module.exports = class ScriptParser {
 			.filter(info => requiredPackages.includes(info.name));
 		
 		// Write new lines to source
-		let newHeaderLines = versionsForPackages.map(info => `#require ${info.name}@${info.version}\n`);
-		
-		const headerLineRegex = /(?<=\n)#require ([^@ \n]+)@([^ \n]+)/g;
-		let linesInsertionPoint = null;
-		
-		while (headerLineRegex.exec(this._headers)) {
-			linesInsertionPoint = headerLineRegex.lastIndex + 1;
+		if (versionsForPackages.length > 0) {
+			const newHeaderLines = versionsForPackages.map(info =>
+				new RequireHeaderLine({
+					packageName: info.name,
+					packageVersion: info.version,
+				})
+			);
+			
+			this._insertHeaderLinesAfterLandmark(
+				newHeaderLines,
+				line => line instanceof RequireHeaderLine
+			);
 		}
-		
-		if (linesInsertionPoint === null) {
-			linesInsertionPoint = this._headers.length;
-			newHeaderLines.push('\n');
-		}
-		
-		this.source =
-			this.source.slice(0, linesInsertionPoint)
-			+ newHeaderLines.join('')
-			+ this.source.slice(linesInsertionPoint);
 		
 		return versionsForPackages;
 	}
 	
 	// Internal
-	get _headers() {
+	get _headersString() {
 		const headerParts = /^((#.*|\s*)\n)*/.exec(this.source);
 		return headerParts[0];
 	}
 	
+	set _headersString(value) {
+		this.source = value + this._sourceWithoutHeaders;
+	}
+	
+	_getHeaderLines() {
+		const lineStrings = this._headersString.split('\n').slice(0, -1);
+		return lineStrings.map(lineString => HeaderLine.forString(lineString));
+	}
+	
+	_setHeaderLines(value) {
+		this._headersString = value
+			.map(line => line.toString() + '\n')
+			.join('');
+	}
+	
+	_insertHeaderLinesAtIndex(newLines, index) {
+		const currentHeaderLines = this._getHeaderLines();
+		
+		const transformedHeaderLines = [
+			...currentHeaderLines.slice(0, index),
+			...newLines,
+			...currentHeaderLines.slice(index)
+		];
+		
+		this._setHeaderLines(transformedHeaderLines);
+	}
+	
+	_insertHeaderLinesAfterLandmark(newLines, landmarkPredicate) {
+		const currentHeaderLines = this._getHeaderLines();
+		const lastLandmarkLineIndex = findLastIndex(currentHeaderLines, landmarkPredicate);
+	
+		if (lastLandmarkLineIndex > -1) {
+			// Insert after landmark lines
+			this._insertHeaderLinesAtIndex(newLines, lastLandmarkLineIndex + 1);
+		} else {
+			// Add at the end of the header
+			this._appendHeaderLines(newLines, true);
+		}
+	}
+	
+	_appendHeaderLines(newLines, padTop) {
+		const currentHeaderLines = this._getHeaderLines();
+		const lastNonEmptyLineIndex = findLastIndex(currentHeaderLines, line => !(line instanceof EmptyHeaderLine));
+		
+		let insertionIndex;
+		
+		// Pick insertion point
+		if (lastNonEmptyLineIndex === -1) {
+			insertionIndex = 0;
+		} else {
+			insertionIndex = lastNonEmptyLineIndex + 1;
+			
+			if (padTop) {
+				newLines = [new EmptyHeaderLine(), ...newLines];
+			}
+		}
+		
+		// Add trailing empty line if inserting at the very end
+		const insertingAtTheEnd = insertionIndex === currentHeaderLines.length;
+		if (insertingAtTheEnd) {
+			newLines = [...newLines, new EmptyHeaderLine()];
+		}
+		
+		this._insertHeaderLinesAtIndex(newLines, insertionIndex);
+	}
+	
 	get _sourceWithoutHeaders() {
-		return this.source.slice(this._headers.length);
+		return this.source.slice(this._headersString.length);
 	}
 };
+
+function findLastIndex(array, predicate) {
+	for (let i = array.length - 1; i >= 0; i--) {
+		if (predicate(array[i])) return i;
+	}
+	
+	return -1;
+}
