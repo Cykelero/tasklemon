@@ -1,8 +1,10 @@
 const path = require('path');
 const Tools = require('./Tools');
 
+const Constants = require('./Constants');
 const PackageCache = require('./PackageCache');
 const HeaderLine = require('./HeaderLine/HeaderLine');
+const ShebangHeaderLine = require('./HeaderLine/ShebangHeaderLine');
 const RequireHeaderLine = require('./HeaderLine/RequireHeaderLine');
 const EmptyHeaderLine = require('./HeaderLine/EmptyHeaderLine');
 
@@ -52,6 +54,26 @@ module.exports = class ScriptParser {
 			+ replacementNewlines
 			+ this._sourceWithoutHeaders
 			+ '\n})();';
+	}
+	
+	pinRuntimeVersion() {
+		const currentHeaderLines = this._getHeaderLines();
+		const firstLineIsShebang = currentHeaderLines[0] instanceof ShebangHeaderLine;
+		
+		const shouldPinVersion = !firstLineIsShebang;
+		
+		if (shouldPinVersion) {
+			const newHeaderLine = new ShebangHeaderLine({
+				shebangPath:
+					Constants.DEFAULT_SHEBANG_BASE
+					+ ' '
+					+ Constants.WIDE_RUNTIME_VERSION_SPECIFIER
+			});
+			
+			this._prependHeaderLines([newHeaderLine], true);
+		}
+		
+		return shouldPinVersion;
 	}
 	
 	pinPackageVersions() {
@@ -145,6 +167,21 @@ module.exports = class ScriptParser {
 			// Add at the end of the header
 			this._appendHeaderLines(newLines, true);
 		}
+	}
+	
+	_prependHeaderLines(newLines, padBottom) {
+		const currentHeaderLines = this._getHeaderLines();
+		const firstLineIsEmpty = currentHeaderLines[0] && currentHeaderLines[0] instanceof EmptyHeaderLine;
+		
+		const shouldAppendEmptyLine =
+			currentHeaderLines.length === 0
+			|| padBottom && !firstLineIsEmpty;
+		
+		if (shouldAppendEmptyLine) {
+			newLines = [...newLines, new EmptyHeaderLine()];
+		}
+		
+		this._insertHeaderLinesAtIndex(newLines, 0);
 	}
 	
 	_appendHeaderLines(newLines, padTop) {
