@@ -24,19 +24,30 @@ function createPackageCacheFolder() {
 }
 
 function parseProgramArguments(argumentList) {
+	let rawArguments = argumentList.slice(2); // skip “node” and “tasklemon”
+	
+	// Consume runtime version
+	let requestedRuntimeVersion = null;
+	
+	const firstArg = rawArguments[0];
+	if (/^v\d(\.\d(\.\d)?)?$/.test(firstArg)) {
+		requestedRuntimeVersion = firstArg;
+		rawArguments = rawArguments.slice(1);
+	}
+	
 	// Separate script argument from ours
-	const rawArguments = argumentList.slice(2); // skip “node” and “tasklemon”
 	let scriptPathIndex = rawArguments.findIndex(arg => (arg[0] !== '-'));
 	if (scriptPathIndex === -1) scriptPathIndex = rawArguments.length;
 	
 	const ourArguments = rawArguments.slice(0, scriptPathIndex);
+	const scriptArguments = rawArguments.slice(scriptPathIndex + 1);
+	
+	// Separate Tasklemon args from Node args
+	const lemonArguments = ourArguments.filter(arg => validLemonArguments.includes(arg));
+	const nodeArguments = ourArguments.filter(arg => validNodeArguments.includes(arg));
 	
 	// Check for unrecognized arguments
 	exitIfContainsInvalidArguments(ourArguments);
-	
-	// Separate arguments
-	const lemonArguments = ourArguments.filter(arg => validLemonArguments.includes(arg));
-	const nodeArguments = ourArguments.filter(arg => validNodeArguments.includes(arg));
 	
 	// Get absolute script path
 	let absoluteScriptPath;
@@ -52,10 +63,11 @@ function parseProgramArguments(argumentList) {
 	
 	// Return
 	return {
+		requestedRuntimeVersion,
 		scriptPath: absoluteScriptPath,
 		lemonArguments,
 		nodeArguments,
-		scriptArguments: rawArguments.slice(scriptPathIndex + 1)
+		scriptArguments
 	};
 }
 
