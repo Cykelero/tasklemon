@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 
 const Tools = require('./Tools');
 
@@ -27,5 +28,9 @@ module.exports = class Script {
 			{ encoding: 'utf8' },
 			`Couldn't write “${this.name}” because of error: “$0”`
 		);
+	}
+	
+	setSourceOrThrow(value) {
+		fs.writeFileSync(this.path, value, { encoding: 'utf8' });
 	}
 };

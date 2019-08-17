@@ -80,6 +80,8 @@ function getActionsForForArguments(args) {
 		&& !args.includes('--preload-pkg')
 		) actions.runScript = true;
 	
+	if (actions.runScript) actions.pinRuntimeVersion = true;
+	
 	if (args.includes('--clear-pkg-cache')) actions.clearPackageCache = true;
 	if (args.includes('--pin-pkg')) actions.pinPackageVersions = true;
 	if (args.includes('--preload-pkg')) actions.preloadPackages = true;
@@ -132,12 +134,26 @@ if (actionsToPerform.clearPackageCache) {
 	}
 }
 
+// Pin runtime version
+if (actionsToPerform.pinRuntimeVersion) {
+	const parser = new ScriptParser(scriptFile.source);
+	const didPin = parser.pinRuntimeVersion();
+	
+	if (didPin) {
+		Tools.tryOrExitWithError(() => {
+			scriptFile.setSourceOrThrow(parser.source);
+		}, `Couldn't pin runtime version of “${scriptFile.name}” because of error: “$0”`);
+	}
+}
+
 // Pin package versions
 if (actionsToPerform.pinPackageVersions) {
+	// Pin
 	const parser = new ScriptParser(scriptFile.source);
 	const pinnedInfo = parser.pinPackageVersions();
 	scriptFile.source = parser.source;
 	
+	// Display outcome
 	if (pinnedInfo.length > 0) {
 		const pinnedList = pinnedInfo
 			.map(info => info.name + '@' + info.version)
