@@ -10,7 +10,15 @@ const ScriptRunner = require('./ScriptRunner');
 const ScriptParser = require('./ScriptParser');
 const Tools = require('./Tools');
 
-const validLemonArguments = ['--clear-pkg-cache', '--no-pin',  '--pin-pkg', '--preload-pkg'];
+const validLemonArguments = [
+	// Package cache
+	'--preload-pkg',
+	'--clear-pkg-cache',
+	
+	// Package/runtime pinning
+	'--pin-pkg',
+	'--no-pin'
+];
 const validNodeArguments = ['--inspect', '--inspect-brk'];
 
 function createPackageCacheFolder() {
@@ -73,21 +81,17 @@ function parseProgramArguments(argumentList) {
 
 function getActionsForForArguments(args) {
 	const actions = {};
+
+	actions.clearPackageCache = args.includes('--preload-pkg');
+	actions.preloadPackages = args.includes('--clear-pkg-cache');
+	actions.pinPackageVersions = args.includes('--pin-pkg');
 	
-	if (
-		!args.includes('--pin-pkg')
-		&& !args.includes('--clear-pkg-cache')
-		&& !args.includes('--preload-pkg')
-		) actions.runScript = true;
+	actions.runScript =
+		!actions.preloadPackages
+		&& !actions.clearPackageCache
+		&& !actions.pinPackageVersions;
 	
-	if (
-		actions.runScript
-		&& !args.includes('--no-pin')
-	) actions.pinRuntimeVersion = true;
-	
-	if (args.includes('--clear-pkg-cache')) actions.clearPackageCache = true;
-	if (args.includes('--pin-pkg')) actions.pinPackageVersions = true;
-	if (args.includes('--preload-pkg')) actions.preloadPackages = true;
+	actions.pinRuntimeVersion = actions.runScript && !args.includes('--no-pin');
 	
 	return actions;
 }
