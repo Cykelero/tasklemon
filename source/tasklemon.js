@@ -10,7 +10,7 @@ const ScriptRunner = require('./ScriptRunner');
 const ScriptParser = require('./ScriptParser');
 const Tools = require('./Tools');
 
-const validLemonArguments = ['--clear-pkg-cache', '--pin-pkg', '--preload-pkg'];
+const validLemonArguments = ['--clear-pkg-cache', '--no-pin',  '--pin-pkg', '--preload-pkg'];
 const validNodeArguments = ['--inspect', '--inspect-brk'];
 
 function createPackageCacheFolder() {
@@ -80,7 +80,10 @@ function getActionsForForArguments(args) {
 		&& !args.includes('--preload-pkg')
 		) actions.runScript = true;
 	
-	if (actions.runScript) actions.pinRuntimeVersion = true;
+	if (
+		actions.runScript
+		&& !args.includes('--no-pin')
+	) actions.pinRuntimeVersion = true;
 	
 	if (args.includes('--clear-pkg-cache')) actions.clearPackageCache = true;
 	if (args.includes('--pin-pkg')) actions.pinPackageVersions = true;
@@ -142,7 +145,9 @@ if (actionsToPerform.pinRuntimeVersion) {
 	if (didPin) {
 		Tools.tryOrExitWithError(() => {
 			scriptFile.setSourceOrThrow(parser.source);
-		}, `Couldn't pin runtime version of “${scriptFile.name}” because of error: “$0”`);
+		}, `Couldn't pin runtime version of “${scriptFile.name}” because of error: “$0”`
+			+ `\nTo execute the script without automatic pinning, specify the \`--no-pin\` option.`
+		);
 	}
 }
 
