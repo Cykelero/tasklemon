@@ -2,36 +2,47 @@
 
 *Painlessly automate in JavaScript.*
 
-Write scripts that manipulate files, make network requests, get user input, all with a delightfully clear API. If you want to script things but don't want to use Bash, Tasklemon is what you've been wishing for all along. Yay!
+Write scripts that manipulate files, make network requests, get user input, all with a delightfully clear API. If you want to script things but don't want to use Bash, Tasklemon is what you've been wishing for all along! ✨
 
-Here's what a script to sort out files might look like:
+Here's what a script to delete files based on their extension might look like:
 
 ````js
 // Declare what arguments we accept
 cli.accept({
-    buildFolder: ['#0', Folder] // argument position in command, and argument type
+	targetFolder: ['-t --target', Folder],
+	extensionFilter: ['-f --filter', String]
 });
 
-const buildFolder = cli.args.buildFolder;
-cli.tell(`Cleaning up ${buildFolder.name}…`);
+const targetFolder = cli.args.targetFolder; // `targetFolder` has been cast to Folder automatically
+const extensionFilter = cli.args.extensionFilter || 'tmp';
 
-// Delete and rename files
-buildFolder.children.forEach(child => {
-    if (child.extension === 'js') {
-        child.name += '.build'; // js files are renamed
-    } else {
-        child.delete(); // the others are moved to the trash
-    }
-});
+cli.tell(`Removing ${extensionFilter} items from ${targetFolder.name}...`);
+
+// Filter and delete files
+const matchingChildren = targetFolder.children
+	.filter(child => child.extension === extensionFilter);
+
+matchingChildren.forEach(child => child.delete()); // move matching items to trash
+
+cli.tell('Removed ' + format.number.integer(matchingChildren.length, 'item')); // “Removed 13 items”
 ````
 
 And with Tasklemon installed, you can just save this code into a file (say, `clean.js`) and run it in a single command; no imports, no preprocessing:
 
 ````bash
-lemon clean.js some-folder
+$ lemon clean.js --target some-folder
 ````
 
 (you can also add a shebang to your scripts to make them directly executable, if you want; see below in Usage)
+
+## Sections
+
+- [Usage](#usage)
+- [Learning](#learning)
+- [Samples](#samples)
+- [Caveats](#caveats)
+- [Contributing](#contributing)
+- [Thanks](#thanks)
 
 ## Usage
 
@@ -39,9 +50,11 @@ lemon clean.js some-folder
 
 Install Tasklemon globally by running `npm install -g tasklemon`. This will make it available as `lemon` on the command&nbsp;line.
 
+Tasklemon supports macOS, Linux, and (for the most part) Windows.
+
 ### Writing and running a script
 
-To use Tasklemon, just write a script and save it into a file, then execute it by running `lemon your-script.js`. At runtime, Tasklemon exposes its entry points to your script, so you don't have to import anything. It also wraps all your code in an `async` function call, so that you can `await` promises wherever.
+To use Tasklemon, write a script and save it into a file, then execute it by running `lemon your-script.js`. At runtime, Tasklemon exposes its entry points to your script, so you don't have to import anything. It also wraps all your code in an `async` function call, so that you can `await` promises wherever.
 
 Optionally, you can add the `#!/usr/bin/env lemon` shebang to the very top of your script, and make it executable using `chmod u+x your-script.js`. You'll then be able to directly invoke the script on the command&nbsp;line, without calling `lemon`.
 
@@ -73,14 +86,18 @@ cli.tell(`The current project is ${packageInfo.name}.`);
 ### Declaring and getting script parameters
 
 ````js
-// $ lemon adduser.js -a --name Rose
-
 cli.accept({
     username: ['--name', String, 'Name of user to add'],
     isAdmin: ['-a', Boolean, 'Make user an admin']
 });
 
-return cli.args; // {username: 'Rose', isAdmin: true}
+console.log(cli.args); // will be {username: 'Rose', isAdmin: true}
+````
+
+Then, run the script:
+
+````bash
+$ lemon adduser.js -a --name Rose
 ````
 
 ### Format data for display
@@ -121,18 +138,18 @@ cli.tell('Total count of unique friend names: ' + uniqueFriendNames.length);
 
 ## Caveats
 
-I really want Tasklemon to be awesome, but here are a few ways in which it's not.
+I really want Tasklemon to be lovely, but here are a few ways in which it's not.
 
-- Tasklemon is still very young. It's got a test suite, sure, but it hasn't seen much real-world usage yet: expect bugs. (please do [report them](https://github.com/Cykelero/tasklemon/issues/new)!)
-- By design, file operations are synchronous—just like in bash scripting, for example. That's great for usability, but you're not going to write concurrent server stuff with these.
+- Tasklemon is still very young. It's got a (partial) test suite, sure, but it hasn't seen much real-world usage yet: expect breaking changes, and bugs. (please do [report these](https://github.com/Cykelero/tasklemon/issues/new)!)
+- By design, file operations are synchronous—just like in bash scripting, for example. That's great for usability, but you're not going to write concurrent server stuff this way.
 - Symlinks aren't very well-supported yet. Just traversing them should be fine, but directly manipulating them will be weird.
-- Tasklemon supports Windows, but with the exception of a few features, such as permission manipulation.
+- While Tasklemon does support Windows, a few features are missing, such as permission manipulation.
 
-## Development
+## Contributing
 
-Clone Tasklemon and run `npm install`.
+Want to help build Tasklemon? It's not too hard!
 
-You can then:
+Clone Tasklemon and run `npm install`. You can then:
 
 - **try out your version of Tasklemon** by running `source/tasklemon.js some-script.js`
 - **run the tests** using `npm run test` (or `npm run watch:test` for automatic runs)
@@ -140,4 +157,5 @@ You can then:
 
 ## Thanks
 
-Thanks to <a href="https://fabien-berini.fr">Fabien Bérini</a>, for all his help with making the unix-y parts reasonably sane :)
+Thanks to [Fabien Bérini](https://fabien-berini.fr), for his help with making the unix-y parts reasonably sane :)  
+Thanks to [Benoît Zugmeyer](https://github.com/BenoitZugmeyer), for his input on API design and npm support :)
