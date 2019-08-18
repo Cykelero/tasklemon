@@ -33,7 +33,7 @@ And with Tasklemon installed, you can just save this code into a file (say, `cle
 $ lemon clean.js --target some-folder
 ````
 
-(you can also add a shebang to your scripts to make them directly executable, if you want; see below in Usage)
+(you can also give the appropriate permissions to your scripts to make them directly executable, if you want; see below in [Shebang and runtime pinning](#shebang-and-runtime-pinning))
 
 ## Sections
 
@@ -48,7 +48,7 @@ $ lemon clean.js --target some-folder
 
 ### Installing
 
-Install Tasklemon globally by running `npm install -g tasklemon`. This will make it available as `lemon` on the command&nbsp;line.
+With Node.js present, install Tasklemon globally by running `npm install -g tasklemon`. This will make it available as `lemon` on the command&nbsp;line.
 
 Tasklemon supports macOS, Linux, and (for the most part) Windows.
 
@@ -56,7 +56,13 @@ Tasklemon supports macOS, Linux, and (for the most part) Windows.
 
 To use Tasklemon, write a script and save it into a file, then execute it by running `lemon your-script.js`. At runtime, Tasklemon exposes its entry points to your script, so you don't have to import anything. It also wraps all your code in an `async` function call, so that you can `await` promises wherever.
 
-Optionally, you can add the `#!/usr/bin/env lemon` shebang to the very top of your script, and make it executable using `chmod u+x your-script.js`. You'll then be able to directly invoke the script on the command&nbsp;line, without calling `lemon`.
+### Shebang and runtime pinning
+
+When you run a script for the first time, Tasklemon will insert a shebang line at the top, which serves two purposes:
+
+- If the script has the proper permissions, it becomes executable itself.
+	Apply the permissions using `chmod u+x your-script.js`, and you will be able to execute the script by running `./your-script.js` directly.
+- The shebang contains the current version number of Tasklemon: this makes sure your script can be properly executed by future versions of the runtime.
 
 ## Learning
 
