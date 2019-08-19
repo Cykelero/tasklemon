@@ -81,9 +81,9 @@ function parseProgramArguments(argumentList) {
 
 function getActionsForForArguments(args) {
 	const actions = {};
-
-	actions.clearPackageCache = args.includes('--preload-pkg');
-	actions.preloadPackages = args.includes('--clear-pkg-cache');
+	
+	actions.preloadPackages = args.includes('--preload-pkg');
+	actions.clearPackageCache = args.includes('--clear-pkg-cache');
 	actions.pinPackageVersions = args.includes('--pin-pkg');
 	
 	actions.runScript =
