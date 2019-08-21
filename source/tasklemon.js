@@ -22,13 +22,10 @@ const validLemonArguments = [
 const validNodeArguments = ['--inspect', '--inspect-brk'];
 
 function createPackageCacheFolder() {
-	try {
-		fs.mkdirSync(Constants.CACHE_PATH);
-	} catch (e) {}
-
-	try {
-		fs.mkdirSync(PackageCache.PACKAGE_CACHE_PATH);
-	} catch (e) {}
+	const message = `Couldn't create cache folder at “${Constants.CACHE_PATH}” because of error: “$0”`;
+	
+	Tools.ensureFolderExistsOrExitWithErrorSync(Constants.CACHE_PATH, message);
+	Tools.ensureFolderExistsOrExitWithErrorSync(PackageCache.PACKAGE_CACHE_PATH, message);
 }
 
 function parseProgramArguments(argumentList) {

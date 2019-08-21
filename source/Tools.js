@@ -30,5 +30,19 @@ module.exports = {
 		return this.tryOrExitWithError(() => {
 			return fs.writeFileSync(filePath, fileContent, options);
 		}, message);
+	},
+	
+	ensureFolderExistsOrExitWithErrorSync(folderPath, message) {
+		const errorIsFolderExistsRegexp = /^EEXIST\b/;
+		
+		try {
+			fs.mkdirSync(folderPath);
+		} catch (error) {
+			if (!errorIsFolderExistsRegexp.test(error.message)) {
+				// Folder couldn't be created
+				const messageWithError = message.replace('$0', this.parseNodeError(error));
+				this.exitWithError(messageWithError);
+			}
+		}
 	}
 };
