@@ -58,11 +58,11 @@ To use Tasklemon, write a script and save it into a file, then execute it by run
 
 ### Shebang and runtime pinning
 
-When you run a script for the first time, Tasklemon will insert a shebang line at the top, which serves two purposes:
+When you run a script for the first time, Tasklemon will insert two lines at the top:
 
-- If the script has the proper permissions, it becomes executable itself.
+- A shebang, which makes the script executable directly, once it has the proper permissions.  
 	Apply the permissions using `chmod u+x your-script.js`, and you will be able to execute the script by running `./your-script.js` directly.
-- The shebang contains the current version number of Tasklemon: this makes sure your script can be properly executed by future versions of the runtime.
+- A version header, with the current version number of Tasklemon: this makes sure your script can be properly executed by future versions of the runtime.
 
 ## Learning
 
