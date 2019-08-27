@@ -33,7 +33,7 @@ function createPackageCacheFolder() {
 function parseProgramArguments(argumentList) {
 	let rawArguments = argumentList.slice(2); // skip “node” and “tasklemon”
 	
-	// Consume runtime version
+	// Consume legacy runtime version
 	let requestedRuntimeVersion = null;
 	
 	const firstArg = rawArguments[0];
@@ -70,7 +70,6 @@ function parseProgramArguments(argumentList) {
 	
 	// Return
 	return {
-		requestedRuntimeVersion,
 		scriptPath: absoluteScriptPath,
 		lemonArguments,
 		nodeArguments,

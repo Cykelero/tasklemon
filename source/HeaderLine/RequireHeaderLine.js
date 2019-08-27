@@ -13,7 +13,7 @@ module.exports = class RequireHeaderLine extends HeaderLine {
 	}
 	
 	static forString(lineString) {
-		const lineParts = /^#require\s+([^@ ]+)@([^ ]+)\s*$/.exec(lineString);
+		const lineParts = /^#require\s+([^@\s]+)@([^\s]+)\s*$/.exec(lineString);
 		
 		if (!lineParts) return null;
 		
