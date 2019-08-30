@@ -2,35 +2,58 @@
 
 *Painlessly automate in JavaScript.*
 
-Write scripts that manipulate files, make network requests, get user input, all with a delightfully clear API. If you want to script things but don't want to use Bash, Tasklemon is what you've been wishing for all along! ✨
+Write scripts that manipulate files, make network requests, get user input, all with a delightfully clear API and exceptional documentation. If you want to script things but don't want to use Bash, Tasklemon is what you've been wishing for all along! ✨
 
-Here's what a script to delete files based on their extension might look like:
+Here's a simple script, written in both Tasklemon and in vanilla Node:
 
-````js
-// Declare what arguments we accept
-cli.accept({
-	targetFolder: ['-t --target', Folder],
-	extensionFilter: ['-f --filter', String]
+<table>
+	<thead>
+		<th>
+			🍋 Tasklemon
+		</th>
+		<th>
+			✳️ Node.js
+		</th>
+	</thead>
+	<tr>
+		<td>
+<pre lang="javascript">
+home.children.forEach(child => {
+    if (child.extension === 'tmp') child.delete();
 });
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+</pre>
+		</td>
+		<td>
+<pre lang="javascript">
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+ 
+const folderPath = os.homedir();
+fs.readdirSync(folderPath).forEach(childName => {
+    if (path.parse(childName).ext === '.tmp') {
+        const absolutePath = path.join(folderPath, childName);
+        fs.unlinkSync(absolutePath);
+    }
+});
+</pre>
+		</td>
+	</tr>
+</table>
 
-const targetFolder = cli.args.targetFolder; // `targetFolder` has been cast to Folder automatically
-const extensionFilter = cli.args.extensionFilter || 'tmp';
-
-cli.tell(`Removing ${extensionFilter} items from ${targetFolder.name}...`);
-
-// Filter and delete files
-const matchingChildren = targetFolder.children
-	.filter(child => child.extension === extensionFilter);
-
-matchingChildren.forEach(child => child.delete()); // move matching items to trash
-
-cli.tell('Removed ' + format.number.integer(matchingChildren.length, 'item')); // “Removed 13 items”
-````
 
 And with Tasklemon installed, you can just save this code into a file (say, `clean.js`) and run it in a single command; no imports, no preprocessing:
 
 ````bash
-$ lemon clean.js --target some-folder
+$ lemon clean.js
 ````
 
 (you can also give the appropriate permissions to your scripts to make them directly executable, if you want; see below in [Shebang and runtime pinning](#shebang-and-runtime-pinning))
