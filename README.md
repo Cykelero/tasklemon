@@ -66,9 +66,9 @@ When you run a script for the first time, Tasklemon will insert two lines at the
 
 ## Learning
 
-To get started, I recommend you look at [the examples](#samples) below. They'll give you a good idea of the main features of Tasklemon.
+After you've [installed Tasklemon](#usage), I recommend you look at [the examples](#samples) below. They'll give you a good idea of the main features you'll want to use.
 
-After that, you can use the [API reference](http://cykelero.github.io/tasklemon/api/) to find what you need. The reference is approachable, straightforward, and replete with clear examples. Here's a sample of what it looks like:
+After that, you can use the [API reference →](http://cykelero.github.io/tasklemon/api/) to find what you need. The reference is approachable, straightforward, and replete with clear examples. Here's a sample of what it looks like:
 
 <a href="https://cykelero.github.io/tasklemon/api/latest/File.html#appendLine"><img src="docs/readme-api-reference-screenshot.png" alt width=838></a>
 
@@ -144,7 +144,7 @@ cli.tell('Total count of unique friend names: ' + uniqueFriendNames.length);
 
 ## Caveats
 
-I really want Tasklemon to be lovely, but here are a few ways in which it's not.
+I really want Tasklemon to be terrific, but here are a few ways in which it's not.
 
 - Tasklemon is still very young. It's got a (partial) test suite, sure, but it hasn't seen much real-world usage yet: expect breaking changes, and bugs. (please do [report these](https://github.com/Cykelero/tasklemon/issues/new)!)
 - By design, file operations are synchronous—just like in bash scripting, for example. That's great for usability, but you're not going to write concurrent server stuff this way.
@@ -153,15 +153,19 @@ I really want Tasklemon to be lovely, but here are a few ways in which it's not.
 
 ## Contributing
 
-Want to help build Tasklemon? It's not too hard!
+Want to help build Tasklemon? That'd be lovely!  
+The simplest way to help is give feedback on what it's like to use Tasklemon. All comments are greatly appreciated! You can [open an issue](https://github.com/cykelero/tasklemon/issues/new) on GitHub, or maybe just drop me a note [on Twitter](https://twitter.com/cykelero).
 
-Clone Tasklemon and run `npm install`. You can then:
+To go one step further, you can directly work on the code.  
+Clone Tasklemon from Github and run `npm install`. You can then:
 
 - **try out your version of Tasklemon** by running `source/tasklemon.js some-script.js`
 - **run the tests** using `npm run test` (or `npm run watch:test` for automatic runs)
 - **build the api docs** using `npm run build-docs` (or `npm run watch:build-docs` for automatic builds)
 
 ## Thanks
+Once you've built something nice, [submit it as a pull request](https://github.com/Cykelero/tasklemon/compare) to make it public.
 
-Thanks to [Fabien Bérini](https://fabien-berini.fr), for his help with making the unix-y parts reasonably sane :)  
-Thanks to [Benoît Zugmeyer](https://github.com/BenoitZugmeyer), for his input on API design and npm support :)
+
+Thanks to [Fabien Bérini →](https://fabien-berini.fr), for his help with making the unix-y parts reasonably sane :)  
+Thanks to [Benoît Zugmeyer →](https://github.com/BenoitZugmeyer), for his input on API design and npm support :)
