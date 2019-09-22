@@ -95,7 +95,7 @@ describe('Item', function() {
 			
 			expect(file.valid).toBeTruthy();
 			expect(file.value instanceof File).toBeTruthy();
-			expect(file.value.path).toBe(testEnv.nativePathFor(userPath));
+			expect(file.value.path).toBe(testEnv.pathFor(userPath));
 		});
 		
 		it('should accept a path to an existing folder', function() {
@@ -108,7 +108,7 @@ describe('Item', function() {
 			
 			expect(file.valid).toBeTruthy();
 			expect(file.value instanceof Folder).toBeTruthy();
-			expect(file.value.path).toBe(testEnv.nativePathFor(userPath + path.sep));
+			expect(file.value.path).toBe(testEnv.pathFor(userPath + '/'));
 		});
 		
 		it('should fail if the item does not exist', function() {
