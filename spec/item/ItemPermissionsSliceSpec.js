@@ -1,21 +1,32 @@
 const fs = require('fs');
+const os = require('os');
 const constants = require('constants');
 
 const Item = require('../../source/Item');
 
-describe('ItemPermissionsSlice', function() {
+const isPosix = os.platform() !== 'win32';
+	
+ifPosixDescribe = function() {
+	if (isPosix) {
+		describe.apply(this, arguments);
+	} else {
+		xdescribe.apply(this, arguments);
+	}
+};
+
+const ifRootIt = function() {
+	const isRoot = process.getuid() === 0;
+	
+	if (isRoot) {
+		it.apply(this, arguments);
+	} else {
+		xit.apply(this, arguments);
+	}
+};
+
+ifPosixDescribe('ItemPermissionsSlice', function() {
 	let testEnv;
 	let initialUmask;
-	
-	const ifRootIt = function() {
-		const isRoot = process.getuid() === 0;
-		
-		if (isRoot) {
-			it.apply(this, arguments);
-		} else {
-			xit.apply(this, arguments);
-		}
-	};
 	
 	beforeEach(function() {
 		testEnv = this.getTestEnv();
