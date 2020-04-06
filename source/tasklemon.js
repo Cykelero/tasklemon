@@ -125,15 +125,11 @@ const scriptFile = new ScriptFile(programArgs.scriptPath);
 
 // Clear package cache
 if (actionsToPerform.clearPackageCache) {
-	const bundleCount = fs.readdirSync(PackageCache.PACKAGE_CACHE_PATH)
-		.filter(path => path.charAt(0) !== '.')
-		.length;
+	const deletedBundleCount = PackageCache.clearAll();
 	
-	if (bundleCount > 0) {
-		PackageCache.clearAll();
-
-		const bundleCountString = (bundleCount > 1) ? bundleCount + ' bundles' : '1 bundle';
-		process.stdout.write(`Cleared package cache (deleted ${bundleCountString}).\n`);
+	if (deletedBundleCount > 0) {
+		const deletedBundleCountString = (deletedBundleCount > 1) ? deletedBundleCount + ' bundles' : '1 bundle';
+		process.stdout.write(`Cleared package cache (deleted ${deletedBundleCountString}).\n`);
 	} else {
 		process.stdout.write('Package cache is already empty.\n');
 	}

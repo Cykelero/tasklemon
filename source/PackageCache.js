@@ -31,7 +31,13 @@ module.exports = {
 	},
 	
 	clearAll() {
+		const deletedBundleCount = fs.readdirSync(this.PACKAGE_CACHE_PATH)
+			.filter(path => path.charAt(0) !== '.')
+			.length;
+		
 		rimraf.sync(this.PACKAGE_CACHE_PATH + '*');
+		
+		return deletedBundleCount;
 	},
 	
 	get(packageName, rawRequestedBundlePackageList, packageVersions) {
