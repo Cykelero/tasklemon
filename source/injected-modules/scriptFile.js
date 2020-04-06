@@ -1,4 +1,4 @@
-const Environment = require('./Environment');
+const ScriptEnvironment = require('../ScriptEnvironment');
 const Item = require('../Item');
 
-module.exports = Item._itemForPath(Environment.sourceScriptPath);
+module.exports = Item._itemForPath(ScriptEnvironment.sourceScriptPath);

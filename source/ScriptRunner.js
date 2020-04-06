@@ -9,7 +9,7 @@ const Constants = require('./Constants');
 const ScriptParser = require('./ScriptParser');
 const PackageCache = require('./PackageCache');
 const Tools = require('./Tools');
-const Environment = require('./injected-modules/Environment')
+const ScriptEnvironment = require('./ScriptEnvironment');
 
 module.exports = {
 	// Exposed
@@ -23,10 +23,10 @@ module.exports = {
 		let preparedScriptPath;
 
 		// Set environment variables
-		Environment.sourceScriptPath = scriptPath;
-		Environment.rawArguments = args;
-		Environment.defaultBundlePackageList = requiredPackages;
-		Environment.requiredPackageVersions = requiredPackageVersions;
+		ScriptEnvironment.sourceScriptPath = scriptPath;
+		ScriptEnvironment.rawArguments = args;
+		ScriptEnvironment.defaultBundlePackageList = requiredPackages;
+		ScriptEnvironment.requiredPackageVersions = requiredPackageVersions;
 	
 		// Write script to stage
 		stagePath = fs.mkdtempSync(os.tmpdir() + path.sep);

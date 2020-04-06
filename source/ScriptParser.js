@@ -9,7 +9,7 @@ const VersionHeaderLine = require('./HeaderLine/VersionHeaderLine');
 const RequireHeaderLine = require('./HeaderLine/RequireHeaderLine');
 const EmptyHeaderLine = require('./HeaderLine/EmptyHeaderLine');
 
-const MODULE_INJECTOR_PATH = path.join(__dirname, 'injected-modules', 'Injector');
+const MODULE_INJECTOR_PATH = path.join(__dirname, 'Injector');
 
 module.exports = class ScriptParser {
 	// Exposed

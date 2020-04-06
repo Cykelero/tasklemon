@@ -1,12 +1,12 @@
-const Environment = require('./Environment');
+const ScriptEnvironment = require('../ScriptEnvironment');
 const PackageCache = require('../PackageCache');
 
 module.exports = new Proxy({}, {
 	get(self, packageName) {
 		return PackageCache.get(
 			packageName,
-			Environment.defaultBundlePackageList,
-			Environment.requiredPackageVersions
+			ScriptEnvironment.defaultBundlePackageList,
+			ScriptEnvironment.requiredPackageVersions
 		);
 	}
 });

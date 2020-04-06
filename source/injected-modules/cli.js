@@ -1,4 +1,4 @@
-const Environment = require('./Environment');
+const ScriptEnvironment = require('../ScriptEnvironment');
 const TypeDefinition = require('../TypeDefinition');
 const Tools = require('../Tools');
 
@@ -11,7 +11,7 @@ cli.accept = function(argumentDefinitions) {
 	
 	const parsedArgumentDefinitions = parseArgumentDefinitions(argumentDefinitions);
 	checkArgumentDefinitionSyntax(parsedArgumentDefinitions);
-	cli.args = applyArgumentDefinitions(parsedArgumentDefinitions, Environment.rawArguments);
+	cli.args = applyArgumentDefinitions(parsedArgumentDefinitions, ScriptEnvironment.rawArguments);
 };
 
 cli.tell = function(text) {
