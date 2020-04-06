@@ -5,12 +5,11 @@ const os = require('os');
 const rimraf = require('rimraf');
 const crossSpawn = require('cross-spawn');
 
+const Constants = require('./Constants');
 const ScriptParser = require('./ScriptParser');
 const PackageCache = require('./PackageCache');
 const Tools = require('./Tools');
 const Environment = require('./injected-modules/Environment')
-
-const TASKLEMON_PATH = path.join(__dirname, 'tasklemon.js');
 
 module.exports = {
 	// Exposed
@@ -49,7 +48,7 @@ module.exports = {
 	runInNewProcess(scriptPath, scriptArgs, nodeArgs) {
 		const inspectableProcess = crossSpawn(
 			'node',
-			[...nodeArgs, TASKLEMON_PATH, scriptPath, ...scriptArgs],
+			[...nodeArgs, Constants.TASKLEMON_PATH, scriptPath, ...scriptArgs],
 			{ stdio: 'inherit' }
 		);
 
