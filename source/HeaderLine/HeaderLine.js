@@ -1,3 +1,5 @@
+/* Represents a single line of a TL script header. Needs subclassing to specify the line type. */
+
 function getConcreteHeaderLineClasses() {
 	return [
 		require('./ShebangHeaderLine'),

@@ -1,3 +1,5 @@
+/* Represents an empty line in a TL script header. */
+
 const HeaderLine = require('./HeaderLine');
 
 module.exports = class EmptyHeaderLine extends HeaderLine {

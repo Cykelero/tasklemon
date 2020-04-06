@@ -1,3 +1,5 @@
+/* Methods for running a TL script, based on its raw source, path, and arguments. */
+
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -12,7 +14,6 @@ const Tools = require('./Tools');
 const ScriptEnvironment = require('./ScriptEnvironment');
 
 module.exports = {
-	// Exposed
 	run(scriptSource, scriptPath, args) {
 		const parser = new ScriptParser(scriptSource);
 		

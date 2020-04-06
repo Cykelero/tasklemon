@@ -1,3 +1,5 @@
+/* Exposes and allow changing the group permissions of a given item, based on the item's stats object. */
+
 const fs = require('fs');
 const childProcess = require('child_process');
 

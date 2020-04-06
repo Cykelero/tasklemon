@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* Run as a separate process. Prepares cache bundles (from creation to `npm install`) while handling simultaneous runs. */
 
 const autopromise = require('./autopromise');
 const path = require('path');

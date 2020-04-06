@@ -1,3 +1,5 @@
+/* Represents a Tasklemon runtime version line in a TL script header. */
+
 const HeaderLine = require('./HeaderLine');
 
 module.exports = class VersionHeaderLine extends HeaderLine {

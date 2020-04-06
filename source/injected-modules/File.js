@@ -1,3 +1,5 @@
+/* Exposes the File class, only for use with the typeof operator. */
+
 const File = require('../File');
 
 module.exports = new Proxy(File, {

@@ -1,3 +1,5 @@
+/* General-purpose methods. */
+
 const fs = require('fs');
 
 module.exports = {

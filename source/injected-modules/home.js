@@ -1,3 +1,5 @@
+/* Exposes the user's home folder, as a Folder. */
+
 const path = require('path');
 const os = require('os');
 

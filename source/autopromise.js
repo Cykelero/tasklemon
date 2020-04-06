@@ -1,3 +1,5 @@
+/* Maps a callback-based Node.js API to a Promise-based one. */
+
 const util = require('util');
 
 module.exports = (callbackModule) => new Proxy(callbackModule, {

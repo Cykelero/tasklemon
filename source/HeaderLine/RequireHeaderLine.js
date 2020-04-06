@@ -1,3 +1,5 @@
+/* Represents a package requirement line in a TL script header. */
+
 const HeaderLine = require('./HeaderLine');
 
 module.exports = class RequireHeaderLine extends HeaderLine {

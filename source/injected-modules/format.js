@@ -1,3 +1,5 @@
+/* Allows formatting numbers, dates and durations in a human-readable way. */
+
 const moment = require('moment');
 
 let format = module.exports = function(value) {

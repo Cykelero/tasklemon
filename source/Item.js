@@ -1,3 +1,5 @@
+/* Represents an item on disk; exposes and allow changing its data and metadata. Needs subclassing to define the type of the item. */
+
 const path = require('path');
 const fs = require('fs');
 const os = require('os');

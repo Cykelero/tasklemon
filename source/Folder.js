@@ -1,3 +1,5 @@
+/* Represents a folder on disk; exposes and allow changing its data and metadata. */
+
 const fs = require('fs');
 const path = require('path');
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* Entry point. Parses command-line arguments, and dispatches requested actions. */
 
 const fs = require('fs');
 const path = require('path');

@@ -1,3 +1,5 @@
+/* Exposes the Item class, only for use with the typeof operator. */
+
 const Item = require('../Item');
 
 module.exports = new Proxy(Item, {

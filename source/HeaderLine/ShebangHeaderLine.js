@@ -1,3 +1,5 @@
+/* Represents a shebang line in a TL script header. */
+
 const HeaderLine = require('./HeaderLine');
 
 module.exports = class ShebangHeaderLine extends HeaderLine {

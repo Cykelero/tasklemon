@@ -1,3 +1,5 @@
+/* Represents a line of an unknown type in a TL script header. */
+
 const HeaderLine = require('./HeaderLine');
 
 module.exports = class OtherHeaderLine extends HeaderLine {

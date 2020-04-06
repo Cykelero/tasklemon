@@ -1,3 +1,5 @@
+/* Tasklemon-wide constants. */
+
 const path = require('path');
 const os = require('os');
 const isPosix = process.platform !== 'win32';

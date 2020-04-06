@@ -1,3 +1,5 @@
+/* Exposes the Folder class, only for use with the typeof operator. */
+
 const Folder = require('../Folder');
 
 module.exports = new Proxy(Folder, {

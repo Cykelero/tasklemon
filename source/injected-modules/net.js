@@ -1,3 +1,5 @@
+/* Allows performing network requests, optionally parsing the response. */
+
 const fetch = require('node-fetch');
 
 let net = module.exports;

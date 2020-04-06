@@ -1,3 +1,5 @@
+/* Exposes script metadata (required packages, etc) and transformations (generate runnable source, pin package versions, etc) based on a TL script's source. */
+
 const path = require('path');
 const Tools = require('./Tools');
 

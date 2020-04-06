@@ -1,3 +1,5 @@
+/* Exposes the root of the file system, as a Folder. */
+
 const path = require('path');
 
 const Item = require('../Item');

@@ -1,3 +1,5 @@
+/* Loads injectable modules into a given scope (normally, the global scope of a TL script). */
+
 const injectableModuleNames = [
 	'root',
 	'home',

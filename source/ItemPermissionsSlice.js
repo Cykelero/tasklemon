@@ -1,3 +1,5 @@
+/* Exposes and allow changing a specific subset of the permissions of a given item, based on the item's stats object. Needs subclassing to define the permission subset. */
+
 const fs = require('fs');
 
 const SetMethod = require('./SetMethod');

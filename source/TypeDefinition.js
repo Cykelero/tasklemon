@@ -1,3 +1,5 @@
+/* Allows executing type definitions, and defines typedefs for some built-in JS types. */
+
 const moment = require('moment');
 
 const symbol = Symbol('Tasklemon type definition');

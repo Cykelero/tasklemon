@@ -1,3 +1,5 @@
+/* Handles preparing and loading cache bundles. Relies on preparePackageCacheBundle.js. */
+
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');

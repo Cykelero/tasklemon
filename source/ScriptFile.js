@@ -1,3 +1,5 @@
+/* Represents a TL script file on disk. Exposes metadata about the file, and allows changing its contents. */
+
 const path = require('path');
 const fs = require('fs');
 
