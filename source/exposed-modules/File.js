@@ -6,7 +6,7 @@ const path = require('path');
 const md5File = require('md5-file');
 
 const Item = require('./Item');
-const TypeDefinition = require('./TypeDefinition');
+const TypeDefinition = require('../TypeDefinition');
 
 class File extends Item {
 	get exists() {

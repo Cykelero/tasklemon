@@ -1,6 +1,6 @@
 const os = require('os');
 
-const root = require('../../source/injected-modules/root');
+const root = require('../../source/exposed-modules/injected/root');
 
 const isPosix = os.platform() !== 'win32';
 

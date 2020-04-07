@@ -1,7 +1,7 @@
 const childProcess = require('child_process');
 const path = require('path');
 
-const Item = require('../../source/Item');
+const Item = require('../../source/exposed-modules/Item');
 
 beforeEach(function() {
 	this.execFileSync = function() {

@@ -2,7 +2,7 @@ const fs = require('fs');
 const os = require('os');
 const constants = require('constants');
 
-const Item = require('../../source/Item');
+const Item = require('../../source/exposed-modules/Item');
 
 const isPosix = os.platform() !== 'win32';
 	

@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const File = require('../../source/File');
-const Folder = require('../../source/Folder');
+const File = require('../../source/exposed-modules/File');
+const Folder = require('../../source/exposed-modules/Folder');
 const TypeDefinition = require('../../source/TypeDefinition');
 
 const isPosix = os.platform() !== 'win32';

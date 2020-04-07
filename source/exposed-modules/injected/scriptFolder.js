@@ -2,7 +2,7 @@
 
 const path = require('path');
 
-const ScriptEnvironment = require('../ScriptEnvironment');
+const ScriptEnvironment = require('../../ScriptEnvironment');
 const Item = require('../Item');
 
 const folderPath = path.parse(ScriptEnvironment.sourceScriptPath).dir;

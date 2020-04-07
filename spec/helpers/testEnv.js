@@ -5,7 +5,7 @@ const childProcess = require('child_process');
 
 const rimraf = require('rimraf');
 
-const Item = require('../../source/Item');
+const Item = require('../../source/exposed-modules/Item');
 
 function toCleanPath(nativePath) {
 	return nativePath.split(path.sep).join('/');

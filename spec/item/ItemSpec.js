@@ -4,10 +4,10 @@ const os = require('os');
 
 const moment = require('moment');
 
-const Item = require('../../source/Item');
-const File = require('../../source/File');
-const Folder = require('../../source/Folder');
-const root = require('../../source/injected-modules/root');
+const Item = require('../../source/exposed-modules/Item');
+const File = require('../../source/exposed-modules/File');
+const Folder = require('../../source/exposed-modules/Folder');
+const root = require('../../source/exposed-modules/injected/root');
 const TypeDefinition = require('../../source/TypeDefinition');
 
 const isPosix = os.platform() !== 'win32';

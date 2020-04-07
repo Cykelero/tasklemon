@@ -6,7 +6,7 @@ const path = require('path');
 const glob = require('glob');
 
 const Item = require('./Item');
-const TypeDefinition = require('./TypeDefinition');
+const TypeDefinition = require('../TypeDefinition');
 
 class Folder extends Item {
 	get exists() {

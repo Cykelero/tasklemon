@@ -1,8 +1,8 @@
 /* Exposes command-line arguments passed to the currently running TL script, and allows interacting with the user through input and output. */
 
-const ScriptEnvironment = require('../ScriptEnvironment');
-const TypeDefinition = require('../TypeDefinition');
-const Tools = require('../Tools');
+const ScriptEnvironment = require('../../ScriptEnvironment');
+const TypeDefinition = require('../../TypeDefinition');
+const Tools = require('../../Tools');
 
 let cli = module.exports;
 

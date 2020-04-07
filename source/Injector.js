@@ -22,7 +22,7 @@ module.exports = function(scope) {
 	injectableModuleNames.forEach(injectableModuleName => {
 		Object.defineProperty(scope, injectableModuleName, {
 			get() {
-				return require(`./injected-modules/${injectableModuleName}`);
+				return require(`./exposed-modules/injected/${injectableModuleName}`);
 			}
 		});
 	});

@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const format = require('../../source/injected-modules/format');
+const format = require('../../source/exposed-modules/injected/format');
 
 describe('format', function() {
 	describe('.number', function() {

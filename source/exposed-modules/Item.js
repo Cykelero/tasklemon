@@ -10,7 +10,7 @@ const moment = require('moment');
 const trash = require('trash');
 const rimraf = require('rimraf');
 
-const TypeDefinition = require('./TypeDefinition');
+const TypeDefinition = require('../TypeDefinition');
 const ItemUserPermissions = require('./ItemUserPermissions');
 const ItemGroupPermissions = require('./ItemGroupPermissions');
 const ItemOtherPermissions = require('./ItemOtherPermissions');
