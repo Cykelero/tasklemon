@@ -65,7 +65,22 @@ beforeEach(function() {
 				const nativeScriptPath = this.nativePathFor('script.lem.js');
 				fs.writeFileSync(nativeScriptPath, source);
 				
-				return childProcess.execFileSync('node', [tasklemonPath, nativeScriptPath, ...args], {cwd: this.nativePath});
+				return new Promise((resolve, reject) => {
+					childProcess.execFile('node', [tasklemonPath, nativeScriptPath, ...args], {
+						cwd: this.nativePath,
+						stdio: ['pipe', 'pipe', 'pipe']
+					}, (error, stdout, stderr) => {
+						if (error) {
+							reject(error);
+						} else if (stderr) {
+							reject(stderr);
+						} else {
+							resolve(stdout);
+						}
+					});
+				});
+				
+				
 			}
 		};
 	};
