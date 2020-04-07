@@ -6,23 +6,8 @@ const Item = require('../../source/exposed-modules/Item');
 
 const isPosix = os.platform() !== 'win32';
 	
-ifPosixDescribe = function() {
-	if (isPosix) {
-		describe.apply(this, arguments);
-	} else {
-		xdescribe.apply(this, arguments);
-	}
-};
-
-const ifRootIt = function() {
-	const isRoot = process.getuid() === 0;
-	
-	if (isRoot) {
-		it.apply(this, arguments);
-	} else {
-		xit.apply(this, arguments);
-	}
-};
+const ifPosixDescribe = isPosix ? describe : xdescribe;
+const ifRootIt = (process.getuid() === 0) ? it : xit;
 
 ifPosixDescribe('ItemPermissionsSlice', function() {
 	let testEnv;

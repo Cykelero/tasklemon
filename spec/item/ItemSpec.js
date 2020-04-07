@@ -11,24 +11,11 @@ const root = require('../../source/exposed-modules/injected/root');
 const TypeDefinition = require('../../source/TypeDefinition');
 
 const isPosix = os.platform() !== 'win32';
-const isMacOS = os.platform() === 'macos';
+const isMacOS = os.platform() === 'darwin';
 const driveId = isPosix ? '' : /[^\\]+/.exec(process.cwd())[0];
 	
-ifPosixIt = function() {
-	if (isPosix) {
-		it.apply(this, arguments);
-	} else {
-		xit.apply(this, arguments);
-	}
-};
-	
-ifMacOSIt = function() {
-	if (isMacOS) {
-		it.apply(this, arguments);
-	} else {
-		xit.apply(this, arguments);
-	}
-};
+const ifPosixIt = isPosix ? it : xit;
+const ifMacOSDescribe = isMacOS ? describe : xdescribe;
 
 describe('Item', function() {
 	let testEnv;
@@ -409,7 +396,7 @@ describe('Item', function() {
 			expect(fileItem.dateCreated.unix()).toBe(moment().unix());
 		});
 		
-		ifMacOSIt('{value} should allow changing the creation date of the item', function() {
+		ifMacOSDescribe('{value} should allow changing the creation date of the item', function() {
 			it('to a former date', function() {
 				let fileItem = this.itemForPath(testEnv.createFile('file'));
 			
@@ -437,7 +424,7 @@ describe('Item', function() {
 			expect(fileItem.dateModified.unix()).toBe(moment().unix());
 		});
 		
-		ifMacOSIt('{value} should allow changing the modification date of the item', function() {
+		ifMacOSDescribe('{value} should allow changing the modification date of the item', function() {
 			it('to a former date', function() {
 				let fileItem = this.itemForPath(testEnv.createFile('file'));
 			
