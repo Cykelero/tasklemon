@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-describe('The wrapper', function() {
+describe('The runtime', function() {
 	let testEnv;
 	
 	beforeEach(function() {
