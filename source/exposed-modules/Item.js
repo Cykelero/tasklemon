@@ -48,7 +48,7 @@ class Item {
 			throw Error(`Can't rename “${this.name}”: “${value}” already exists`);
 		}
 
-		// Rename filesystem item (and possibly throw)
+		// Rename file system item (and possibly throw)
 		fs.renameSync(this._path, targetPath);
 		
 		// Update paths of all related items
@@ -119,7 +119,7 @@ class Item {
 			childProcess.execFileSync('SetFile', ['-d', formattedDate, this._path]);
 		} catch (error) {
 			if (error.message.indexOf('error: invalid active developer path') > -1) {
-				throw Error(`Can't set creation date of “${this.name}”: command line tools are not installed. Please run \`xcode-select --install\``);
+				throw Error(`Can't set creation date of “${this.name}”: command-line tools are not installed. Please run \`xcode-select --install\``);
 			} else {
 				throw error;
 			}
@@ -197,7 +197,7 @@ class Item {
 		// Create parents if necessary
 		if (forgiving) Item._makeParentHierarchy(targetPath);
 
-		// Move filesystem item (and possibly throw)
+		// Move file system item (and possibly throw)
 		fs.renameSync(this._path, targetPath);
 		
 		// Update paths of all related items
@@ -223,7 +223,7 @@ class Item {
 		// Create parents if necessary
 		if (forgiving) Item._makeParentHierarchy(targetPath);
 
-		// Copy filesystem item (and possibly throw)
+		// Copy file system item (and possibly throw)
 		Item._recursivelyCopyItem(this._path, targetPath);
 		
 		return Item._itemForPath(targetPath);
@@ -257,7 +257,7 @@ class Item {
 			throw Error(`Can't duplicate “${this.name}” to “${newName}”: ${this._typeName} already exists`);
 		}
 
-		// Copy filesystem item (and possibly throw)
+		// Copy file system item (and possibly throw)
 		Item._recursivelyCopyItem(this._path, targetPath);
 		
 		return Item._itemForPath(targetPath);
@@ -313,7 +313,7 @@ class Item {
 		return cleanPath.split('/').join(path.sep);
 	}
 	
-	static _itemForPath(inputPath, detectTypeFromFilesystem) {
+	static _itemForPath(inputPath, detectTypeFromFileSystem) {
 		let normalizedInputPath;
 		let isFolder;
 		let name;
@@ -343,8 +343,8 @@ class Item {
 		parentPath = Item._realParentPathForPath(normalizedInputPath);
 		
 		// Decide if item is folder or not
-		if (detectTypeFromFilesystem) {
-			// Look at filesystem
+		if (detectTypeFromFileSystem) {
+			// Look at file system
 			const isFile = this._isActualItemAFile(normalizedInputPath);
 			if (isFile === null) return null;
 			
