@@ -58,6 +58,11 @@ module.exports = {
 			package = this._getFromBundle(packageName, dedicatedBundlePackageList);
 		}
 		
+		// If the dedicated bundle was present but incorrectly prepared, try again
+		if (!package) {
+			package = this._getFromBundle(packageName, dedicatedBundlePackageList);
+		}
+		
 		// Couldn't load bundle
 		if (!package) {
 			this._markBundleForDeletion(dedicatedBundlePackageList);
@@ -103,9 +108,11 @@ module.exports = {
 		let bundleIndex;
 		
 		try {
+			// First, try to load any existing package index
 			if (!fs.existsSync(bundleIndexPath)) throw false;
 			bundleIndex = require(bundleIndexPath);
 		} catch(e) {
+			// Loading failed: try installing
 			if (!this._synchronouslyPreparedPackages.has(packageName)) {
 				this._synchronouslyPreparedPackages.add(packageName);
 				process.stdout.write('Preparing packages...\n');
@@ -118,6 +125,7 @@ module.exports = {
 				delete(require.cache[bundleIndexPath]);
 				bundleIndex = require(bundleIndexPath);
 			} catch(e) {
+				// Something is very wrong: preparePackageCacheBundle.js shouldn't ever fail, as it installs all packages as optional dependencies
 				throw Error(`Package “${packageName}” could not be retrieved: the package cache bundle preparation process is failing. Make sure the names of your packages are correct.`);
 			}
 		}
