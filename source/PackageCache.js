@@ -8,6 +8,7 @@ const crossSpawn = require('cross-spawn');
 const rimraf = require('rimraf');
 
 const Constants = require('./Constants');
+const Tools = require('./Tools');
 
 module.exports = {
 	PACKAGE_CACHE_PATH: path.join(Constants.CACHE_PATH, 'npm-packages', path.sep),
@@ -87,6 +88,8 @@ module.exports = {
 	
 	// Internal
 	_prepareBundleForList(packageList) {
+		this._ensurePackageCacheFolderExists();
+		
 		const preparationProcess = crossSpawn(
 			'node',
 			this._nodeArgumentsForList(packageList),
@@ -99,6 +102,8 @@ module.exports = {
 	},
 	
 	_prepareBundleForListSync(packageList) {
+		this._ensurePackageCacheFolderExists();
+		
 		crossSpawn.sync('node', this._nodeArgumentsForList(packageList));
 	},
 	
@@ -138,6 +143,15 @@ module.exports = {
 		try {
 			fs.unlink(bundleIndexPath, () => {});
 		} catch(e) {}
+	},
+	
+	_ensurePackageCacheFolderExists() {
+		const message = `Couldn't create cache folder at “${Constants.CACHE_PATH}” because of error: “$0”`;
+		const cacheFolderParent = path.parse(Constants.CACHE_PATH).dir;
+		
+		Tools.ensureFolderExistsOrExitWithErrorSync(cacheFolderParent, message);
+		Tools.ensureFolderExistsOrExitWithErrorSync(Constants.CACHE_PATH, message);
+		Tools.ensureFolderExistsOrExitWithErrorSync(this.PACKAGE_CACHE_PATH, message);
 	},
 	
 	// // Tools

@@ -59,8 +59,13 @@ async function prepareBundle() {
 		
 		console.info('Installation successful!');
 	} else {
-		console.info('Other installation already exists.');
-		await checkOtherInstallationProgress(true);
+		// Couldn't create bundle folder
+		if (await fs.exists(bundlePath)) {
+			console.info('Other installation already exists.');
+			await checkOtherInstallationProgress(true);
+		} else {
+			throw new Error(`Couldn't create bundle folder.`);
+		}
 	}
 }
 
@@ -192,4 +197,7 @@ packages = parsePackageList(packageList);
 bundlePath = PackageCache._bundlePathForList(packageList);
 
 prepareBundle()
-	.catch(() => process.exit(1));
+	.catch(error => {
+		console.error(error.message);
+		process.exit(1);
+	});

@@ -22,15 +22,6 @@ const validLemonArguments = [
 ];
 const validNodeArguments = ['--inspect', '--inspect-brk'];
 
-function createPackageCacheFolder() {
-	const message = `Couldn't create cache folder at “${Constants.CACHE_PATH}” because of error: “$0”`;
-	const cacheFolderParent = path.parse(Constants.CACHE_PATH).dir;
-	
-	Tools.ensureFolderExistsOrExitWithErrorSync(cacheFolderParent, message);
-	Tools.ensureFolderExistsOrExitWithErrorSync(Constants.CACHE_PATH, message);
-	Tools.ensureFolderExistsOrExitWithErrorSync(PackageCache.PACKAGE_CACHE_PATH, message);
-}
-
 function parseProgramArguments(argumentList) {
 	let rawArguments = argumentList.slice(2); // skip “node” and “tasklemon”
 	
@@ -115,9 +106,6 @@ function exitIfContainsInvalidArguments(args) {
 		Tools.exitWithError(message);
 	}
 }
-
-// Init
-createPackageCacheFolder();
 
 // Run
 const programArgs = parseProgramArguments(process.argv);
