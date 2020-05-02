@@ -75,7 +75,10 @@ format.date.long = function(value, noTime) {
 
 format.date.relative = function(value) {
 	const dateIsFuture = moment().isBefore(value);
-	const durationString = format.duration.between(moment(), value);
+	
+	let durationString = format.duration.between(moment(), value);
+	if (durationString === '60 seconds') durationString = 'a minute';
+	
 	return dateIsFuture ? 'in ' + durationString : durationString + ' ago';
 };
 
