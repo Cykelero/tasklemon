@@ -49,12 +49,14 @@ class Folder extends Item {
 	
 	file(path) {
 		if (path.slice(-1) === '/') throw Error(`“${path}” is not a file path (ends with a slash)`);
+		if (path.slice(0, 1) === '/' && !this._isRoot) throw Error(`“${path}” is an absolute path (starts with a slash) but the folder is a root folder`);
 			
 		return Item._itemForPath(this._path + Item._toNativePath(path));
 	}
 	
 	folder(path) {
 		if (path.slice(-1) !== '/') throw Error(`“${path}” is not a folder path (does not end with a slash)`);
+		if (path.slice(0, 1) === '/' && !this._isRoot) throw Error(`“${path}” is an absolute path (starts with a slash) but the folder is a root folder`);
 			
 		return Item._itemForPath(this._path + Item._toNativePath(path));
 	}

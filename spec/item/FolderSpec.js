@@ -2,11 +2,13 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
+const Item = require('../../source/exposed-modules/File');
 const File = require('../../source/exposed-modules/File');
 const Folder = require('../../source/exposed-modules/Folder');
 const TypeDefinition = require('../../source/TypeDefinition');
 
 const isPosix = os.platform() !== 'win32';
+const driveId = isPosix ? '' : /[^\\]+/.exec(process.cwd())[0];
 
 describe('Folder', function() {
 	let testEnv;
@@ -51,7 +53,24 @@ describe('Folder', function() {
 		});
 	});
 	
-	describe('file() {path}', function() {
+	describe('file() and folder()', function() {
+		it('should accept a starting slash only if self is root', function() {
+			// Self is root
+			const rootItem = Item._itemForPath('/');
+			
+			const rootChildItem = rootItem.folder('/opt/');
+			
+			expect(rootChildItem instanceof Folder).toBe(true);
+			expect(rootChildItem.path).toBe(driveId + '/opt/');
+			
+			// Self is not root
+			const nonRootItem = Item._itemForPath('/var/');
+			
+			expect(() => nonRootItem.folder('/opt/')).toThrow();
+		});
+	});
+	
+	describe('file()', function() {
 		it('should return the child file', function() {
 			const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
 			const childItemPath = testEnv.pathFor('folder/child');
@@ -69,7 +88,7 @@ describe('Folder', function() {
 		});
 	});
 	
-	describe('folder() {path}', function() {
+	describe('folder()', function() {
 		it('should return the child folder', function() {
 			const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
 			const childItemPath = testEnv.pathFor('folder/child/');
