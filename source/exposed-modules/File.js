@@ -43,6 +43,10 @@ class File extends Item {
 		return castResult.valid ? castResult.value : null;
 	}
 	
+	getContentAsJSON() {
+		return this.getContentAs(Object);
+	}
+	
 	appendLine(value, forgiving) {
 		if (!forgiving) this._throwIfNonexistent(`append line to`);
 		fs.appendFileSync(this._path, this._stringify(value) + '\n');

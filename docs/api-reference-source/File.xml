@@ -94,9 +94,27 @@ here.file('package.json').make().content = basicInfo;
 					Throws if the file doesn't exist.
 				]]>
 				</discussion>
+				<sample name="Read a date from a file">
+				<![CDATA[
+const lastUpdateDate = here.file('lastUpdateDate.txt').getContentAs(Date);
+cli.tell('Last update: ' + format.date.relative(lastUpdateDate));
+				]]>
+				</sample>
+			</method>
+			<method name="getContentAsJSON">
+				<signature></signature>
+				<returns>Any</returns>
+				<short-description>Returns the content of the file parsed as JSON</short-description>
+				<discussion>
+				<![CDATA[
+					Reads the text content of the file, then parses it as JSON and returns the result.<br>
+					If the content of the file is not valid JSON, the method returns <code>null</code> instead.<br>
+					Throws if the file doesn't exist.
+				]]>
+				</discussion>
 				<sample name="Read JSON from a file">
 				<![CDATA[
-const packageInfo = here.file('package.json').getContentAs(Object);
+const packageInfo = here.file('package.json').getContentAsJSON();
 cli.tell(`The current project is ${packageInfo.name}.`);
 				]]>
 				</sample>
@@ -169,7 +187,7 @@ here.file('events.log').appendLine('Operation complete.');
 				<short-description>Prepends content as a new line</short-description>
 				<discussion>
 				<![CDATA[
-					Serializes <df-arg>content</df-arg> using <code>JSON.stringify()</code> if it is not already a string, then adds it at the beginning of the file, followed by a newline character..<br>
+					Serializes <df-arg>content</df-arg> using <code>JSON.stringify()</code> if it is not already a string, then adds it at the beginning of the file, followed by a newline character.<br>
 					Throws if the file doesn't exist.
 				]]>
 				</discussion>

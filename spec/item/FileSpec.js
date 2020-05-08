@@ -79,6 +79,15 @@ describe('File', function() {
 		});
 	});
 	
+	describe('#getContentAsJSON()', function() {
+		it('should return the content of the file parsed as JSON', function() {
+			const fileItem = this.itemForPath(testEnv.createFile('file'));
+			
+			fileItem.content = {key: 'value'};
+			expect(fileItem.getContentAsJSON()).toEqual(jasmine.objectContaining({key: 'value'}));
+		});
+	});
+	
 	describe('#appendLine() {content}', function() {
 		it('should append the provided content to the file', function() {
 			const fileItem = this.itemForPath(testEnv.createFile('file'));
