@@ -23,6 +23,7 @@
     "node": ">=8.7.0"
   },
   "dependencies": {
+    "chokidar": "^3.4.0",
     "cross-spawn": "^6.0.5",
     "glob": "^7.1.2",
     "jsdom": "^11.3.0",
@@ -33,7 +34,7 @@
     "trash": "^4.2.1"
   },
   "devDependencies": {
-    "chokidar-cli": "^1.2.2",
+    "chokidar-cli": "^2.1.0",
     "docfish": "^1.4.0",
     "jasmine": "^2.99.0",
     "jasmine-spec-reporter": "^4.2.1"
