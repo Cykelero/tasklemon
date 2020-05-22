@@ -178,8 +178,8 @@ cli.tell(`Latest version is ${versionData.latest}.`);
 				<short-description>Asks the user for a value</short-description>
 				<discussion>
 				<![CDATA[
-					Displays <df-arg>prompt</df-arg> to the user then waits for input.<br>
-					Once a value is entered, it is cast and validated with <df-arg>type</df-arg>. If the value is valid, the method returns it as a <code>Promise</code>. If it is invalid, the user is asked again.
+					Displays <df-arg>promptText</df-arg> to the user then waits for input.<br>
+					Once a value is entered, it is cast and validated with <df-arg>type</df-arg>. If the value is valid, the method returns it as a <code>Promise</code>. If the value is invalid, the user is asked again.
 				]]>
 				</discussion>
 				<sample name="Ask for a number">
