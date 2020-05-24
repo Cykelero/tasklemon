@@ -13,6 +13,10 @@
   "author": "Nathan Manceaux-Panot",
   "license": "MIT",
   "scripts": {
+    "lint": "eslint .",
+    "watch:lint": "npm run lint; chokidar '**/*.js' -c 'npm run lint'",
+    "lint-fix": "eslint . --fix",
+    "watch:lint-fix": "npm run lint-fix; chokidar '**/*.js' -c 'npm run lint-fix'",
     "test": "jasmine",
     "watch:test": "jasmine; chokidar 'source/**/*.js' 'spec/**/*.js' -c 'jasmine'",
     "build-docs": "docfish --source=docs/api-reference-source --destination=docs/api-reference-build",
@@ -36,6 +40,7 @@
   "devDependencies": {
     "chokidar-cli": "^2.1.0",
     "docfish": "^1.4.0",
+    "eslint": "^7.0.0",
     "jasmine": "^2.99.0",
     "jasmine-spec-reporter": "^4.2.1"
   }
