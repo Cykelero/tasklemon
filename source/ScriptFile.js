@@ -24,7 +24,7 @@ module.exports = class Script {
 	}
 	
 	set source(value) {
-		return Tools.writeFileOrExitWithErrorSync(
+		Tools.writeFileOrExitWithErrorSync(
 			this.path,
 			value,
 			{ encoding: 'utf8' },

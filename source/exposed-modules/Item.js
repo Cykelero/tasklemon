@@ -175,7 +175,7 @@ class Item {
 		if (forgiving) Item._makeParentHierarchy(this._path);
 		
 		// Create item
-		this._make(forgiving);
+		this._make();
 		
 		return this;
 	}
@@ -250,7 +250,7 @@ class Item {
 		
 		// Feasibility checks
 		if (newName.indexOf('/') > -1) {
-			throw Error(`Can't duplicate “${this.name}”: “${value}” is not a valid name (contains a slash)`);
+			throw Error(`Can't duplicate “${this.name}”: “${newName}” is not a valid name (contains a slash)`);
 		}
 
 		if (fs.existsSync(targetPath)) {
@@ -433,7 +433,7 @@ class Item {
 					relatedItem._parentPath = newRelatedItemParentPath;
 					relatedItem._name = newRelatedItemName;
 					Item._registerItem(relatedItem);
-				};
+				}
 			}
 		});
 	}
@@ -453,7 +453,7 @@ class Item {
 			fs.mkdirSync(targetPath, {mode: itemStats.mode});
 			
 			// Copy children
-			return fs.readdirSync(itemPath).forEach(childName => {
+			fs.readdirSync(itemPath).forEach(childName => {
 				const childPath = path.join(itemPath, childName);
 				const childTargetPath = path.join(targetPath, childName);
 				Item._recursivelyCopyItem(childPath, childTargetPath);

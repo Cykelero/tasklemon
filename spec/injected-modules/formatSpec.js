@@ -48,6 +48,7 @@ describe('format', function() {
 				});
 			});
 		});
+		
 		describe('.integer', function() {
 			it('should round', function() {
 				expect(format.number.integer(1.1)).toBe('1');
@@ -55,6 +56,7 @@ describe('format', function() {
 			});
 		});
 	});
+	
 	describe('.date', function() {
 		describe('.short', function() {
 			it('should format the date concisely', function() {
@@ -67,6 +69,7 @@ describe('format', function() {
 				});
 			});
 		});
+		
 		describe('.long', function() {
 			it('should format the date verbosely', function() {
 				expect(format.date.long(new Date('March 11, 1984, 8:30'))).toBe('Sunday, March 11th, 1984, 08:30:00');

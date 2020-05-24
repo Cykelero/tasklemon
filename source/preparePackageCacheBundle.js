@@ -4,7 +4,6 @@
 const autopromise = require('./autopromise');
 const path = require('path');
 const fs = autopromise(require('fs'));
-const childProcess = require('child_process');
 
 const rimraf = require('rimraf');
 const crossSpawn = require('cross-spawn');
@@ -127,7 +126,7 @@ async function generatePackageFile() {
 async function runNpmInstall() {
 	const installProcess = crossSpawn('npm', ['install'], {cwd: bundlePath});
 	
-	return new Promise((resolve, reject) => {
+	return new Promise(resolve => {
 		installProcess.on('exit', code => {
 			if (code === 0) {
 				resolve();

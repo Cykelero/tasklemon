@@ -87,7 +87,7 @@ class Folder extends Item {
 		}
 	}
 	
-	_make(forgiving) {
+	_make() {
 		fs.mkdirSync(this._path);
 	}
 	

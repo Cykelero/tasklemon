@@ -31,7 +31,7 @@ format.number.float = function(value, unit, decimalPlaces = 2) {
 	if (value < 0) result += '-';
 
 	// Build comma-separated integer part
-	integerPartWithCommas = integerPart.replace(/(?<!^)(?=(.{3})+$)/g, ',');
+	const integerPartWithCommas = integerPart.replace(/(?<!^)(?=(.{3})+$)/g, ',');
 	
 	result += integerPartWithCommas;
 	
@@ -44,7 +44,7 @@ format.number.float = function(value, unit, decimalPlaces = 2) {
 	// Add and pluralize unit
 	if (unit) {
 		if (!Array.isArray(unit)) unit = [unit, unit + 's'];
-		const isPlural =  value === 0 || Math.abs(value) > 1;
+		const isPlural = value === 0 || Math.abs(value) > 1;
 		
 		result += ' ' + (isPlural ? unit[1] : unit[0]);
 	}

@@ -47,30 +47,30 @@ module.exports = {
 		const requestedBundlePackageList = this._normalizePackageList(rawRequestedBundlePackageList, packageVersions);
 		const dedicatedBundlePackageList = this._dedicatedBundlePackageListFor(packageName, packageVersions);
 		
-		let package;
+		let packageObject;
 		
 		// Try loading package from requested bundle
 		if (requestedBundlePackageList) {
-			package = this._getFromBundle(packageName, requestedBundlePackageList);
+			packageObject = this._getFromBundle(packageName, requestedBundlePackageList);
 		}
 		
 		// Try loading package from dedicated bundle
-		if (!package) {
-			package = this._getFromBundle(packageName, dedicatedBundlePackageList);
+		if (!packageObject) {
+			packageObject = this._getFromBundle(packageName, dedicatedBundlePackageList);
 		}
 		
 		// If the dedicated bundle was present but incorrectly prepared, try again
-		if (!package) {
-			package = this._getFromBundle(packageName, dedicatedBundlePackageList);
+		if (!packageObject) {
+			packageObject = this._getFromBundle(packageName, dedicatedBundlePackageList);
 		}
 		
 		// Couldn't load bundle
-		if (!package) {
+		if (!packageObject) {
 			this._markBundleForDeletion(dedicatedBundlePackageList);
 			throw Error(`Package “${packageName}” could not be retrieved. Make sure its name is correct and that you are connected to the Internet.`);
 		}
 		
-		return package;
+		return packageObject;
 	},
 	
 	bundlePathForHash(packageHash) {
@@ -157,7 +157,7 @@ module.exports = {
 	// // Tools
 	_normalizePackageList(packageList, packageVersions = {}) {
 		const normalized = packageList
-			.map(packageName => /[^\/]+/.exec(packageName)[0])
+			.map(packageName => /[^/]+/.exec(packageName)[0])
 			.map(packageName => {
 				const packageVersion = packageVersions[packageName];
 				

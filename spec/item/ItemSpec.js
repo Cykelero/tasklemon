@@ -221,7 +221,7 @@ describe('Item', function() {
 
 			it('should move children of the item', function() {
 				const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
-				const childItem = this.itemForPath(testEnv.createFile('folder/child'));
+				testEnv.createFile('folder/child');
 				
 				folderItem.name = 'folder2';
 				
@@ -246,9 +246,9 @@ describe('Item', function() {
 
 			it('should fail if there is already an item of the same name', function() {
 				const fileItem = this.itemForPath(testEnv.createFile('file'));
-				const file2Item = this.itemForPath(testEnv.createFile('file2'));
+				testEnv.createFile('file2');
 				
-				expect(() => fileItem.name = 'file2').toThrow();
+				expect(() => { fileItem.name = 'file2' }).toThrow();
 				expect(testEnv.itemFor('file').exists).toBe(true);
 			});
 		});
@@ -369,7 +369,6 @@ describe('Item', function() {
 	describe('#parent', function() {
 		it('should provide the parent of the item', function() {
 			const parentPath = testEnv.createFolder('parent/');
-			let parentItem = this.itemForPath(parentPath);
 			let childItem = this.itemForPath(testEnv.createFile('parent/child'));
 			
 			expect(childItem.parent instanceof Folder).toBe(true);
@@ -564,7 +563,7 @@ describe('Item', function() {
 
 		it('should move children of the item', function() {
 			const folderItem = testEnv.itemFor('folder/').make();
-			const childItem = testEnv.itemFor('folder/child').make();
+			testEnv.itemFor('folder/child').make();
 			const destinationItem = testEnv.itemFor('destination/').make();
 		
 			folderItem.moveTo(destinationItem);
@@ -594,7 +593,7 @@ describe('Item', function() {
 		it('should fail if there is already an item of the same name at the destination', function() {
 			const fileItem = testEnv.itemFor('file').make();
 			const destinationItem = testEnv.itemFor('destination/').make();
-			const destinationChildItem = testEnv.itemFor('destination/file').make();
+			testEnv.itemFor('destination/file').make();
 			
 			expect(() => fileItem.moveTo(destinationItem)).toThrow();
 			expect(testEnv.itemFor('file').exists).toBe(true);
@@ -643,7 +642,7 @@ describe('Item', function() {
 
 		it('should copy children of the item', function() {
 			const folderItem = testEnv.itemFor('folder/').make();
-			const childItem = testEnv.itemFor('folder/child').make();
+			testEnv.itemFor('folder/child').make();
 			const destinationItem = testEnv.itemFor('destination/').make();
 			
 			folderItem.copyTo(destinationItem);
@@ -679,7 +678,7 @@ describe('Item', function() {
 		it('should fail if there is already an item of the same name at the destination', function() {
 			const fileItem = testEnv.itemFor('file').make();
 			const destinationItem = testEnv.itemFor('destination/').make();
-			const destinationChildItem = testEnv.itemFor('destination/file').make();
+			testEnv.itemFor('destination/file').make();
 			
 			expect(() => fileItem.copyTo(destinationItem)).toThrow();
 		});
@@ -727,7 +726,7 @@ describe('Item', function() {
 
 		it('should copy children of the item', function() {
 			const folderItem = testEnv.itemFor('folder/').make();
-			const childItem = testEnv.itemFor('folder/child').make();
+			testEnv.itemFor('folder/child').make();
 			
 			folderItem.duplicate();
 			

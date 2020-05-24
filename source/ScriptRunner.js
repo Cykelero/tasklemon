@@ -10,7 +10,6 @@ const crossSpawn = require('cross-spawn');
 const Constants = require('./Constants');
 const ScriptParser = require('./ScriptParser');
 const PackageCache = require('./PackageCache');
-const Tools = require('./Tools');
 const ScriptEnvironment = require('./ScriptEnvironment');
 
 module.exports = {

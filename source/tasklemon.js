@@ -4,7 +4,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const Constants = require('./Constants');
 const PackageCache = require('./PackageCache');
 const ScriptFile = require('./ScriptFile');
 const ScriptRunner = require('./ScriptRunner');
@@ -26,11 +25,9 @@ function parseProgramArguments(argumentList) {
 	let rawArguments = argumentList.slice(2); // skip “node” and “tasklemon”
 	
 	// Consume legacy runtime version
-	let requestedRuntimeVersion = null;
-	
+	// Tasklemon used to accept a runtime version number as its first argument
 	const firstArg = rawArguments[0];
 	if (/^v\d(\.\d(\.\d)?)?$/.test(firstArg)) {
-		requestedRuntimeVersion = firstArg;
 		rawArguments = rawArguments.slice(1);
 	}
 	

@@ -81,7 +81,7 @@ class File extends Item {
 		return path.join(this._parentPath, this._name);
 	}
 	
-	_make(forgiving) {
+	_make() {
 		fs.closeSync(fs.openSync(this._path, 'a'));
 	}
 	

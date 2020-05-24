@@ -1,4 +1,3 @@
-const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
@@ -45,7 +44,7 @@ describe('Folder', function() {
 
 		it('should exclude dotfiles', function() {
 			const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
-			const childFileItem = this.itemForPath(testEnv.createFile('folder/.childFile'));
+			testEnv.createFile('folder/.childFile');
 			
 			const children = folderItem.children;
 			
@@ -147,8 +146,8 @@ describe('Folder', function() {
 	describe('empty()', function() {
 		it('should remove all items from the folder', function() {
 			const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
-			const childFileItem = this.itemForPath(testEnv.createFile('folder/childFile'));
-			const childFolderItem = this.itemForPath(testEnv.createFolder('folder/childFolder/'));
+			testEnv.createFile('folder/childFile');
+			testEnv.createFolder('folder/childFolder/');
 			
 			folderItem.empty();
 			
@@ -158,8 +157,8 @@ describe('Folder', function() {
 		describe('{immediately: true}', function() {
 			it('should remove all items from the folder', function() {
 				const folderItem = this.itemForPath(testEnv.createFolder('folder/'));
-				const childFileItem = this.itemForPath(testEnv.createFile('folder/childFile'));
-				const childFolderItem = this.itemForPath(testEnv.createFolder('folder/childFolder/'));
+				testEnv.createFile('folder/childFile');
+				testEnv.createFolder('folder/childFolder/');
 			
 				folderItem.empty(true);
 			

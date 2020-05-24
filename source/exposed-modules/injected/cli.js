@@ -21,11 +21,11 @@ cli.tell = function(text) {
 };
 
 cli.ask = function(promptText, type, skippable) {
-	const interface = require('readline').createInterface({input: process.stdin, output: process.stdout});
+	const readlineInterface = require('readline').createInterface({input: process.stdin, output: process.stdout});
 	
-	return new Promise(function(resolve, reject) {
-		interface.question(`${promptText} `, function(answer) {
-			interface.close();
+	return new Promise(function (resolve) {
+		readlineInterface.question(`${promptText} `, function(answer) {
+			readlineInterface.close();
 			
 			if (answer === '') {
 				// No answer
@@ -55,7 +55,7 @@ cli.askMany = async function(askArguments) {
 	
 	for (let askKey of Object.keys(askArguments)) {
 		result[askKey] = await cli.ask.apply(cli, askArguments[askKey]);
-	};
+	}
 	
 	return result;
 };
@@ -66,7 +66,7 @@ cli.tellWhile = async function(promptText, awaitable) {
 	const awaitableResult = await awaitable;
 	
 	process.stdout.cursorTo(0);
-	for (var i = 0; i < promptText.length; i++) {
+	for (let i = 0; i < promptText.length; i++) {
 		process.stdout.write(' ');
 	}
 	process.stdout.cursorTo(0);
@@ -227,8 +227,8 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 			// Positional argument
 			const positionalIdentity = '#' + nextPositionalIndex;
 			
-			let argumentDefinition;
-			if (argumentDefinition = definitionFor(positionalIdentity, false)) {
+			const argumentDefinition = definitionFor(positionalIdentity, false);
+			if (argumentDefinition) {
 				// Indexed
 				rememberOccurrence(argumentDefinition, positionalIdentity);
 				const castValue = castForDefinition(argumentDefinition, expandedArgument);

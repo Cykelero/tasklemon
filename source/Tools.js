@@ -13,7 +13,7 @@ module.exports = {
 		return errorParts ? errorParts[1] : error.message;
 	},
 	
-	tryOrExitWithError(callback, message) {
+	tryOrExitWithError(callback, message) { /* eslint-disable-line consistent-return */
 		try {
 			return callback();
 		} catch (error) {
