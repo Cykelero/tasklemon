@@ -33,7 +33,7 @@ class ItemPermissionsSlice {
 		this._setBit(0, value);
 	}
 	
-	get _encodedSliceOffset() {}
+	//get _encodedSliceOffset() {}
 	
 	get _itemStats() {
 		return fs.lstatSync(this._item.path);

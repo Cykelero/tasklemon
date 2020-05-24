@@ -11,7 +11,7 @@ function getConcreteHeaderLineClasses() {
 }
 
 module.exports = class HeaderLine {
-	toString() {}
+	//toString() {}
 	
 	static forString(lineString) {
 		let result;

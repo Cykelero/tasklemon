@@ -22,7 +22,7 @@ class Item {
 		this._name = name;
 	}
 	
-	get exists() {}
+	//get exists() {}
 	
 	get path() {
 		return Item._toCleanPath(this._path);
@@ -89,7 +89,7 @@ class Item {
 		}
 	}
 	
-	get size() {}
+	//get size() {}
 	
 	get parent() {
 		return this._isRoot ? null : Item._itemForPath(this._parentPath);
@@ -279,7 +279,7 @@ class Item {
 			&& other._name === this._name;
 	}
 	
-	get _path() {}
+	//get _path() {}
 	
 	get _isRoot() {
 		return this.name === '';
@@ -303,7 +303,7 @@ class Item {
 		}
 	}
 	
-	_make() {}
+	//_make() {}
 
 	static _toCleanPath(nativePath) {
 		return nativePath.split(path.sep).join('/');
