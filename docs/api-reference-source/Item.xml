@@ -148,7 +148,7 @@ newPlayerSheet.moveTo(here);
 				<discussion>
 				<![CDATA[
 					Deletes the {df:commonName} by moving it to the user's trash.<br>
-					Relies on the <a href="https://www.npmjs.com/package/trash">trash</a> package.
+					Implemented using the <a href="https://www.npmjs.com/package/trash">trash</a> package.
 				]]>
 				</discussion>
 				<sample name="Clean up after an operation">

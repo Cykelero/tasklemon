@@ -154,7 +154,7 @@ buildFolder.glob('*.js').forEach(child => child.delete());
 				<discussion>
 				<![CDATA[
 					Deletes the folder's children by moving them to the user's trash.<br>
-					Relies on the <a href="https://www.npmjs.com/package/trash">trash</a> package.
+					Implemented using the <a href="https://www.npmjs.com/package/trash">trash</a> package.
 				]]>
 				</discussion>
 				<sample name="Empty a folder">
