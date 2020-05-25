@@ -25,7 +25,7 @@
 		<related>
 		<![CDATA[
 			<code>File</code> objects are a type of <df-class>Item</df-class>.<br>
-			See <df-link target="index"><code>the index</code></df-link> for a list of other globals representing useful file system locations.
+			See <df-link target="index">the index</df-link> for a list of other globals representing useful file system locations.
 		]]>
 		</related>
 		<placeholder-values>
