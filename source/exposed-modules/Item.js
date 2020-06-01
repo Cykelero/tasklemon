@@ -366,29 +366,35 @@ class Item {
 	}
 	
 	static _realParentPathForPath(inputPath) {
-		let parentPathExistent = path.dirname(inputPath);
+		let uncheckedParentPath = path.dirname(inputPath);
+		let parentPathExistent = null;
 		let parentPathNonexistent = '';
-		let resolvedParentPathExistent = null;
 		
-		while (resolvedParentPathExistent === null) {
+		// Remove pieces off the end of uncheckedParentPath until we find it on the file system
+		while (parentPathExistent === null) {
+			// See if uncheckedParentPath exists on disk
 			try {
-				resolvedParentPathExistent = fs.realpathSync(parentPathExistent + path.sep);
-				if (resolvedParentPathExistent.slice(-1) === path.sep) {
-					resolvedParentPathExistent = resolvedParentPathExistent.slice(0, -1);
+				parentPathExistent = fs.realpathSync(uncheckedParentPath);
+				
+				// It does: we're done
+				if (parentPathExistent.slice(-1) === path.sep) {
+					parentPathExistent = parentPathExistent.slice(0, -1);
 				}
 			} catch (e) {
-				const lastPathPiece = path.basename(parentPathExistent);
-				parentPathExistent = parentPathExistent.slice(0, -lastPathPiece.length - 1);
-				parentPathNonexistent = path.sep + lastPathPiece + parentPathNonexistent;
+				// It doesn't: remove last piece from the path (along with separator)
+				const lastPathPiece = path.basename(uncheckedParentPath);
+				
+				uncheckedParentPath = uncheckedParentPath.slice(0, -lastPathPiece.length - 1);
+				parentPathNonexistent = (path.sep + lastPathPiece) + parentPathNonexistent;
 			}
-
-			if (parentPathExistent === '') {
-				resolvedParentPathExistent = '';
+			
+			// We've reached the root
+			if (uncheckedParentPath === '') {
+				parentPathExistent = '';
 			}
 		}
 		
-		
-		return resolvedParentPathExistent + parentPathNonexistent + path.sep;
+		return parentPathExistent + parentPathNonexistent + path.sep;
 	}
 	
 	static _isActualItemAFile(path) {
