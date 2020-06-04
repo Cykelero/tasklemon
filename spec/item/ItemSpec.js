@@ -48,10 +48,11 @@ describe('Item', function() {
 			const item3 = this.itemForPath('/non-existent/..');
 			if (isPosix) {
 				expect(item3.path).toBe('/');
+				expect(item3.name).toBe('');
 			} else {
 				expect(item3.path).toBe(driveId + '/');
+				expect(item3.name).toBe(driveId);
 			}
-			expect(item3.name).toBe('');
 		});
 		
 		it('should resolve standalone relative path components', function() {
@@ -70,6 +71,33 @@ describe('Item', function() {
 			expect(item2.path).toBe(this.toCleanPath(hereParentPath));
 			expect(item2.name).toBe(hereParentName);
 		});
+		
+		if (!isPosix) {
+			it('should resolve absolute paths starting with C:', function() {
+				const rootC = this.itemForPath('C:/');
+				
+				expect(rootC.path).toBe('C:/');
+				expect(rootC.name).toBe('C:');
+				
+				const itemOnC = this.itemForPath('C:/non-existent/');
+				
+				expect(itemOnC.path).toBe('C:/non-existent/');
+				expect(itemOnC.name).toBe('non-existent');
+			});
+			
+			it('should resolve absolute paths with a non-C Windows drive letter', function() {
+				const rootD = this.itemForPath('D:/');
+				
+				expect(rootD.path).toBe('D:/');
+				expect(rootD.name).toBe('D:');
+				
+				const itemOnD = this.itemForPath('D:/non-existent/');
+				
+				expect(itemOnD.path).toBe('D:/non-existent/');
+				expect(itemOnD.name).toBe('non-existent');
+				expect(itemOnD.parent.name).toBe('D:');
+			});
+		}
 	});
 	
 	describe('TypeDefinition', function() {

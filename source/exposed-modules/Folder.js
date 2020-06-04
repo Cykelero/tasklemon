@@ -47,18 +47,32 @@ class Folder extends Item {
 		return this._itemsForRawRelativePaths(childPaths);
 	}
 	
-	file(path) {
-		if (path.slice(-1) === '/') throw Error(`“${path}” is not a file path (ends with a slash)`);
-		if (path.slice(0, 1) === '/' && !this._isRoot) throw Error(`“${path}” is an absolute path (starts with a slash) but the folder is a root folder`);
+	file(cleanPath) {
+		const nativePath = Item._toNativePath(cleanPath);
+		
+		if (cleanPath.slice(-1) === '/') throw Error(`“${cleanPath}” is not a file path (ends with a slash)`);
+		
+		if (Item._isAbsolutePath(nativePath)) {
+			if (!this._isRoot) throw Error(`“${cleanPath}” is an absolute path but the folder is not a root folder`);
 			
-		return Item._itemForPath(this._path + Item._toNativePath(path));
+			return Item._itemForPath(nativePath);
+		} else {
+			return Item._itemForPath(this._path + nativePath);
+		}
 	}
 	
-	folder(path) {
-		if (path.slice(-1) !== '/') throw Error(`“${path}” is not a folder path (does not end with a slash)`);
-		if (path.slice(0, 1) === '/' && !this._isRoot) throw Error(`“${path}” is an absolute path (starts with a slash) but the folder is a root folder`);
+	folder(cleanPath) {
+		const nativePath = Item._toNativePath(cleanPath);
+		
+		if (cleanPath.slice(-1) !== '/') throw Error(`“${cleanPath}” is not a folder path (does not end with a slash)`);
+		
+		if (Item._isAbsolutePath(nativePath)) {
+			if (!this._isRoot) throw Error(`“${cleanPath}” is an absolute path but the folder is not a root folder`);
 			
-		return Item._itemForPath(this._path + Item._toNativePath(path));
+			return Item._itemForPath(nativePath);
+		} else {
+			return Item._itemForPath(this._path + nativePath);
+		}
 	}
 	
 	glob(pattern, options) {
@@ -80,11 +94,7 @@ class Folder extends Item {
 	}
 	
 	get _path() {
-		if (!this._isRoot) {
-			return path.join(this._parentPath, this._name) + path.sep;
-		} else {
-			return path.join(this._parentPath, this._name);
-		}
+		return this._parentPath + this._name + path.sep;
 	}
 	
 	_make() {

@@ -35,9 +35,9 @@ class Item {
 	set name(value) {
 		this._throwIfNonexistent(`set name of`);
 		
-		const targetPath = this._parentPath + value + (this._isFolder ? path.sep : '');
-		
 		if (value === this.name) return;
+		
+		const targetPath = this._parentPath + value + (this._isFolder ? path.sep : '');
 		
 		// Feasibility checks
 		if (value.indexOf('/') > -1) {
@@ -282,7 +282,7 @@ class Item {
 	//get _path() {}
 	
 	get _isRoot() {
-		return this.name === '';
+		return this._parentPath === '';
 	}
 	
 	get _isFolder() {
@@ -305,6 +305,16 @@ class Item {
 	
 	//_make() {}
 
+	static _isAbsolutePath(nativePath) {
+		const firstPathComponent = nativePath.split(path.sep)[0];
+		return this._isRootItemName(firstPathComponent);
+	}
+	
+	static _isRootItemName(itemName) {
+		return itemName === ''
+			|| (!isPosix && /^\w+:$/.test(itemName));
+	}
+	
 	static _toCleanPath(nativePath) {
 		return nativePath.split(path.sep).join('/');
 	}
@@ -315,6 +325,7 @@ class Item {
 	
 	static _itemForPath(inputPath, detectTypeFromFileSystem) {
 		let normalizedInputPath;
+		
 		let isFolder;
 		let name;
 		let parentPath;
@@ -322,18 +333,8 @@ class Item {
 		// Normalize path
 		normalizedInputPath = path.normalize(inputPath);
 		
-		// // Windows: Add drive identifier
-		if (!isPosix && normalizedInputPath[0] === path.sep) {
-			const driveIdentifier = /[^\\]+/.exec(process.cwd())[0];
-			normalizedInputPath = driveIdentifier + normalizedInputPath;
-		}
-		
 		// // Make absolute
-		const isAbsolute = isPosix
-			? normalizedInputPath[0] === path.sep
-			: /^\w+:\\/.test(normalizedInputPath);
-		
-		if (!isAbsolute) {
+		if (!this._isAbsolutePath(normalizedInputPath)) {
 			// Prepend current working directory
 			normalizedInputPath = path.join(process.cwd(), normalizedInputPath);
 		}
@@ -341,6 +342,13 @@ class Item {
 		// Get info from path
 		name = path.basename(normalizedInputPath);
 		parentPath = Item._realParentPathForPath(normalizedInputPath);
+		
+		// // For root items, transfer parent path into name
+		const isAnonymousRoot = (name === '');
+		if (isAnonymousRoot) {
+			name = parentPath.slice(0, -1); // on Windows, this is a drive identifier; elsewhere, an empty string
+			parentPath = '';
+		}
 		
 		// Decide if item is folder or not
 		if (detectTypeFromFileSystem) {
@@ -370,30 +378,41 @@ class Item {
 		let parentPathExistent = null;
 		let parentPathNonexistent = '';
 		
+		// When path.dirname returns a root item, it's with a trailing slash: strip it
+		if (uncheckedParentPath.slice(-1) === path.sep) {
+			uncheckedParentPath = uncheckedParentPath.slice(0, -1);
+		}
+		
 		// Remove pieces off the end of uncheckedParentPath until we find it on the file system
-		while (parentPathExistent === null) {
-			// See if uncheckedParentPath exists on disk
-			try {
-				parentPathExistent = fs.realpathSync(uncheckedParentPath);
-				
-				// It does: we're done
-				if (parentPathExistent.slice(-1) === path.sep) {
-					parentPathExistent = parentPathExistent.slice(0, -1);
-				}
-			} catch (e) {
-				// It doesn't: remove last piece from the path (along with separator)
-				const lastPathPiece = path.basename(uncheckedParentPath);
-				
-				uncheckedParentPath = uncheckedParentPath.slice(0, -lastPathPiece.length - 1);
-				parentPathNonexistent = (path.sep + lastPathPiece) + parentPathNonexistent;
+		while (true) {
+			// Have we reached the root?
+			if (!isPosix && uncheckedParentPath === '') {
+				// Anonymous root on Windows: replace with current drive letter
+				const currentDriveIdentifier = process.cwd().split(path.sep)[0];
+				parentPathExistent = currentDriveIdentifier;
+				break;
+			} else if (this._isRootItemName(uncheckedParentPath)) {
+				// Named root on Windows, or only root on posix systems
+				parentPathExistent = uncheckedParentPath;
+				break;
 			}
 			
-			// We've reached the root
-			if (uncheckedParentPath === '') {
-				parentPathExistent = '';
+			// Check if uncheckedParentPath exists on disk
+			try {
+				parentPathExistent = fs.realpathSync.native(uncheckedParentPath);
+				
+				// It does exist, and we have its true path: we're done
+				break;
+			} catch (e) {
+				// It doesn't exist: remove last piece from the path (along with separator)
+				const lastPathPiece = path.sep + path.basename(uncheckedParentPath);
+				
+				uncheckedParentPath = uncheckedParentPath.slice(0, -lastPathPiece.length);
+				parentPathNonexistent = lastPathPiece + parentPathNonexistent;
 			}
 		}
 		
+		// Join the existent path we've found with the non-existent portion of the input path
 		return parentPathExistent + parentPathNonexistent + path.sep;
 	}
 	

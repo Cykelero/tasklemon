@@ -18,6 +18,7 @@ module.exports = {
         'consistent-return': 'error',
         'no-var': 'error',
         
+        'no-constant-condition': [1, {checkLoops: false }],
         'accessor-pairs': 'error',
         'default-param-last': 'error',
         'require-atomic-updates': 'error',

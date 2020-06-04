@@ -7,7 +7,7 @@ const Folder = require('../../source/exposed-modules/Folder');
 const TypeDefinition = require('../../source/TypeDefinition');
 
 const isPosix = os.platform() !== 'win32';
-const driveId = isPosix ? '' : /[^\\]+/.exec(process.cwd())[0];
+const currentDriveIdentifier = isPosix ? '' : /[^\\]+/.exec(process.cwd())[0];
 
 describe('Folder', function() {
 	let testEnv;
@@ -60,7 +60,7 @@ describe('Folder', function() {
 			const rootChildItem = rootItem.folder('/opt/');
 			
 			expect(rootChildItem instanceof Folder).toBe(true);
-			expect(rootChildItem.path).toBe(driveId + '/opt/');
+			expect(rootChildItem.path).toBe(currentDriveIdentifier + '/opt/');
 			
 			// Self is not root
 			const nonRootItem = Item._itemForPath('/var/');

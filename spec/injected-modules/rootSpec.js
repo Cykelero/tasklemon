@@ -14,6 +14,10 @@ describe('root', function() {
 	});
 
 	it('should have the correct name', function() {
-		expect(root.name).toBe('');
+		if (isPosix) {
+			expect(root.name).toBe('');
+		} else {
+			expect(root.name).toMatch(/^\w+:$/);
+		}
 	});
 });
