@@ -11,8 +11,8 @@ module.exports = class ItemUserPermissions extends ItemPermissionsSlice {
 	}
 	
 	set id(value) {
-		const gid = this._itemStats.gid;
-		fs.lchownSync(this._item.path, value, gid);
+		const currentGid = this._itemStats.gid;
+		fs.lchownSync(this._item.path, value, currentGid);
 	}
 	
 	get name() {
