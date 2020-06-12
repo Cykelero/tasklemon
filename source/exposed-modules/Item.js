@@ -305,6 +305,7 @@ class Item {
 	
 	//_make() {}
 
+	// Path utilities
 	static _isAbsolutePath(nativePath) {
 		const firstPathComponent = nativePath.split(path.sep)[0];
 		return this._isRootItemName(firstPathComponent);
@@ -323,6 +324,7 @@ class Item {
 		return cleanPath.split('/').join(path.sep);
 	}
 	
+	// File system access
 	static _itemForPath(inputPath, detectTypeFromFileSystem) {
 		let normalizedInputPath;
 		
@@ -424,45 +426,6 @@ class Item {
 		}
 	}
 	
-	static _registerItem(item) {
-		const itemPath = item._path;
-		if (!Item._itemsByPath[itemPath]) Item._itemsByPath[itemPath] = new Set();
-		
-		Item._itemsByPath[itemPath].add(item);
-	}
-	
-	static _deregisterItem(item) {
-		const itemPath = item._path;
-		Item._itemsByPath[itemPath].delete(item);
-	}
-		
-	static _registerItemPathChange(item, newItemPath) {
-		const initialItemPath = item._path;
-		const initialItemPathLength = initialItemPath.length;
-		
-		const knownItemPaths = Object.keys(Item._itemsByPath);
-	
-		knownItemPaths.forEach(knownItemPath => {
-			const isRelated = item._isFolder ?
-				knownItemPath.slice(0, initialItemPathLength) === initialItemPath :
-				knownItemPath === initialItemPath;
-		
-			if (isRelated) {
-				const newRelatedItemPath = newItemPath + knownItemPath.slice(initialItemPathLength);
-				
-				const newRelatedItemParentPath = path.dirname(newRelatedItemPath) + path.sep;
-				const newRelatedItemName = newRelatedItemPath.slice(newRelatedItemParentPath.length);
-			
-				for (let relatedItem of Item._itemsByPath[knownItemPath].values()) {
-					Item._deregisterItem(relatedItem);
-					relatedItem._parentPath = newRelatedItemParentPath;
-					relatedItem._name = newRelatedItemName;
-					Item._registerItem(relatedItem);
-				}
-			}
-		});
-	}
-	
 	static _makeParentHierarchy(itemPath) {
 		const parentPath = path.dirname(itemPath);
 		if (!fs.existsSync(parentPath)) {
@@ -498,6 +461,46 @@ class Item {
 		} else {
 			rimraf.sync(itemPath);
 		}
+	}
+	
+	// Item tracking
+	static _registerItem(item) {
+		const itemPath = item._path;
+		if (!Item._itemsByPath[itemPath]) Item._itemsByPath[itemPath] = new Set();
+		
+		Item._itemsByPath[itemPath].add(item);
+	}
+	
+	static _deregisterItem(item) {
+		const itemPath = item._path;
+		Item._itemsByPath[itemPath].delete(item);
+	}
+	
+	static _registerItemPathChange(item, newItemPath) {
+		const initialItemPath = item._path;
+		const initialItemPathLength = initialItemPath.length;
+		
+		const knownItemPaths = Object.keys(Item._itemsByPath);
+		
+		knownItemPaths.forEach(knownItemPath => {
+			const isRelated = item._isFolder ?
+			knownItemPath.slice(0, initialItemPathLength) === initialItemPath :
+			knownItemPath === initialItemPath;
+			
+			if (isRelated) {
+				const newRelatedItemPath = newItemPath + knownItemPath.slice(initialItemPathLength);
+				
+				const newRelatedItemParentPath = path.dirname(newRelatedItemPath) + path.sep;
+				const newRelatedItemName = newRelatedItemPath.slice(newRelatedItemParentPath.length);
+				
+				for (let relatedItem of Item._itemsByPath[knownItemPath].values()) {
+					Item._deregisterItem(relatedItem);
+					relatedItem._parentPath = newRelatedItemParentPath;
+					relatedItem._name = newRelatedItemName;
+					Item._registerItem(relatedItem);
+				}
+			}
+		});
 	}
 }
 
