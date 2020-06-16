@@ -51,23 +51,24 @@ fs.readdirSync(folderPath).forEach(childName => {
 
 And with Tasklemon installed, you can just save this code into a file (say, `clean.js`) and run it in a single command; no imports, no preprocessing:
 
-````bash
+```bash
 $ lemon clean.js
-````
+```
 
 (you can also give the appropriate permissions to your scripts to make them directly executable, if you want; see below in [Shebang and runtime pinning](#shebang-and-runtime-pinning))
 
 ## 🛠 Usage
 
-### Installing
+### Installing Tasklemon
 
-With Node.js present, install Tasklemon globally by running `npm install -g tasklemon`. This will make it available as `lemon` on the command&nbsp;line.
+With [Node.js](https://nodejs.org/) present, install Tasklemon globally by running `npm install -g tasklemon`. This will make it available as `lemon` on the command&nbsp;line.
 
-Tasklemon supports macOS, Linux, and (for the most part) Windows.
+Tasklemon supports macOS, Linux, and (with a few caveats) Windows.
 
 ### Writing and running a script
 
-To use Tasklemon, write a script and save it into a file, then execute it by running `lemon your-script.js`. At runtime, Tasklemon exposes its entry points to your script, so you don't have to import anything. It also wraps all your code in an `async` function call, so that you can `await` promises wherever.
+To use Tasklemon, write a script and save it into a file, then execute it by running `lemon your-script.js`.  
+At runtime, Tasklemon exposes its entry points to your script, so you don't have to import anything. It also wraps all your code in an `async` function call, so that you can `await` promises wherever.
 
 ### Shebang and runtime pinning
 
@@ -87,73 +88,73 @@ After that, you can use the [API reference →](http://cykelero.github.io/taskle
 
 ## ☀️ Samples
 
-### Writing and reading files
+### Write and read files
 
 Add some text to a log file in the current working directory:
 
-````js
+```js
 here.file('events.log').appendLine('Operation complete.');
-````
+```
 
 Read JSON from a file:
 
-````js
-const packageInfo = here.file('package.json').getContentAs(Object);
+```js
+const packageInfo = here.file('package.json').getContentAsJSON();
 cli.tell(`The current project is ${packageInfo.name}.`);
-````
+```
 
-### Declaring and getting script parameters
+### Declare script parameters, get the values
 
-````js
+```js
 cli.accept({
     username: ['--name', String, 'Name of user to add'],
     isAdmin: ['-a', Boolean, 'Make user an admin']
 });
 
 console.log(cli.args); // will be {username: 'Rose', isAdmin: true}
-````
+```
 
 Then, run the script:
 
-````bash
+```bash
 $ lemon adduser.js -a --name Rose
-````
+```
 
 ### Format data for display
 
 Display a relative timestamp:
 
-````js
+```js
 const logDate = here.file('log.txt').dateModified;
 cli.tell(format.date.relative(logDate)); // “3 minutes ago”
-````
+```
 
 Display a number and pluralize its unit:
 
-````js
+```js
 cli.tell(format.number(1, 'carrot')); // “1.00 carrot”
 cli.tell(format.number(4528.5, 'carrot')); // “4,528.50 carrots”
-````
+```
 
 ### Get JSON from a URL
 
-````js
+```js
 const tasklemonNpmDetails = await net.getJSON('https://registry.npmjs.org/tasklemon');
 const lastReleaseDate = tasklemonNpmDetails.time.modified;
 
 cli.tell('Last Tasklemon release was ' + format.date.relative(lastReleaseDate) + '.');
-````
+```
 
 ### Use the `dedupe` npm package
 
 There is no need to ever install, or even import packages prior to using them.
 
-````js
+```js
 const friendNames = await cli.ask('What are your friends called?', Array);
 const uniqueFriendNames = npm.dedupe(friendNames);
 
 cli.tell('Total count of unique friend names: ' + uniqueFriendNames.length);
-````
+```
 
 ## 💬 Caveats
 
@@ -162,7 +163,7 @@ I really want Tasklemon to be terrific, but here are a few ways in which it's no
 - Tasklemon is still very young. It's got a (partial) test suite, sure, but it hasn't seen much real-world usage yet: expect breaking changes, and bugs. (please do [report these](https://github.com/cykelero/tasklemon/issues/new)!)
 - By design, file operations are synchronous—just like in bash scripting, for example. That's great for usability, but you're not going to write concurrent server stuff this way.
 - Symlinks aren't very well-supported yet. Just traversing them should be fine, but directly manipulating them will be weird.
-- While Tasklemon does support Windows, a few features are missing, such as permission manipulation.
+- On Windows, a few features are missing, such as permission manipulation.
 
 ## 👩🏿‍💻 Contributing
 
