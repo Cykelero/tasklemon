@@ -70,6 +70,15 @@ Tasklemon supports macOS, Linux, and (with a few caveats) Windows.
 To use Tasklemon, write a script and save it into a file, then execute it by running `lemon your-script.js`.  
 At runtime, Tasklemon exposes its entry points to your script, so you don't have to import anything. It also wraps all your code in an `async` function call, so that you can `await` promises wherever.
 
+### Debugging a script
+
+Node.js supports debugging through V8's inspector protocol. To debug a Tasklemon script:
+
+1. Run the script with the `--inspect-brk` flag specified.  
+Make sure the flag is before the script's name, so that it is consumed by Tasklemon itself: `lemon --inspect-brk your-script.js`
+2. Open [a compatible client](https://nodejs.org/en/docs/guides/debugging-getting-started/#inspector-clients), such as Google Chrome's DevTools, or Visual Studio Code, and connect to the Node process.  
+For instance, in Google Chrome, this means navigating to `chrome://inspect`, then clicking “inspect” under “Remote Target”.
+
 ### Shebang and runtime pinning
 
 When you run a script for the first time, Tasklemon will insert two lines at the top:
