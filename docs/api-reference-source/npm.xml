@@ -61,7 +61,7 @@ cli.tell('Hello, ' + await npm.username() + '!');
 				
 				<p>
 					To have Tasklemon automatically add <code>#require</code> statements for all the packages used by your script, setting them to their latest available version, you can use the <code>--pin-packages</code> command-line action.<br>
-					It's a good idea to do this, to ensure your script keeps the same behavior despite any possible package updates.
+					It's a good idea to do this, to ensure your script keeps the same behavior over time, even after new versions of the packages are released.
 				</p>
 				
 				<df-sample name="Automatically add version directives to a script">
@@ -74,7 +74,8 @@ $ lemon --pin-packages script.js
 			<discussion>
 			<![CDATA[
 				<p>
-					In order to make sure a script can execute offline, and without any download delays, you can ask Tasklemon to preload all of the script's required packages. These include packages you implicitely require, not just the packages pinned by version directives.
+					In order to ensure a script can execute offline, and without any download delays, you can ask Tasklemon to preload all of the script's required packages. These include packages you implicitely require, not just the packages pinned by version directives.<br>
+					This has no purpose for a script that's been run at least once, since Tasklemon will already have downloaded its packages.
 				</p>
 				
 				<df-sample name="Preload the packages used by a script">
