@@ -4,12 +4,14 @@
 		<short-description>Describes an item on the file system</short-description>
 		<discussion>
 		<![CDATA[
-			<code>Item</code> objects represent a file or a folder on the file system, whether it exists or not, based on its path.<br>
+			<p>
+				<code>Item</code> objects represent a file or a folder on the file system, whether it exists or not, based on its path.
+			</p>
 			<div class="df-list-with-title">
 				To get or create <code>Item</code> objects, you can:
 				<ul>
 					<li>
-						use one of the <code><df-class>root</df-class>/<df-class>home</df-class>/<df-class>here</df-class></code> or <code><df-class>scriptFile</df-class>/<df-class>scriptFolder</df-class></code> globals
+						use one of the <df-class>root</df-class>/<df-class>home</df-class>/<df-class>here</df-class> or <df-class>scriptFile</df-class>/<df-class>scriptFolder</df-class> globals
 					</li>
 					<li>
 						call <df-link target="Folder#file"><code>file()</code></df-link> or <df-link target="Folder#folder"><code>folder()</code></df-link> on a <df-class>Folder</df-class>
@@ -19,6 +21,9 @@
 					</li>
 				</ul>
 			</div>
+			<p>
+				To check whether a given <df-class>Item</df-class> object is a <code>File</code> or a <code>Folder</code>, you can use the <code>instanceof</code> operator.
+			</p>
 		]]>
 		</discussion>
 		<related>

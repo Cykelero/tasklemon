@@ -4,7 +4,9 @@
 		<short-description>Describes a file on the file system</short-description>
 		<discussion>
 		<![CDATA[
-			<code>File</code> objects represent a file on the file system, whether it exists or not, based on its path.<br>
+			<p>
+				<code>File</code> objects represent a file on the file system, whether it exists or not, based on its path.
+			</p>
 			<div class="df-list-with-title">
 				To get or create <code>File</code> objects, you can:
 				<ul>
@@ -15,11 +17,13 @@
 						ask the user through a <df-class>cli</df-class> method, using the <code>File</code> <df-link target="TypeDefinition">type definition</df-link>
 					</li>
 					<li>
-						use the <code><df-class>scriptFile</df-class></code> global
+						use the <df-class>scriptFile</df-class> global
 					</li>
 				</ul>
 			</div>
-			
+			<p>
+				To check if a given <df-class>Item</df-class> object is a <code>File</code>, you can use the <code>instanceof</code> operator.
+			</p>
 		]]>
 		</discussion>
 		<related>
