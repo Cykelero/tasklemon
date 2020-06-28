@@ -143,7 +143,11 @@ cli.tell('Hello there!'); // displays “Hello there!”
 			<method name="cli.tellWhile">
 				<signature>String text, Promise asyncOperation</signature>
 				<argument name="text" type="String">The text to display while awaiting.</argument>
-				<argument name="asyncOperation" type="Promise">The <code>Promise</code> to wait for.</argument>
+				<argument name="asyncOperation" type="Promise">
+				<![CDATA[
+					The <code>Promise</code> to wait for.
+				]]>
+			</argument>
 				<returns>Promise&lt;Any&gt;</returns>
 				<short-description>Displays text until a Promise resolves</short-description>
 				<discussion>
@@ -173,7 +177,11 @@ cli.tell(`Latest version is ${versionData.latest}.`);
 					The <df-link target="TypeDefinition">type definition</df-link> to apply to the entered value.
 				]]>
 				</argument>
-				<argument name="optional" type="Boolean" default="false">If <code>true</code>, allows the user to enter an empty string, which will result in the value being <code>null</code>.</argument>
+				<argument name="optional" type="Boolean" default="false">
+				<![CDATA[
+					If <code>true</code>, allows the user to enter an empty string, which will result in the value being <code>null</code>.
+				]]>
+				</argument>
 				<returns>Promise&lt;Any&gt;</returns>
 				<short-description>Asks the user for a value</short-description>
 				<discussion>
@@ -191,7 +199,11 @@ cli.tell(`Number of balloons requested: ${balloonCount}`);
 			</method>
 			<method name="cli.askMany">
 				<signature>Object definitions</signature>
-				<argument name="definitions" type="Object">A map of argument arrays for <code>ask()</code>, by value name.</argument>
+				<argument name="definitions" type="Object">
+				<![CDATA[
+					A map of argument arrays for <code>ask()</code>, by value name.
+				]]>
+			</argument>
 				<returns>Promise&lt;Object&gt;</returns>
 				<short-description>Asks the user for multiple values</short-description>
 				<discussion>

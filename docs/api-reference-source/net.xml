@@ -20,7 +20,11 @@
 			<method name="net.getText">
 				<signature>String url, [Object options]</signature>
 				<argument name="url" type="String">The URL to query.</argument>
-				<argument name="options" type="Object">Custom options passed to <code>fetch()</code>.</argument>
+				<argument name="options" type="Object">
+				<![CDATA[
+					Custom options passed to <code>fetch()</code>.
+				]]>
+				</argument>
 				<returns>Promise&lt;String&gt;</returns>
 				<short-description>Gets text from a URL</short-description>
 				<discussion>
@@ -39,7 +43,11 @@ cli.tell(trulyRandomNumber);
 			<method name="net.getJSON">
 				<signature>String url, [Object options]</signature>
 				<argument name="url" type="String">The URL to query.</argument>
-				<argument name="options" type="Object">Custom options passed to <code>fetch()</code>.</argument>
+				<argument name="options" type="Object">
+				<![CDATA[
+					Custom options passed to <code>fetch()</code>.
+				]]>
+				</argument>
 				<returns>Promise&lt;Any&gt;</returns>
 				<short-description>Gets JSON from a URL</short-description>
 				<discussion>
@@ -60,7 +68,11 @@ cli.tell('Last Tasklemon release was ' + format.date.relative(lastReleaseDate) +
 			<method name="net.getDOM">
 				<signature>String url, [Object options]</signature>
 				<argument name="url" type="String">The URL to query.</argument>
-				<argument name="options" type="Object">Custom options passed to <code>fetch()</code>.</argument>
+				<argument name="options" type="Object">
+				<![CDATA[
+					Custom options passed to <code>fetch()</code>.
+				]]>
+				</argument>
 				<returns>Promise&lt;JSDOM&gt;</returns>
 				<short-description>Gets a DOM tree from a URL</short-description>
 				<discussion>

@@ -71,7 +71,11 @@ cli.tell(format.number(12.536, ['cactus', 'cacti'])); // “12.54 cacti”
 			<method name="format.number.integer">
 				<signature>Number value, [String|Array unit]</signature>
 				<argument name="value" type="Number">The number to format.</argument>
-				<argument name="unit" type="String|Array" default="null">The unit to append to the formatted number. See <code>format.number.float</code> for details.</argument>
+				<argument name="unit" type="String|Array" default="null">
+				<![CDATA[
+					The unit to append to the formatted number. See <code>format.number.float</code> for details.
+				]]>
+				</argument>
 				<returns>String</returns>
 				<short-description>Rounds and formats a number</short-description>
 				<discussion>

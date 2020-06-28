@@ -128,7 +128,11 @@ newPlayerSheet.name = 'player-sheet.md';
 			</method>
 			<method name="duplicate">
 				<signature>[String newName]</signature>
-				<argument name="newName" type="String">The name to use for the copy instead of an automatically-picked one. <code>duplicate()</code> will throw if the name is taken.</argument>
+				<argument name="newName" type="String">
+				<![CDATA[
+					The name to use for the copy instead of an automatically-picked one. <code>duplicate()</code> will throw if the name is taken.
+				]]>
+				</argument>
 				<returns>{df:$classname}</returns>
 				<short-description>Duplicates the {df:commonName} in place.</short-description>
 				<discussion>
