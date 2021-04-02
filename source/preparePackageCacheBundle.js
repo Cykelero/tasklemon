@@ -149,7 +149,7 @@ function startPulse() {
 	function schedulePulse() {
 		currentPulseTimeout = setTimeout(() => {
 			if (isPulsing) {
-				fs.writeFile(bundlePath + PULSE_FILE_NAME, Date.now());
+				fs.writeFile(bundlePath + PULSE_FILE_NAME, Date.now().toString());
 				schedulePulse();
 			}
 		}, PULSE_REFRESH_INTERVAL);
