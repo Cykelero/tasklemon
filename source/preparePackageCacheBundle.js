@@ -37,7 +37,7 @@ async function doesItemExist(path) {
 // // Installation process
 function parsePackageList(rawPackageList) {
 	return rawPackageList.reduce((result, packageString) => {
-		const [, name, version] = /([^@]+)@?(.*)/.exec(packageString);
+		const [, name, version] = /^(.+?)(?:@([^@]*))?$/.exec(packageString);
 		result[name] = version ? version : '*';
 		return result;
 	}, {});
