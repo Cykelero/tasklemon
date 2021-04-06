@@ -45,4 +45,23 @@ describe('npm', function() {
 		let value = fs.readFileSync(outputPath).toString();
 		expect(value).toBe('3.2.4');
 	});
+
+	it('should allow require-access to sub files', async function() {
+		const scriptSource = `#require uuid@3.3.0
+			const uuid_v1 = npm['uuid:v1'];
+			const uuid_v4 = npm['uuid:v4'];
+
+			here.file('output.json').make(true).content = {
+				v1: uuid_v1.toString(),
+				v4: uuid_v4.toString()
+			};
+		`;
+
+		await testEnv.runLemonScript(scriptSource);
+
+		const outputPath = testEnv.nativePathFor('output.json');
+		let value = JSON.parse(fs.readFileSync(outputPath));
+		expect(value.v1).toContain('function v1');
+		expect(value.v4).toContain('function v4');
+	});
 });
