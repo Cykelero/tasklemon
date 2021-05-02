@@ -36,10 +36,10 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
  
-const folderPath = os.homedir();
-fs.readdirSync(folderPath).forEach(childName => {
+const homePath = os.homedir();
+fs.readdirSync(homePath).forEach(childName => {
     if (path.parse(childName).ext === '.tmp') {
-        const absolutePath = path.join(folderPath, childName);
+        const absolutePath = path.join(homePath, childName);
         fs.unlinkSync(absolutePath);
     }
 });
@@ -68,7 +68,8 @@ Tasklemon supports macOS, Linux, and (with a few caveats) Windows.
 ### Writing and running a script
 
 To use Tasklemon, write a script and save it into a file, then execute it by running `lemon your-script.js`.  
-At runtime, Tasklemon exposes its entry points to your script, so you don't have to import anything. It also wraps all your code in an `async` function call, so that you can `await` promises wherever.
+At runtime, Tasklemon exposes its entry points to your script, so you don't have to import anything. It also wraps all your code in an `async` function call, so that you can `await` promises wherever.  
+To get a feel of what's possible, have a look at [the examples](#%EF%B8%8F-samples) below.
 
 ### Debugging a script
 
@@ -155,6 +156,8 @@ cli.tell(format.number(4528.5, 'carrot')); // “4,528.50 carrots”
 ```
 
 ### Get JSON from a URL
+
+You can use `await` at the top level of your scripts.
 
 ```js
 const tasklemonNpmDetails = await net.getJSON('https://registry.npmjs.org/tasklemon');
