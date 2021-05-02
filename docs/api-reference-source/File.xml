@@ -11,6 +11,9 @@
 				To get or create <code>File</code> objects, you can:
 				<ul>
 					<li>
+						call one of the <df-link target="#File"><code>File()</code></df-link>/<df-link target="Item#Item"><code>Item()</code></df-link> globals with an absolute path
+					</li>
+					<li>
 						call <df-link target="Folder#file"><code>file()</code></df-link> on a <df-class>Folder</df-class>
 					</li>
 					<li>
@@ -44,6 +47,30 @@
 		</placeholder-values>
 	</metadata>
 	<members>
+		<group name="Getting an instance from an absolute path">
+			<method name="File">
+				<signature>String absolutePath</signature>
+				<returns>File</returns>
+				<argument name="absolutePath" type="String">The absolute path to the file to get.</argument>
+				<short-description>Gets a file by absolute path</short-description>
+				<discussion>
+				<![CDATA[
+					Returns a new <code>File</code> instance for <df-arg>absolutePath</df-arg>.<br>
+					On Windows, the path can optionally include a drive identifier.
+				]]>
+				</discussion>
+				<sample name="Get a folder by absolute path">
+				<![CDATA[
+const fonts = Folder('/System/Library/Fonts/');
+				]]>
+				</sample>
+				<sample name="Get a file on a specific Windows drive">
+				<![CDATA[
+const directXLog = File('C:/Windows/DirectX.log');
+				]]>
+				</sample>
+			</method>
+		</group>
 		<group name="Creating, deleting, checking existence and comparing">
 			<import from="Item" id="existence" />
 		</group>

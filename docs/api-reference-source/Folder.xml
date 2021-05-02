@@ -14,6 +14,9 @@
 						use one of the <df-class>root</df-class>/<df-class>home</df-class>/<df-class>here</df-class> or <df-class>scriptFolder</df-class> globals
 					</li>
 					<li>
+						call one of the <df-link target="#Folder"><code>Folder()</code></df-link>/<df-link target="Item#Item"><code>Item()</code></df-link> globals with an absolute path
+					</li>
+					<li>
 						call <df-link target="#folder"><code>folder()</code></df-link> on another <code>Folder</code>
 					</li>
 					<li>
@@ -44,6 +47,30 @@
 		</placeholder-values>
 	</metadata>
 	<members>
+		<group name="Getting an instance from an absolute path">
+			<method name="Folder">
+				<signature>String absolutePath</signature>
+				<returns>Folder</returns>
+				<argument name="absolutePath" type="String">The absolute path to the folder to get.</argument>
+				<short-description>Gets a folder by absolute path</short-description>
+				<discussion>
+				<![CDATA[
+					Returns a new <code>Folder</code> instance for <df-arg>absolutePath</df-arg>.<br>
+					On Windows, the path can optionally include a drive identifier.
+				]]>
+				</discussion>
+				<sample name="Get a folder by absolute path">
+				<![CDATA[
+const fonts = Folder('/System/Library/Fonts/');
+				]]>
+				</sample>
+				<sample name="Get a file on a specific Windows drive">
+				<![CDATA[
+const directXLog = File('C:/Windows/DirectX.log');
+				]]>
+				</sample>
+			</method>
+		</group>
 		<group name="Creating, deleting, checking existence and comparing">
 			<import from="Item" id="existence" />
 		</group>
@@ -83,7 +110,7 @@ const hosts = root.file('etc/hosts'); // returns the /etc/hosts file
 				<short-description>Gets a folder by path</short-description>
 				<discussion>
 				<![CDATA[
-					Returns a new <df-class>Folder</df-class> instance for <df-arg>relativePath</df-arg>.<br>
+					Returns a new <code>Folder</code> instance for <df-arg>relativePath</df-arg>.<br>
 					Throws if <df-arg>relativePath</df-arg> doesn't end with a slash.
 				]]>
 				</discussion>

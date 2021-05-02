@@ -375,6 +375,19 @@ class Item {
 		return itemInstance;
 	}
 	
+	static _itemForAbsoluteCleanPath(klass, cleanPath) {
+		// Ensure path is absolute
+		const nativePath = this._toNativePath(cleanPath);
+		if (!this._isAbsolutePath(nativePath)) throw new Error(`“${cleanPath}” is not an absolute path`);
+		
+		// Create item, handle validity errors
+		const castResult = TypeDefinition.execute(klass, cleanPath);
+		
+		if (!castResult.valid) throw new Error(`“${cleanPath}” ${castResult.errorText}`);
+		
+		return castResult.value;
+	}
+	
 	static _realParentPathForPath(inputPath) {
 		let uncheckedParentPath = path.dirname(inputPath);
 		let parentPathExistent = null;

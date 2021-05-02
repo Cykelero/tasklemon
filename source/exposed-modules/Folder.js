@@ -55,6 +55,8 @@ class Folder extends Item {
 		if (Item._isAbsolutePath(nativePath)) {
 			if (!this._isRoot) throw Error(`“${cleanPath}” is an absolute path but the folder is not a root folder`);
 			
+			console.trace("Calling the file() method with an absolute path is deprecated. Call the File() global instead.");
+			
 			return Item._itemForPath(nativePath);
 		} else {
 			return Item._itemForPath(this._path + nativePath);
@@ -68,6 +70,8 @@ class Folder extends Item {
 		
 		if (Item._isAbsolutePath(nativePath)) {
 			if (!this._isRoot) throw Error(`“${cleanPath}” is an absolute path but the folder is not a root folder`);
+			
+			console.trace("Calling the folder() method with an absolute path is deprecated. Call the Folder() global instead.");
 			
 			return Item._itemForPath(nativePath);
 		} else {

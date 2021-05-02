@@ -4,6 +4,10 @@ const Item = require('../Item');
 
 module.exports = new Proxy(Item, {
 	construct() {
-		throw new Error('You cannot instantiate this class directly. To obtain a reference to a file or folder, start with an entry point global: `root`, `home`, `here`, `scriptFile` or `scriptFolder`.')
+		throw new Error('`Item` cannot be called with the `new` operator; use it as a function instead.')
+	},
+	
+	apply(target, thisArg, argumentsList) {
+		return Item._itemForAbsoluteCleanPath(Item, argumentsList[0]);
 	}
 });

@@ -14,6 +14,9 @@
 						use one of the <df-class>root</df-class>/<df-class>home</df-class>/<df-class>here</df-class> or <df-class>scriptFile</df-class>/<df-class>scriptFolder</df-class> globals
 					</li>
 					<li>
+						call one of the <df-link target="File#File"><code>File()</code></df-link>/<df-link target="Folder#Folder"><code>Folder()</code></df-link>/<df-link target="#Item"><code>Item()</code></df-link> globals with an absolute path
+					</li>
+					<li>
 						call <df-link target="Folder#file"><code>file()</code></df-link> or <df-link target="Folder#folder"><code>folder()</code></df-link> on a <df-class>Folder</df-class>
 					</li>
 					<li>
@@ -36,6 +39,43 @@
 		]]>
 		</related>
 	</metadata>
+	<members>
+		<group name="Getting an instance from an absolute path">
+			<method name="Item">
+				<signature>String absolutePath</signature>
+				<returns>Item</returns>
+				<argument name="absolutePath" type="String">The absolute path to the item to get.</argument>
+				<short-description>Gets an item by absolute path</short-description>
+				<discussion>
+				<![CDATA[
+					<p>
+						Returns a new <df-class>File</df-class> or <df-class>Folder</df-class> instance for <df-arg>absolutePath</df-arg>, depending on the actual kind of the item on the filesystem.<br>
+						Use this global when you don't know the item kind in advance, such as when accepting user input. Otherwise, use one of the <df-link target="File#File"><code>File()</code></df-link>/<df-link target="Folder#Folder"><code>Folder()</code></df-link> globals.
+					</p>
+					<p>
+						On Windows, the path can optionally include a drive identifier.
+					</p>
+					<p>
+						Throws if the item doesn't exist.
+					</p>
+				]]>
+				</discussion>
+				<sample name="Get an item of unknown kind by absolute path">
+				<![CDATA[
+const mysteryPath = '/path/to/something'; // a path we got from outside the script
+
+const item = Item(mysteryPath);
+
+if (item instanceof File) {
+	// item is a file
+} else if (item instanceof Folder) {
+	// item is a folder
+}
+				]]>
+				</sample>
+			</method>
+		</group>
+	</members>
 	<exports>
 		<export id="existence">
 			<property name="exists">

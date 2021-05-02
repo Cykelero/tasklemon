@@ -115,7 +115,7 @@ cli.tell(`The current project is ${packageInfo.name}.`);
 Use an absolute path:
 
 ```js
-const directXLog = root.file('C:/Windows/DirectX.log'); // on Windows, drive letter can be specified
+const directXLog = File('C:/Windows/DirectX.log'); // on Windows, drive letter can be specified
 const lastLogDate = directXLog.dateModified;
 
 cli.tell('The last DirectX install happened ' + format.date.relative(lastLogDate) + '.');
