@@ -29,12 +29,12 @@ describe('The runtime', function() {
 	
 	it('should expose errors thrown by scripts', async function() {
 		const scriptSource = `
-			methodThatDoesNotExist();
+			functionThatDoesNotExist();
 		`;
 		
 		const scriptRunError = await testEnv.runLemonScript(scriptSource)
 			.catch(error => error);
 		
-		expect(scriptRunError.toString()).toContain('ReferenceError: methodThatDoesNotExist is not defined');
+		expect(scriptRunError.toString()).toContain('ReferenceError: functionThatDoesNotExist is not defined');
 	});
 });

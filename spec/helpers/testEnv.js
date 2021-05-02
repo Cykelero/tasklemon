@@ -71,7 +71,7 @@ beforeEach(function() {
 						stdio: ['pipe', 'pipe', 'pipe']
 					}, (error, stdout, stderr) => {
 						if (error) {
-							reject(error);
+							reject(error.message);
 						} else if (stderr) {
 							reject(stderr);
 						} else {
