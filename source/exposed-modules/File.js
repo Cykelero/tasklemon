@@ -94,7 +94,7 @@ module.exports = File;
 
 File[TypeDefinition.symbol] = function(value) {
 	if (value.slice(-1) === path.sep) {
-		throw 'is not a path to a file';
+		throw 'is not a path to a file (has a trailing slash)';
 	}
 	
 	return Item._itemForPath(value);
