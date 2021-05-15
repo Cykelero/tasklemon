@@ -1,8 +1,9 @@
-/* Represents a Tasklemon runtime version line in a TL script header. */
+/* Deprecated. Represents a Tasklemon runtime version line in a TL script header. */
+/* Version pinning is now done in the script's shebang. */
 
 const HeaderLine = require('./HeaderLine');
 
-module.exports = class VersionHeaderLine extends HeaderLine {
+module.exports = class LegacyVersionHeaderLine extends HeaderLine {
 	constructor(values) {
 		super();
 		
@@ -18,7 +19,7 @@ module.exports = class VersionHeaderLine extends HeaderLine {
 		
 		if (!lineParts) return null;
 		
-		return new VersionHeaderLine({
+		return new LegacyVersionHeaderLine({
 			runtimeVersion: lineParts[1]
 		});
 	}

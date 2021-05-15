@@ -3,9 +3,11 @@
 function getConcreteHeaderLineClasses() {
 	return [
 		require('./ShebangHeaderLine'),
-		require('./VersionHeaderLine'),
 		require('./RequireHeaderLine'),
+		
+		require('./LegacyVersionHeaderLine'),
 		require('./LegacyRequireHeaderLine'),
+		
 		require('./EmptyHeaderLine'),
 		require('./OtherHeaderLine')
 	];

@@ -7,9 +7,9 @@ const Constants = require('./Constants');
 const PackageCache = require('./PackageCache');
 const HeaderLine = require('./HeaderLine/HeaderLine');
 const ShebangHeaderLine = require('./HeaderLine/ShebangHeaderLine');
-const VersionHeaderLine = require('./HeaderLine/VersionHeaderLine');
 const RequireHeaderLine = require('./HeaderLine/RequireHeaderLine');
 const EmptyHeaderLine = require('./HeaderLine/EmptyHeaderLine');
+const LegacyVersionHeaderLine = require('./HeaderLine/LegacyVersionHeaderLine');
 const LegacyRequireHeaderLine = require('./HeaderLine/LegacyRequireHeaderLine');
 
 const MODULE_INJECTOR_PATH = path.join(__dirname, 'Injector');
@@ -61,7 +61,7 @@ module.exports = class ScriptParser {
 	
 	get requiredRuntimeVersion() {
 		const currentHeaderLines = this._getHeaderLines();
-		const firstVersionLine = currentHeaderLines.find(line => line instanceof VersionHeaderLine);
+		const firstVersionLine = currentHeaderLines.find(line => line instanceof LegacyVersionHeaderLine);
 		return firstVersionLine ? firstVersionLine.runtimeVersion : null;
 	}
 	
@@ -79,34 +79,17 @@ module.exports = class ScriptParser {
 	pinRuntimeVersion() {
 		const currentHeaderLines = this._getHeaderLines();
 		const firstLineIsShebang = currentHeaderLines[0] instanceof ShebangHeaderLine;
-		const someLineIsVersionLine = currentHeaderLines.some(line => line instanceof VersionHeaderLine);
 		
-		let didChangeHeaders = false;
-		
-		// Add shebang line
 		if (!firstLineIsShebang) {
 			const newHeaderLine = new ShebangHeaderLine({
 				shebangPath: Constants.DEFAULT_SHEBANG
 			});
-		
 			this._prependHeaderLines([newHeaderLine], true);
-			didChangeHeaders = true;
+			
+			return true;
 		}
 		
-		// Add runtime version line
-		if (!someLineIsVersionLine) {
-			const newVersionLine = new VersionHeaderLine({
-				runtimeVersion: Constants.WIDE_RUNTIME_VERSION_SPECIFIER
-			});
-		
-			this._insertHeaderLinesAfterLandmark(
-				[newVersionLine],
-				line => line instanceof ShebangHeaderLine
-			);
-			didChangeHeaders = true;
-		}
-		
-		return didChangeHeaders;
+		return false;
 	}
 	
 	pinPackageVersions() {

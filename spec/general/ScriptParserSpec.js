@@ -80,7 +80,7 @@ cli.tell('Hello!');
 	});
 	
 	describe('#pinRuntimeVersion', function() {
-		it('should add shebang and runtime version headers', async function() {
+		it('should add shebang', async function() {
 			const scriptSource = `cli.tell('Hello!');` + '\n';
 			
 			const scriptParser = new ScriptParser(scriptSource);
@@ -88,8 +88,7 @@ cli.tell('Hello!');
 			
 			expect(scriptParser.source).toMatch(
 				new RegExp(
-					`#!/usr/bin/env lemon` + '\\s+'
-					+ `#version \\d.\\d` + '\\s+'
+					`#!/usr/bin/env tasklemon-v\\d(.\\d)?` + '\\s+'
 					+ '\\s+'
 				)
 			);
