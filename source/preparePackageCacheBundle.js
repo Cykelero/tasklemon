@@ -18,8 +18,7 @@ const PULSE_FILE_MAXIMUM_CREATION_DELAY = 500;
 let packages;
 let bundlePath;
 
-let isPulsing = false;
-let currentPulseTimeout = null;
+let currentPulseInterval = null;
 let firstPulseCheckDate = null;
 
 // Functions
@@ -144,23 +143,16 @@ async function createIndexFile() {
 
 // // Pulse
 function startPulse() {
-	isPulsing = true;
-	
-	function schedulePulse() {
-		currentPulseTimeout = setTimeout(() => {
-			if (isPulsing) {
-				fs.writeFile(bundlePath + PULSE_FILE_NAME, Date.now().toString());
-				schedulePulse();
-			}
-		}, PULSE_REFRESH_INTERVAL);
+	function writePulseFile() {
+		fs.writeFile(bundlePath + PULSE_FILE_NAME, Date.now().toString());
 	}
 	
-	schedulePulse();
+	currentPulseInterval = setInterval(writePulseFile, PULSE_REFRESH_INTERVAL);
+	writePulseFile();
 }
 
 function stopPulse() {
-	isPulsing = false;
-	clearInterval(currentPulseTimeout);
+	clearInterval(currentPulseInterval);
 	fs.unlink(bundlePath + PULSE_FILE_NAME);
 }
 
