@@ -157,7 +157,7 @@ module.exports = {
 	// // Tools
 	_normalizePackageList(packageList, packageVersions = {}) {
 		const normalized = packageList
-			.map(packageName => /[^/]+/.exec(packageName)[0])
+			.map(packageName => /[^:]+/.exec(packageName)[0])
 			.map(packageName => {
 				const packageVersion = packageVersions[packageName];
 				

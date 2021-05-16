@@ -37,9 +37,9 @@ cli.tell('Total count of unique friend names: ' + uniqueFriendNames.length);
 				<p>
 					To access a package with special characters in its name, use bracket notation.
 				</p>
-			
-				<df-sample name="Use the uuid package">
-const uuid = npm['uuid/v4'];
+				
+				<df-sample name="Use the UUID package from Allthings">
+const uuid = npm['@allthings/uuid'];
 cli.tell('New unique identifier: ' + uuid());
 				</df-sample>
 			]]>
@@ -66,6 +66,20 @@ cli.tell('Hello, ' + await npm.username() + '!');
 				
 				<df-sample name="Automatically add version directives to a script">
 $ lemon --pin-packages script.js
+				</df-sample>
+			]]>
+			</discussion>
+		</detail>
+		<detail name="Requiring other files" id="requiring-sub-files">
+			<discussion>
+			<![CDATA[
+				<p>
+					If your script needs to use a specific sub-file of a package, rather than the package's main file, you can specify it by using a colon to separate the package name from the sub-file path.
+				</p>
+				
+				<df-sample name="Use the uuid package">
+const uuid = npm['uuid:v4'];
+cli.tell('New unique identifier: ' + uuid());
 				</df-sample>
 			]]>
 			</discussion>
