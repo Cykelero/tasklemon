@@ -10,6 +10,7 @@ const ShebangHeaderLine = require('./HeaderLine/ShebangHeaderLine');
 const VersionHeaderLine = require('./HeaderLine/VersionHeaderLine');
 const RequireHeaderLine = require('./HeaderLine/RequireHeaderLine');
 const EmptyHeaderLine = require('./HeaderLine/EmptyHeaderLine');
+const LegacyRequireHeaderLine = require('./HeaderLine/LegacyRequireHeaderLine');
 
 const MODULE_INJECTOR_PATH = path.join(__dirname, 'Injector');
 
@@ -39,8 +40,18 @@ module.exports = class ScriptParser {
 	get requiredPackageVersions() {
 		let result = {};
 		
+		// Read require lines
 		this._getHeaderLines()
 			.filter(line => line instanceof RequireHeaderLine)
+			.forEach(requireLine => {
+				requireLine.requiredPackages.forEach(requiredPackage => {
+					result[requiredPackage.name] = requiredPackage.version;
+				});
+			});
+		
+		// Read legacy require lines
+		this._getHeaderLines()
+			.filter(line => line instanceof LegacyRequireHeaderLine)
 			.forEach(requireLine => {
 				result[requireLine.packageName] = requireLine.packageVersion;
 			});
@@ -117,7 +128,7 @@ module.exports = class ScriptParser {
 		const requiredPackages = this.requiredPackages;
 		const alreadyPinnedPackages = Object.keys(this.requiredPackageVersions);
 		
-		const versionsForPackages = Object.entries(packageLockInfo.dependencies)
+		const detectedPackageVersions = Object.entries(packageLockInfo.dependencies)
 			.map(entries => {
 				return {
 					name: entries[0],
@@ -127,27 +138,27 @@ module.exports = class ScriptParser {
 			.filter(info => !alreadyPinnedPackages.includes(info.name))
 			.filter(info => requiredPackages.includes(info.name));
 		
+		const allPackageVersions = [
+			...packageVersionsObjectToArray(this.requiredPackageVersions),
+			...detectedPackageVersions
+		];
+		
 		// Write new lines to source
-		if (versionsForPackages.length > 0) {
-			const newHeaderLines = versionsForPackages.map(info =>
-				new RequireHeaderLine({
-					packageName: info.name,
-					packageVersion: info.version,
-				})
-			);
+		if (detectedPackageVersions.length > 0) {
+			const newRequireLine = new RequireHeaderLine({requiredPackages: allPackageVersions});
 			
-			this._insertHeaderLinesAfterLandmark(
-				newHeaderLines,
+			this._replaceHeaderLineAtLandmark(
+				newRequireLine,
 				line => line instanceof RequireHeaderLine
 			);
 		}
 		
-		return versionsForPackages;
+		return detectedPackageVersions;
 	}
 	
 	// Internal
 	get _headersString() {
-		const headerParts = /^((#.*|\s*)\n)*/.exec(this.source);
+		const headerParts = /^((#.*|\/\/\s*tl:.*|\s*)\n)*/.exec(this.source);
 		return headerParts[0];
 	}
 	
@@ -164,6 +175,31 @@ module.exports = class ScriptParser {
 		this._headersString = value
 			.map(line => line.toString() + '\n')
 			.join('');
+	}
+	
+	_replaceHeaderLineAtIndex(newLine, index) {
+		const currentHeaderLines = this._getHeaderLines();
+		
+		const transformedHeaderLines = [
+			...currentHeaderLines.slice(0, index),
+			...newLine,
+			...currentHeaderLines.slice(index + 1)
+		];
+		
+		this._setHeaderLines(transformedHeaderLines);
+	}
+	
+	_replaceHeaderLineAtLandmark(newLine, landmarkPredicate, padTopIfAppending) {
+		const currentHeaderLines = this._getHeaderLines();
+		const lastLandmarkLineIndex = findLastIndex(currentHeaderLines, landmarkPredicate);
+	
+		if (lastLandmarkLineIndex > -1) {
+			// Insert after landmark lines
+			this._replaceHeaderLineAtIndex([newLine], lastLandmarkLineIndex);
+		} else {
+			// Add at the end of the header
+			this._appendHeaderLines([newLine], padTopIfAppending);
+		}
 	}
 	
 	_insertHeaderLinesAtIndex(newLines, index) {
@@ -243,4 +279,14 @@ function findLastIndex(array, predicate) {
 	}
 	
 	return -1;
+}
+
+function packageVersionsObjectToArray(object) {
+	return Object.entries(object)
+		.map(entry => {
+			return {
+				name: entry[0],
+				version: entry[1]
+			}
+		});
 }

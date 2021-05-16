@@ -34,8 +34,8 @@ describe('npm', function() {
 	});
 
 	it('should recognize pinned versions for scoped packages', async function() {
-		// The #require must be in column 0 of the script, thus the unusual formatting
-		const scriptSource = `#require @octokit/core@3.2.4
+		// The require header must be in column 0 of the script, thus the unusual formatting
+		const scriptSource = `// tl:require: @octokit/core@3.2.4
 			here.file('output').make(true).content = npm['@octokit/core'].Octokit.VERSION;
 		`;
 
@@ -47,7 +47,7 @@ describe('npm', function() {
 	});
 
 	it('should allow require-access to sub files', async function() {
-		const scriptSource = `#require uuid@3.3.0
+		const scriptSource = `// tl:require: uuid@3.3.0
 			const uuid_v1 = npm['uuid:v1'];
 			const uuid_v4 = npm['uuid:v4'];
 

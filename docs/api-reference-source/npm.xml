@@ -54,14 +54,14 @@ cli.tell('New unique identifier: ' + uuid());
 				</p>
 			
 				<df-sample name="Specify which version of username to use">
-#require username@5.0.0
+// tl:require: username@5.0.0
 
 cli.tell('Hello, ' + await npm.username() + '!');
 				</df-sample>
 				
 				<p>
-					To have Tasklemon automatically add <code>#require</code> statements for all the packages used by your script, setting them to their latest available version, you can use the <code>--pin-pkg</code> command-line action.<br>
 					It's a good idea to do this, to ensure your script keeps the same behavior over time, even after new versions of the packages are released.
+					To have Tasklemon automatically add a <code>tl:require</code> directive for all the packages used by your script, setting them to their latest available version, you can use the <code>--pin-pkg</code> command-line action.<br>
 				</p>
 				
 				<df-sample name="Automatically add version directives to a script">
