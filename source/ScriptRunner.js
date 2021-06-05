@@ -24,6 +24,7 @@ module.exports = {
 
 		// Set environment variables
 		ScriptEnvironment.sourceScriptPath = scriptPath;
+		ScriptEnvironment.requiredRuntimeVersion = parser.requiredRuntimeVersion;
 		ScriptEnvironment.rawArguments = args;
 		ScriptEnvironment.defaultBundlePackageList = requiredPackages;
 		ScriptEnvironment.requiredPackageVersions = requiredPackageVersions;

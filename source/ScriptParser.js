@@ -48,6 +48,12 @@ module.exports = class ScriptParser {
 		return result;
 	}
 	
+	get requiredRuntimeVersion() {
+		const currentHeaderLines = this._getHeaderLines();
+		const firstVersionLine = currentHeaderLines.find(line => line instanceof VersionHeaderLine);
+		return firstVersionLine ? firstVersionLine.runtimeVersion : null;
+	}
+	
 	get preparedSource() {
 		const headerNewlineCount = this._getHeaderLines().length;
 		const replacementNewlines = '\n'.repeat(headerNewlineCount);
