@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>
+			format — Tasklemon API
+		</title>
+		<meta name="viewport" content="width = device-width, initial-scale = 1, user-scalable = no" />
+		<link href="resources/main.css" type="text/css" rel="stylesheet" />
+		<link href="resources/580-.css" type="text/css" rel="stylesheet" media="(max-width: 580px)" />
+		<link href="resources/highlightjs.css" type="text/css" rel="stylesheet" />
+		<script src="resources/main.js" type="text/javascript"></script>
+	</head>
+	<body>
+		<nav>
+			<a href="./" style="color: #63C917">
+				<img class="product-logo" src="resources/nav-logo@3x.png" alt="" />
+				<span class="product-name">Tasklemon API</span>
+				<span class="product-version">0.3.0</span>
+			</a>
+		</nav>
+
+		<div class="page">
+			<div class="class">
+				<h1>format</h1>
+				<h2 id="overview">Overview</h2>
+				<div class="discussion class-discussion">The <code>format</code> object exposes methods for formatting numbers, dates and durations to be human-readable.<br /></div>
+				<h2 id="members">Methods and properties</h2>
+				<div class="class-member-groups">
+					<div class="class-member-group">
+						<h3>Formatting automatically</h3>
+						<div class="class-member class-method" id="format">
+							<h4 class="class-method-signatures" title="Formats a value based on its type">
+								<code class="class-method-returntype"><span class="df-kind-string">String</span></code>
+								<code class="class-method-signature"
+									>format(<span class="class-method-signature-argument-block"><span class="df-kind-number">Number</span>|<span class="df-kind-object">Date</span> <span class="class-method-argument">value</span></span
+									>)</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-string">
+								<div class="discussion class-method-discussion">
+									If <span class="class-method-argument">value</span> is a number, returns the value formatted with <a href="#format.number" title="Formats a float (alias)"><code>format.number()</code></a
+									>. Otherwise, returns the value formatted with <a href="#format.date" title="Formats a date (alias)"><code>format.date()</code></a
+									>.
+								</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-multiple">
+												<span class="class-method-argument">value</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The value to format.
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Format a number then a date</h5>
+								<pre class="sample class-method-sample hljs"><code>cli.tell(format(<span class="hljs-number">8.9</span>)); <span class="hljs-comment">// “8.90”</span>
+cli.tell(format(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-string">'June 29, 2007 09:42'</span>))); <span class="hljs-comment">// “07-06-29 09:42:00”</span></code></pre>
+							</div>
+						</div>
+					</div>
+					<div class="class-member-group">
+						<h3>Formatting numbers</h3>
+						<div class="class-member class-method" id="format.number">
+							<h4 class="class-method-signatures" title="Formats a float (alias)">
+								<code class="class-method-returntype"><span class="df-kind-string">String</span></code>
+								<code class="class-method-signature"
+									>format.number(<span class="class-method-signature-argument-block"><span class="df-kind-number">Number</span> <span class="class-method-argument">value</span>,</span> [<span class="class-method-signature-argument-block"><span class="df-kind-string">String</span>|<span class="df-kind-object">Array</span> <span class="class-method-argument">unit</span>,</span> [<span class="class-method-signature-argument-block"><span class="df-kind-number">Number</span> <span class="class-method-argument">decimalPlaces</span></span
+									>]])</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-string">
+								<div class="discussion class-method-discussion">
+									Aliases <a href="#format.number.float" title="Formats a float"><code>format.number.float()</code></a
+									>.
+								</div>
+							</div>
+						</div>
+						<div class="class-member class-method" id="format.number.float">
+							<h4 class="class-method-signatures" title="Formats a float">
+								<code class="class-method-returntype"><span class="df-kind-string">String</span></code>
+								<code class="class-method-signature"
+									>format.number.float(<span class="class-method-signature-argument-block"><span class="df-kind-number">Number</span> <span class="class-method-argument">value</span>,</span> [<span class="class-method-signature-argument-block"><span class="df-kind-string">String</span>|<span class="df-kind-object">Array</span> <span class="class-method-argument">unit</span>,</span> [<span class="class-method-signature-argument-block"><span class="df-kind-number">Number</span> <span class="class-method-argument">decimalPlaces</span></span
+									>]])</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-string">
+								<div class="discussion class-method-discussion">Returns <span class="class-method-argument">value</span> as a formatted string, adding thousands separators and enforcing the number of decimal places. If <span class="class-method-argument">unit</span> is specified, it is appended, and pluralized based on <span class="class-method-argument">value</span>.</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-number">
+												<span class="class-method-argument">value</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The number to format.
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td class="df-kind-multiple">
+												<span class="class-method-argument">unit</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The unit to append to the formatted number. Can either be an array of two strings (the singular and plural form respectively) or a single string, to which an “s” will be appended to create the plural form.
+												</div>
+												<span class="default-value">Defaults to <code>null</code>.</span>
+											</td>
+										</tr>
+										<tr>
+											<td class="df-kind-number">
+												<span class="class-method-argument">decimalPlaces</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The number of decimal places to include in the result. Zeroes are added to pad if necessary.
+												</div>
+												<span class="default-value">Defaults to <code>2</code>.</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Format with a string unit</h5>
+								<pre class="sample class-method-sample hljs"><code>cli.tell(format.number(<span class="hljs-number">1</span>, <span class="hljs-string">'carrot'</span>)); <span class="hljs-comment">// “1.00 carrot”</span>
+cli.tell(format.number(<span class="hljs-number">4528.5</span>, <span class="hljs-string">'carrot'</span>)); <span class="hljs-comment">// “4,528.50 carrots”</span></code></pre>
+								<h5><span class="caption">sample</span> Format with an array unit</h5>
+								<pre class="sample class-method-sample hljs"><code>cli.tell(format.number(<span class="hljs-number">12.536</span>, [<span class="hljs-string">'cactus'</span>, <span class="hljs-string">'cacti'</span>])); <span class="hljs-comment">// “12.54 cacti”</span></code></pre>
+							</div>
+						</div>
+						<div class="class-member class-method" id="format.number.integer">
+							<h4 class="class-method-signatures" title="Rounds and formats a number">
+								<code class="class-method-returntype"><span class="df-kind-string">String</span></code>
+								<code class="class-method-signature"
+									>format.number.integer(<span class="class-method-signature-argument-block"><span class="df-kind-number">Number</span> <span class="class-method-argument">value</span>,</span> [<span class="class-method-signature-argument-block"><span class="df-kind-string">String</span>|<span class="df-kind-object">Array</span> <span class="class-method-argument">unit</span></span
+									>])</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-string">
+								<div class="discussion class-method-discussion">
+									Returns <span class="class-method-argument">value</span> formatted with <a href="#format.number.float" title="Formats a float"><code>format.number.float()</code></a> with the <code>decimalPlaces</code> argument set to <code>0</code>.
+								</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-number">
+												<span class="class-method-argument">value</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The number to format.
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td class="df-kind-multiple">
+												<span class="class-method-argument">unit</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">The unit to append to the formatted number. See <code>format.number.float</code> for details.</div>
+												<span class="default-value">Defaults to <code>null</code>.</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Format a number</h5>
+								<pre class="sample class-method-sample hljs"><code>cli.tell(format.number.integer(<span class="hljs-number">67.82</span>, <span class="hljs-string">'donut'</span>)); <span class="hljs-comment">// “68 donuts”</span></code></pre>
+							</div>
+						</div>
+					</div>
+					<div class="class-member-group">
+						<h3>Formatting dates</h3>
+						<div class="class-member class-method" id="format.date">
+							<h4 class="class-method-signatures" title="Formats a date (alias)">
+								<code class="class-method-returntype"><span class="df-kind-string">String</span></code>
+								<code class="class-method-signature"
+									>format.date(<span class="class-method-signature-argument-block"><span class="df-kind-object">Date</span>|<span class="df-kind-object">Moment</span> <span class="class-method-argument">value</span>,</span> [<span class="class-method-signature-argument-block"><span class="df-kind-boolean">Boolean</span> <span class="class-method-argument">omitTime</span></span
+									>])</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-string">
+								<div class="discussion class-method-discussion">
+									Aliases <a href="#format.date.short" title="Formats a date compactly"><code>format.date.short()</code></a
+									>.
+								</div>
+							</div>
+						</div>
+						<div class="class-member class-method" id="format.date.short">
+							<h4 class="class-method-signatures" title="Formats a date compactly">
+								<code class="class-method-returntype"><span class="df-kind-string">String</span></code>
+								<code class="class-method-signature"
+									>format.date.short(<span class="class-method-signature-argument-block"><span class="df-kind-object">Date</span>|<span class="df-kind-object">Moment</span> <span class="class-method-argument">value</span>,</span> [<span class="class-method-signature-argument-block"><span class="df-kind-boolean">Boolean</span> <span class="class-method-argument">omitTime</span></span
+									>])</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-string">
+								<div class="discussion class-method-discussion">Returns <span class="class-method-argument">value</span> as string, in <code>YY-MM-DD HH:mm:ss</code> format.</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-multiple">
+												<span class="class-method-argument">value</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The date to format.
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td class="df-kind-boolean">
+												<span class="class-method-argument">omitTime</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													Whether or not to leave out the time component of the date.
+												</div>
+												<span class="default-value">Defaults to <code>false</code>.</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Format a date compactly</h5>
+								<pre class="sample class-method-sample hljs"><code>cli.tell(format.date.short(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-string">'March 11, 1984, 8:30'</span>))); <span class="hljs-comment">// “84-03-11 08:30:00”</span></code></pre>
+							</div>
+						</div>
+						<div class="class-member class-method" id="format.date.long">
+							<h4 class="class-method-signatures" title="Formats a date verbosely">
+								<code class="class-method-returntype"><span class="df-kind-string">String</span></code>
+								<code class="class-method-signature"
+									>format.date.long(<span class="class-method-signature-argument-block"><span class="df-kind-object">Date</span>|<span class="df-kind-object">Moment</span> <span class="class-method-argument">value</span>,</span> [<span class="class-method-signature-argument-block"><span class="df-kind-boolean">Boolean</span> <span class="class-method-argument">omitTime</span></span
+									>])</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-string">
+								<div class="discussion class-method-discussion">Returns <span class="class-method-argument">value</span> as a string, in <code>WeekDayName, MonthName MonthDay, FullYear HH:mm:ss</code> format.</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-multiple">
+												<span class="class-method-argument">value</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The date to format.
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td class="df-kind-boolean">
+												<span class="class-method-argument">omitTime</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													Whether or not to leave out the time component of the date.
+												</div>
+												<span class="default-value">Defaults to <code>false</code>.</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Format a date explicitely</h5>
+								<pre class="sample class-method-sample hljs"><code>cli.tell(format.date.long(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-string">'March 11, 1984, 8:30'</span>))); <span class="hljs-comment">// “Sunday, March 11th, 1984, 08:30:00”</span></code></pre>
+							</div>
+						</div>
+						<div class="class-member class-method" id="format.date.relative">
+							<h4 class="class-method-signatures" title="Formats a date relative to now">
+								<code class="class-method-returntype"><span class="df-kind-string">String</span></code>
+								<code class="class-method-signature"
+									>format.date.relative(<span class="class-method-signature-argument-block"><span class="df-kind-object">Date</span>|<span class="df-kind-object">Moment</span> <span class="class-method-argument">value</span></span
+									>)</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-string">
+								<div class="discussion class-method-discussion">Returns the duration from the present date to <span class="class-method-argument">value</span> as a formatted string, such as <code>"in 3 hours"</code> or <code>"10 days ago"</code>.</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-multiple">
+												<span class="class-method-argument">value</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The date to format.
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Format a modification date naturally</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> logDate = here.file(<span class="hljs-string">'log.txt'</span>).dateModified;
+cli.tell(format.date.relative(logDate)); <span class="hljs-comment">// “3 minutes ago”</span></code></pre>
+							</div>
+						</div>
+					</div>
+					<div class="class-member-group">
+						<h3>Formatting durations</h3>
+						<div class="class-member class-method" id="format.duration">
+							<h4 class="class-method-signatures" title="Formats two dates as a duration (alias)">
+								<code class="class-method-returntype"><span class="df-kind-string">String</span></code>
+								<code class="class-method-signature"
+									>format.duration(<span class="class-method-signature-argument-block"><span class="df-kind-object">Date</span>|<span class="df-kind-object">Moment</span> <span class="class-method-argument">date1</span>,</span> <span class="class-method-signature-argument-block"><span class="df-kind-object">Date</span>|<span class="df-kind-object">Moment</span> <span class="class-method-argument">date2</span></span
+									>)</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-string">
+								<div class="discussion class-method-discussion">
+									Aliases <a href="#format.duration.between" title="Formats two dates as a duration"><code>format.duration.between()</code></a
+									>.
+								</div>
+							</div>
+						</div>
+						<div class="class-member class-method" id="format.duration.between">
+							<h4 class="class-method-signatures" title="Formats two dates as a duration">
+								<code class="class-method-returntype"><span class="df-kind-string">String</span></code>
+								<code class="class-method-signature"
+									>format.duration.between(<span class="class-method-signature-argument-block"><span class="df-kind-object">Date</span>|<span class="df-kind-object">Moment</span> <span class="class-method-argument">date1</span>,</span> <span class="class-method-signature-argument-block"><span class="df-kind-object">Date</span>|<span class="df-kind-object">Moment</span> <span class="class-method-argument">date2</span></span
+									>)</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-string">
+								<div class="discussion class-method-discussion">Returns the duration between <span class="class-method-argument">date1</span> and <span class="class-method-argument">date2</span> as a formatted string.</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-multiple">
+												<span class="class-method-argument">date1</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The start of the duration.
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td class="df-kind-multiple">
+												<span class="class-method-argument">date2</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The end of the duration.
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Report execution time</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> startDate = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>();
+performSlowOperation();
+<span class="hljs-keyword">const</span> endDate = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>();
+
+cli.tell(format.duration(startDate, endDate)); <span class="hljs-comment">// “32 minutes”</span></code></pre>
+							</div>
+						</div>
+					</div>
+				</div>
+				<h2 id="related">Related classes</h2>
+				<div class="discussion class-related">
+					<a href="cli.html" title="Allows user interaction through the command-line"><code>cli</code></a> methods such as <a href="cli.html#cli.tell" title="Displays text to the user"><code>cli.tell()</code></a> are a natural place to use nicely formatted values.
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>
+			npm — Tasklemon API
+		</title>
+		<meta name="viewport" content="width = device-width, initial-scale = 1, user-scalable = no" />
+		<link href="resources/main.css" type="text/css" rel="stylesheet" />
+		<link href="resources/580-.css" type="text/css" rel="stylesheet" media="(max-width: 580px)" />
+		<link href="resources/highlightjs.css" type="text/css" rel="stylesheet" />
+		<script src="resources/main.js" type="text/javascript"></script>
+	</head>
+	<body>
+		<nav>
+			<a href="./" style="color: #63C917">
+				<img class="product-logo" src="resources/nav-logo@3x.png" alt="" />
+				<span class="product-name">Tasklemon API</span>
+				<span class="product-version">0.3.0</span>
+			</a>
+		</nav>
+
+		<div class="page">
+			<div class="class">
+				<h1>npm</h1>
+				<h2 id="overview">Overview</h2>
+				<div class="discussion class-discussion">
+					<p>The <code>npm</code> object provides access to all <a href="https://www.npmjs.com">npm</a> packages.</p>
+				</div>
+				<h2 id="using-packages">Using packages</h2>
+				<div class="discussion class-detail-discussion">
+					<p>To use a package, simply get it by name from <code>npm</code>'s properties.</p>
+
+					<h5><span class="caption">sample</span> Use the dedupe package</h5>
+					<pre class="sample free-sample hljs"><code><span class="hljs-keyword">const</span> friendNames = <span class="hljs-keyword">await</span> cli.ask(<span class="hljs-string">'What are your friends called?'</span>, <span class="hljs-built_in">Array</span>);
+<span class="hljs-keyword">const</span> uniqueFriendNames = npm.dedupe(friendNames);
+
+cli.tell(<span class="hljs-string">'Total count of unique friend names: '</span> + uniqueFriendNames.length);</code></pre>
+
+					<p>
+						You do not need to import or install the packages you use in any way; Tasklemon will automatically install and inject any package you use.
+					</p>
+
+					<p>
+						To access a package with special characters in its name, use bracket notation.
+					</p>
+
+					<h5><span class="caption">sample</span> Use the UUID package from Allthings</h5>
+					<pre class="sample free-sample hljs"><code><span class="hljs-keyword">const</span> uuid = npm[<span class="hljs-string">'@allthings/uuid'</span>];
+cli.tell(<span class="hljs-string">'New unique identifier: '</span> + uuid());</code></pre>
+				</div>
+
+				<h2 id="specifying-versions">Requiring specific versions</h2>
+				<div class="discussion class-detail-discussion">
+					<p>
+						If your script needs a specific version of a package, you can add a package version directive at the top of your script.<br />
+						Add the directive below the shebang, if any, and above the script's code.
+					</p>
+
+					<h5><span class="caption">sample</span> Specify which version of username to use</h5>
+					<pre class="sample free-sample hljs"><code>#require username@5.0.0
+
+cli.tell(<span class="hljs-string">'Hello, '</span> + <span class="hljs-keyword">await</span> npm.username() + <span class="hljs-string">'!'</span>);</code></pre>
+
+					<p>
+						To have Tasklemon automatically add <code>#require</code> statements for all the packages used by your script, setting them to their latest available version, you can use the <code>--pin-packages</code> command-line action.<br />
+						It's a good idea to do this, to ensure your script keeps the same behavior over time, even after new versions of the packages are released.
+					</p>
+
+					<h5><span class="caption">sample</span> Automatically add version directives to a script</h5>
+					<pre class="sample free-sample hljs"><code>$ lemon --pin-packages script.js</code></pre>
+				</div>
+
+				<h2 id="requiring-sub-files">Requiring other files</h2>
+				<div class="discussion class-detail-discussion">
+					<p>
+						If your script needs to use a specific sub-file of a package, rather than the package's main file, you can specify it by using a colon to separate the package name from the sub-file path.
+					</p>
+
+					<h5><span class="caption">sample</span> Use the uuid package</h5>
+					<pre class="sample free-sample hljs"><code><span class="hljs-keyword">const</span> uuid = npm[<span class="hljs-string">'uuid:v4'</span>];
+cli.tell(<span class="hljs-string">'New unique identifier: '</span> + uuid());</code></pre>
+				</div>
+
+				<h2 id="managing-the-cache">Managing the cache</h2>
+				<div class="discussion class-detail-discussion">
+					<p>
+						In order to ensure a script can execute offline, and without any download delays, you can ask Tasklemon to preload all of the script's required packages. These include packages you implicitely require, not just the packages pinned by version directives.<br />
+						This has no purpose for a script that's been run at least once, since Tasklemon will already have downloaded its packages.
+					</p>
+
+					<h5><span class="caption">sample</span> Preload the packages used by a script</h5>
+					<pre class="sample free-sample hljs"><code>$ lemon --preload-pkg script.js</code></pre>
+
+					<p>
+						Tasklemon's package cache is generally very resilient, and can recover from most download and installation issues. If something seems broken, however, you can try emptying the package cache.
+					</p>
+
+					<h5><span class="caption">sample</span> Empty the package cache</h5>
+					<pre class="sample free-sample hljs"><code>$ lemon --clear-pkg-cache</code></pre>
+				</div>
+
+				<h2 id="related">Related classes</h2>
+				<div class="discussion class-related">
+					To fetch arbitrary data from the Internet, use <a href="net.html" title="Allows retrieving and sending data"><code>net</code></a
+					>.
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
