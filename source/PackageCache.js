@@ -9,6 +9,7 @@ const rimraf = require('rimraf');
 
 const Constants = require('./Constants');
 const Tools = require('./Tools');
+const RuntimeVersion = require('./RuntimeVersion');
 
 module.exports = {
 	PACKAGE_CACHE_PATH: path.join(Constants.CACHE_PATH, 'npm-packages', path.sep),
@@ -159,6 +160,10 @@ module.exports = {
 	
 	// // Tools
 	packageNameForImportPath(importPath) {
+		if (RuntimeVersion.isLowerThan('0.3')) {
+			importPath = importPath.replace(/\//g, ':');
+		}
+		
 		return importPath.split(":")[0];
 	},
 	
