@@ -139,7 +139,8 @@ module.exports = {
 			}
 		}
 		
-		return bundleIndex(importPath);
+		const flattenedImportPath = importPath.replace(/:/g, '/');
+		return bundleIndex(flattenedImportPath);
 	},
 	
 	_markBundleForDeletion(packageList) {
