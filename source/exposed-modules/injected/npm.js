@@ -4,9 +4,9 @@ const ScriptEnvironment = require('../../ScriptEnvironment');
 const PackageCache = require('../../PackageCache');
 
 module.exports = new Proxy({}, {
-	get(self, packageName) {
+	get(self, importPath) {
 		return PackageCache.get(
-			packageName,
+			importPath,
 			ScriptEnvironment.defaultBundlePackageList,
 			ScriptEnvironment.requiredPackageVersions
 		);

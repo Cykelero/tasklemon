@@ -43,30 +43,32 @@ module.exports = {
 		return deletedBundleCount;
 	},
 	
-	get(packageName, rawRequestedBundlePackageList, packageVersions) {
+	get(importPath, rawRequestedBundlePackageList, packageVersions) {
 		const requestedBundlePackageList = this._normalizePackageList(rawRequestedBundlePackageList, packageVersions);
-		const dedicatedBundlePackageList = this._dedicatedBundlePackageListFor(packageName, packageVersions);
+		const dedicatedBundlePackageList = this._dedicatedBundlePackageListFor(importPath, packageVersions);
 		
 		let packageObject;
 		
 		// Try loading package from requested bundle
 		if (requestedBundlePackageList) {
-			packageObject = this._getFromBundle(packageName, requestedBundlePackageList);
+			packageObject = this._getFromBundle(importPath, requestedBundlePackageList);
 		}
 		
 		// Try loading package from dedicated bundle
 		if (!packageObject) {
-			packageObject = this._getFromBundle(packageName, dedicatedBundlePackageList);
+			packageObject = this._getFromBundle(importPath, dedicatedBundlePackageList);
 		}
 		
 		// If the dedicated bundle was present but incorrectly prepared, try again
 		if (!packageObject) {
-			packageObject = this._getFromBundle(packageName, dedicatedBundlePackageList);
+			packageObject = this._getFromBundle(importPath, dedicatedBundlePackageList);
 		}
 		
 		// Couldn't load bundle
 		if (!packageObject) {
 			this._markBundleForDeletion(dedicatedBundlePackageList);
+			
+			const packageName = this.packageNameForImportPath(importPath);
 			throw Error(`Package “${packageName}” could not be retrieved. Make sure its name is correct and that you are connected to the Internet.`);
 		}
 		
@@ -107,7 +109,8 @@ module.exports = {
 		crossSpawn.sync('node', this._nodeArgumentsForList(packageList));
 	},
 	
-	_getFromBundle(packageName, packageList) {
+	_getFromBundle(importPath, packageList) {
+		const packageName = this.packageNameForImportPath(importPath);
 		const bundleIndexPath = this._bundlePathForList(packageList) + this.INDEX_FILE_NAME;
 		
 		let bundleIndex;
@@ -135,7 +138,7 @@ module.exports = {
 			}
 		}
 		
-		return bundleIndex(packageName);
+		return bundleIndex(importPath);
 	},
 	
 	_markBundleForDeletion(packageList) {
@@ -155,10 +158,14 @@ module.exports = {
 	},
 	
 	// // Tools
+	packageNameForImportPath(importPath) {
+		return importPath.split(":")[0];
+	},
+	
 	_normalizePackageList(packageList, packageVersions = {}) {
 		const normalized = packageList
-			.map(packageName => /[^:]+/.exec(packageName)[0])
-			.map(packageName => {
+			.map(importPath => {
+				const packageName = this.packageNameForImportPath(importPath);
 				const packageVersion = packageVersions[packageName];
 				
 				if (packageVersion) {
@@ -172,8 +179,8 @@ module.exports = {
 		return deduplicated;
 	},
 	
-	_dedicatedBundlePackageListFor(packageName, packageVersions) {
-		return this._normalizePackageList([packageName], packageVersions);
+	_dedicatedBundlePackageListFor(importPath, packageVersions) {
+		return this._normalizePackageList([importPath], packageVersions);
 	},
 	
 	_bundleHashForList(packageList) {
