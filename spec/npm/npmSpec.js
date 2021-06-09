@@ -66,7 +66,7 @@ describe('npm', function() {
 	});
 
 	describe('(pre-0.3)', function() {
-		fit('should allow require-access to sub files', async function() {
+		it('should allow require-access to sub files', async function() {
 			const scriptSource = `#version 0.2.3
 #require uuid@3.3.0
 				const uuid_v1 = npm['uuid/v1'];
