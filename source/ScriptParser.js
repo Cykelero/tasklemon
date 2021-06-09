@@ -61,6 +61,16 @@ module.exports = class ScriptParser {
 	
 	get requiredRuntimeVersion() {
 		const currentHeaderLines = this._getHeaderLines();
+		
+		// Does the shebang contain a runtime version?
+		const firstHeaderLine = currentHeaderLines[0];
+		if (firstHeaderLine instanceof ShebangHeaderLine) {
+			const shebangRequestedVersion = currentHeaderLines[0].requestedRuntimeVersion;
+			
+			if (shebangRequestedVersion) return shebangRequestedVersion;
+		}
+		
+		// Or, is there a version line?
 		const firstVersionLine = currentHeaderLines.find(line => line instanceof LegacyVersionHeaderLine);
 		return firstVersionLine ? firstVersionLine.runtimeVersion : null;
 	}
