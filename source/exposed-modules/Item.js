@@ -198,7 +198,16 @@ class Item {
 		if (forgiving) Item._makeParentHierarchy(targetPath);
 
 		// Move file system item (and possibly throw)
-		fs.renameSync(this._path, targetPath);
+		try {
+			fs.renameSync(this._path, targetPath);
+		} catch (error) {
+			if (error.code === 'EXDEV') {
+				Item._recursivelyCopyItem(this._path, targetPath);
+				Item._deleteItem(this._path, true);
+			} else {
+				throw error;
+			}
+		}
 		
 		// Update paths of all related items
 		Item._registerItemPathChange(this, targetPath);
