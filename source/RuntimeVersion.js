@@ -23,7 +23,7 @@ module.exports = {
 		
 		return {
 			major: Number(versionParts[0]),
-			minor: Number(versionParts[1] ?? '0')
+			minor: Number(versionParts[1] || '0')
 		};
 	}
 };
