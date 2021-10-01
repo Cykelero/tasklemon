@@ -39,6 +39,16 @@ describe('Argument parsing', function() {
 			
 			expect(cli.args.namedArg).toEqual(false);
 		});
+		
+		it('should accept a negative number', function() {
+			ScriptEnvironment.rawArguments = ['--named', '-34'];
+			
+			cli.accept({
+				namedArg: ['--named', Number]
+			});
+			
+			expect(cli.args.namedArg).toEqual(-34);
+		});
 	});
 	
 	describe('shorthand argument', function() {
@@ -101,6 +111,19 @@ describe('Argument parsing', function() {
 			expect(cli.args.positionalArgument0).toBe('value0');
 			expect(cli.args.positionalArgument1).toBe('value1');
 		});
+		
+		it('should accept a dash', function() {
+			ScriptEnvironment.rawArguments = ['-', 'value1'];
+			
+			cli.accept({
+				positionalArgument0: ['#0', String],
+				positionalArgument1: ['#1', String]
+			});
+			
+			expect(cli.args.positionalArgument0).toBe('-');
+			expect(cli.args.positionalArgument1).toBe('value1');
+		});
+		
 	});
 	
 	describe('rest argument', function() {
@@ -112,6 +135,16 @@ describe('Argument parsing', function() {
 			});
 			
 			expect(cli.args.restArgument).toEqual(['value0', 'value1']);
+		});
+		
+		it('should accept dashes', function() {
+			ScriptEnvironment.rawArguments = ['-', 'value1'];
+			
+			cli.accept({
+				restArgument: ['#+', String]
+			});
+			
+			expect(cli.args.restArgument).toEqual(['-', 'value1']);
 		});
 	});
 	

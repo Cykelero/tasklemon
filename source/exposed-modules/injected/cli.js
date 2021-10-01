@@ -139,7 +139,6 @@ function checkArgumentDefinitionSyntax(argumentDefinitions) {
 
 function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 	let result = {};
-	let expandedArguments;
 	
 	function definitionFor(userString, failIfAbsent) {
 		const argumentDefinition = argumentDefinitions.find(ad => ad.alternatives.some(a => a === userString));
@@ -175,19 +174,6 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 		result.rest = [];
 	}
 	
-	// Expand shorthands
-	expandedArguments = [];
-	rawArguments.forEach(rawArgument => {
-		if (rawArgument[0] === '-' && rawArgument[1] !== '-') {
-			rawArgument
-				.slice(1)
-				.split('')
-				.forEach(shorthandLetter => expandedArguments.push('-' + shorthandLetter));
-		} else {
-			expandedArguments.push(rawArgument);
-		}
-	});
-	
 	// Read arguments
 	let firstOccurrences = {};
 	let nextPositionalIndex = 0;
@@ -202,10 +188,10 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 		firstOccurrences[argumentName] = userString;
 	}
 	
-	expandedArguments.forEach(expandedArgument => {
+	rawArguments.forEach(rawArgument => {
 		// Consume argument as value?
 		if (expectValueFor) {
-			const castValue = castForDefinition(expectValueFor, expandedArgument);
+			const castValue = castForDefinition(expectValueFor, rawArgument);
 			result[expectValueFor.name] = castValue;
 			
 			expectValueFor = null;
@@ -213,16 +199,38 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 		}
 		
 		// No: interpret argument as argument
-		if (expandedArgument[0] === '-') {
-			// Shorthand or named argument
-			const argumentDefinition = definitionFor(expandedArgument, true);
-			rememberOccurrence(argumentDefinition, expandedArgument);
+		if (rawArgument.slice(0, 2) === '--') {
+			// Named argument
+			const argumentDefinition = definitionFor(rawArgument, true);
+			rememberOccurrence(argumentDefinition, rawArgument);
 			
 			if (argumentDefinition.type === Boolean) {
 				result[argumentDefinition.name] = true;
 			} else {
 				expectValueFor = argumentDefinition;
 			}
+		} else if (rawArgument[0] === '-' && rawArgument.length > 1) {
+			// Shorthand argument (or shorthand argument group)
+			const shorthandArgumentLetters = rawArgument.slice(1).split('');
+			
+			shorthandArgumentLetters.forEach((shorthandArgumentLetter, index) => {
+				const isLastLetter = (index + 1) === shorthandArgumentLetters.length;
+				const expandedArgument = '-' + shorthandArgumentLetter;
+				const argumentDefinition = definitionFor(expandedArgument, true);
+				
+				if (argumentDefinition.type !== Boolean && !isLastLetter) {
+					// Argument needs a value, but is not in last place
+					Tools.exitWithError(`Argument error: “${expandedArgument}” requires a value`);
+				}
+				
+				rememberOccurrence(argumentDefinition, expandedArgument);
+				
+				if (argumentDefinition.type === Boolean) {
+					result[argumentDefinition.name] = true;
+				} else {
+					expectValueFor = argumentDefinition;
+				}
+			});
 		} else {
 			// Positional argument
 			const positionalIdentity = '#' + nextPositionalIndex;
@@ -231,15 +239,15 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 			if (argumentDefinition) {
 				// Indexed
 				rememberOccurrence(argumentDefinition, positionalIdentity);
-				const castValue = castForDefinition(argumentDefinition, expandedArgument);
+				const castValue = castForDefinition(argumentDefinition, rawArgument);
 				result[argumentDefinition.name] = castValue;
 			} else if (restDefinition) {
 				// Catch-all
-				const castValue = castForDefinition(restDefinition, expandedArgument);
+				const castValue = castForDefinition(restDefinition, rawArgument);
 				result[restDefinition.name].push(castValue);
 			} else {
 				// Rest
-				result.rest.push(expandedArgument);
+				result.rest.push(rawArgument);
 			}
 			
 			nextPositionalIndex++;
@@ -254,4 +262,3 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 	
 	return result;
 }
-
