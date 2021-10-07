@@ -124,6 +124,21 @@ describe('Argument parsing', function() {
 			expect(cli.args.positionalArgument1).toBe('value1');
 		});
 		
+		
+		it('should honor a delimiter', function() {
+			ScriptEnvironment.rawArguments = ['value0', '--named', '--', '--value1', '--value2'];
+			
+			cli.accept({
+				positionalArgument0: ['#0', String],
+				positionalArgument1: ['#1', String],
+				positionalArgument2: ['#2', String],
+				namedArg: ['--named', Boolean]
+			});
+			
+			expect(cli.args.positionalArgument0).toBe('value0');
+			expect(cli.args.positionalArgument1).toBe('--value1');
+			expect(cli.args.positionalArgument2).toBe('--value2');
+		});
 	});
 	
 	describe('rest argument', function() {

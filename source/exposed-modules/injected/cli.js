@@ -178,6 +178,7 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 	let firstOccurrences = {};
 	let nextPositionalIndex = 0;
 	let expectValueFor = null;
+	let didEncounterDelimiter = false;
 
 	function rememberOccurrence({name: argumentName}, userString) {
 		const priorUsageString = firstOccurrences[argumentName];
@@ -198,60 +199,71 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 			return;
 		}
 		
-		// No: interpret argument as argument
-		if (rawArgument.slice(0, 2) === '--') {
-			// Named argument
-			const argumentDefinition = definitionFor(rawArgument, true);
-			rememberOccurrence(argumentDefinition, rawArgument);
-			
-			if (argumentDefinition.type === Boolean) {
-				result[argumentDefinition.name] = true;
-			} else {
-				expectValueFor = argumentDefinition;
+		// Did we pass a delimiter?
+		if (!didEncounterDelimiter) {
+			if (rawArgument === '--') {
+				didEncounterDelimiter = true;
+				return;
 			}
-		} else if (rawArgument[0] === '-' && rawArgument.length > 1) {
-			// Shorthand argument (or shorthand argument group)
-			const shorthandArgumentLetters = rawArgument.slice(1).split('');
 			
-			shorthandArgumentLetters.forEach((shorthandArgumentLetter, index) => {
-				const isLastLetter = (index + 1) === shorthandArgumentLetters.length;
-				const expandedArgument = '-' + shorthandArgumentLetter;
-				const argumentDefinition = definitionFor(expandedArgument, true);
-				
-				if (argumentDefinition.type !== Boolean && !isLastLetter) {
-					// Argument needs a value, but is not in last place
-					Tools.exitWithError(`Argument error: “${expandedArgument}” requires a value`);
-				}
-				
-				rememberOccurrence(argumentDefinition, expandedArgument);
+			if (rawArgument.slice(0, 2) === '--') {
+				// Named argument
+				const argumentDefinition = definitionFor(rawArgument, true);
+				rememberOccurrence(argumentDefinition, rawArgument);
 				
 				if (argumentDefinition.type === Boolean) {
 					result[argumentDefinition.name] = true;
 				} else {
 					expectValueFor = argumentDefinition;
 				}
-			});
-		} else {
-			// Positional argument
-			const positionalIdentity = '#' + nextPositionalIndex;
-			
-			const argumentDefinition = definitionFor(positionalIdentity, false);
-			if (argumentDefinition) {
-				// Indexed
-				rememberOccurrence(argumentDefinition, positionalIdentity);
-				const castValue = castForDefinition(argumentDefinition, rawArgument);
-				result[argumentDefinition.name] = castValue;
-			} else if (restDefinition) {
-				// Catch-all
-				const castValue = castForDefinition(restDefinition, rawArgument);
-				result[restDefinition.name].push(castValue);
-			} else {
-				// Rest
-				result.rest.push(rawArgument);
+				return;
 			}
 			
-			nextPositionalIndex++;
+			if (rawArgument[0] === '-' && rawArgument.length > 1) {
+				// Shorthand argument (or shorthand argument group)
+				const shorthandArgumentLetters = rawArgument.slice(1).split('');
+				
+				shorthandArgumentLetters.forEach((shorthandArgumentLetter, index) => {
+					const isLastLetter = (index + 1) === shorthandArgumentLetters.length;
+					const expandedArgument = '-' + shorthandArgumentLetter;
+					const argumentDefinition = definitionFor(expandedArgument, true);
+					
+					if (argumentDefinition.type !== Boolean && !isLastLetter) {
+						// Argument needs a value, but is not in last place
+						Tools.exitWithError(`Argument error: “${expandedArgument}” requires a value`);
+					}
+					
+					rememberOccurrence(argumentDefinition, expandedArgument);
+					
+					if (argumentDefinition.type === Boolean) {
+						result[argumentDefinition.name] = true;
+					} else {
+						expectValueFor = argumentDefinition;
+					}
+				});
+				return;
+			}
 		}
+		
+		// Didn't match anything else: positional argument
+		const positionalIdentity = '#' + nextPositionalIndex;
+		
+		const argumentDefinition = definitionFor(positionalIdentity, false);
+		if (argumentDefinition) {
+			// Indexed
+			rememberOccurrence(argumentDefinition, positionalIdentity);
+			const castValue = castForDefinition(argumentDefinition, rawArgument);
+			result[argumentDefinition.name] = castValue;
+		} else if (restDefinition) {
+			// Catch-all
+			const castValue = castForDefinition(restDefinition, rawArgument);
+			result[restDefinition.name].push(castValue);
+		} else {
+			// Rest
+			result.rest.push(rawArgument);
+		}
+		
+		nextPositionalIndex++;
 	});
 	
 	if (expectValueFor !== null) {
