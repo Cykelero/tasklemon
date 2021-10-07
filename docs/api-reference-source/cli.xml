@@ -1,7 +1,7 @@
 <Class id="cli" public="true">
 	<metadata>
 		<name>cli</name>
-		<short-description>Allows user interaction through the command-line</short-description>
+		<short-description>Allows user interaction through the command line</short-description>
 		<discussion>
 		<![CDATA[
 			The <code>cli</code> object exposes methods for reading command-line arguments, displaying messages to the user, and asking the user for input.
