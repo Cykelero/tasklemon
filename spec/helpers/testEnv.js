@@ -59,14 +59,14 @@ beforeEach(function() {
 				return toCleanPath(path.join(completeFolderPath, path.sep));
 			},
 			
-			runLemonScript: function(source, args = []) {
+			runLemonScript: function(source, scriptArgs = [], lemonArgs = []) {
 				const tasklemonPath = fs.realpathSync('source/tasklemon.js');
 				
 				const nativeScriptPath = this.nativePathFor('script.lem.js');
 				fs.writeFileSync(nativeScriptPath, source);
 				
 				return new Promise((resolve, reject) => {
-					childProcess.execFile('node', [tasklemonPath, nativeScriptPath, ...args], {
+					childProcess.execFile('node', [tasklemonPath, ...lemonArgs, nativeScriptPath, ...scriptArgs], {
 						cwd: this.nativePath,
 						stdio: ['pipe', 'pipe', 'pipe']
 					}, (error, stdout, stderr) => {

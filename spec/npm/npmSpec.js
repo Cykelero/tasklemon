@@ -78,7 +78,7 @@ describe('npm', function() {
 				};
 			`;
 	
-			await testEnv.runLemonScript(scriptSource);
+			await testEnv.runLemonScript(scriptSource, [], ['--no-pin']);
 	
 			const outputPath = testEnv.nativePathFor('output.json');
 			let value = JSON.parse(fs.readFileSync(outputPath));

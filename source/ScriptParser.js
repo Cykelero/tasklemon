@@ -72,7 +72,10 @@ module.exports = class ScriptParser {
 		
 		// Or, is there a version line?
 		const firstVersionLine = currentHeaderLines.find(line => line instanceof LegacyVersionHeaderLine);
-		return firstVersionLine ? firstVersionLine.runtimeVersion : null;
+		if (firstVersionLine) return firstVersionLine.runtimeVersion;
+		
+		// Nothing found
+		return null;
 	}
 	
 	get preparedSource() {
