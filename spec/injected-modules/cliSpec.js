@@ -97,6 +97,22 @@ describe('Argument parsing', function() {
 			expect(cli.args.shorthandArg2).toBe(false);
 			expect(cli.args.shorthandArg3).toBe('value');
 		});
+		
+		it('should interpret all group characters as shorthand', async function() {
+			const testEnv = this.getTestEnv();
+			
+			const scriptSource = `
+				cli.accept({
+					shorthandArg0: ['-s', Boolean],
+					shorthandArg1: ['-t', Boolean]
+				});
+			`;
+			
+			const scriptRunError = await testEnv.runLemonScript(scriptSource, ['-stv'])
+				.catch(error => error);
+			
+			expect(scriptRunError.toString()).toContain('Argument error: “-v” unexpected');
+		});
 	});
 	
 	describe('positional argument', function() {
@@ -193,8 +209,6 @@ describe('Argument parsing', function() {
 	});
 	
 	describe('TypeDefinition support', function() {
-		// TODO: Test typedef rejection. Can't be done right now, since the code calls process.exit() when a typedef fails.
-		
 		it('should accept built-in typedefs', function() {
 			ScriptEnvironment.rawArguments = ['1984', 'ab?'];
 			
@@ -241,6 +255,21 @@ describe('Argument parsing', function() {
 			
 			expect(cli.args.arg0).toEqual(true);
 			expect(cli.args.arg1).toEqual(false);
+		});
+		
+		it('should display typedef rejections', async function() {
+				const testEnv = this.getTestEnv();
+				
+				const scriptSource = `
+					cli.accept({
+						numberArg: ['#0', Number]
+					});
+				`;
+				
+				const scriptRunError = await testEnv.runLemonScript(scriptSource, ['text'])
+					.catch(error => error);
+				
+				expect(scriptRunError.toString()).toContain('Argument error: “text” is not a valid number');
 		});
 	});
 	
