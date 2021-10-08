@@ -124,7 +124,6 @@ describe('Argument parsing', function() {
 			expect(cli.args.positionalArgument1).toBe('value1');
 		});
 		
-		
 		it('should honor a delimiter', function() {
 			ScriptEnvironment.rawArguments = ['value0', '--named', '--', '--value1', '--value2'];
 			
@@ -218,6 +217,26 @@ describe('Argument parsing', function() {
 			cli.accept({
 				arg0: ['#0', [trueIfA]],
 				arg1: ['#1', [trueIfA]]
+			});
+			
+			expect(cli.args.arg0).toEqual(true);
+			expect(cli.args.arg1).toEqual(false);
+		});
+		
+		it('should accept typedef arrays', function() {
+			ScriptEnvironment.rawArguments = ['1984', '--', '-34'];
+			
+			function isPositive(value) {
+				if (typeof value !== 'number') {
+					throw 'is not a number';
+				}
+				
+				return value >= 0;
+			}
+			
+			cli.accept({
+				arg0: ['#0', [Number, isPositive]],
+				arg1: ['#1', [Number, isPositive]]
 			});
 			
 			expect(cli.args.arg0).toEqual(true);
