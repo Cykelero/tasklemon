@@ -4,7 +4,7 @@ const fs = require('fs');
 
 module.exports = {
 	exitWithError(message) {
-		process.stdout.write(message + '\n');
+		process.stderr.write(message + '\n');
 		process.exit(1);
 	},
 	
