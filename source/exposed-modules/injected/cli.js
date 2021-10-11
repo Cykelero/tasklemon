@@ -154,6 +154,7 @@ function checkArgumentDefinitionSyntax(argumentDefinitions) {
 
 function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 	let result = {};
+	let providedPositionalArgumentCount = 0;
 	
 	function definitionFor(userString, failIfAbsent) {
 		const argumentDefinition = argumentDefinitions.find(ad => ad.alternatives.some(a => a === userString));
@@ -261,6 +262,7 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 		}
 		
 		// Didn't match anything else: positional argument
+		providedPositionalArgumentCount++;
 		const positionalIdentity = '#' + nextPositionalIndex;
 		
 		const argumentDefinition = definitionFor(positionalIdentity, false);
@@ -316,5 +318,31 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 		
 		Tools.exitWithError(`Argument error: ${allArgumentsString} ${are} required`);
 	}
+	
+	// // For positional arguments
+	const orderedPositionalArgs = argumentDefinitions
+		.filter(argumentDefinition => positionForArg(argumentDefinition) !== null)
+		.sort((a, b) => positionForArg(a) - positionForArg(b));
+	const requiredPositionalArgs = orderedPositionalArgs
+		.filter(argumentDefinition => argumentDefinition.omitBehavior && argumentDefinition.omitBehavior.type === 'required');
+	const lastRequiredPositionalOnlyArgument =
+		Array.from(requiredPositionalArgs)
+		.reverse()
+		.find(argumentDefinition => !argumentDefinition.alternatives.some(alternative => alternative[0] === '-'));
+	
+	if (lastRequiredPositionalOnlyArgument && !(lastRequiredPositionalOnlyArgument.name in firstOccurrences)) {
+		const requiredPositionalArgumentCount = positionForArg(lastRequiredPositionalOnlyArgument) + 1;
+		const s = requiredPositionalArgumentCount > 1 ? 's' : '';
+		
+		Tools.exitWithError(`Argument error: expected ${requiredPositionalArgumentCount} positional argument${s}, got ${providedPositionalArgumentCount} instead`);
+	}
+	
 	return result;
+}
+
+function positionForArg(argumentDefinition) {
+	const alternativeParts = argumentDefinition.alternatives.find(alternative => /#(\d)/.exec(alternative));
+	if (!alternativeParts) return null;
+	
+	return Number(alternativeParts[1]);
 }

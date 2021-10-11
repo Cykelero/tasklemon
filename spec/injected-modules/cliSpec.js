@@ -323,6 +323,41 @@ describe('Argument parsing', function() {
 				
 				expect(scriptRunError.toString()).toContain('Argument error: “-1”, “-3” and “-4” are required');
 			});
+			
+			it('should support positional arguments', async function() {
+				const testEnv = this.getTestEnv();
+				
+				const scriptSource = `
+					cli.accept({
+						positionalArg: ['#0', String, required()]
+					});
+				`;
+				
+				const scriptRunError = await testEnv.runLemonScript(scriptSource)
+					.catch(error => error);
+				
+				expect(scriptRunError.toString()).toContain('Argument error: expected 1 positional argument, got 0 instead');
+			});
+			
+			it('should support multiple positional arguments', async function() {
+				const testEnv = this.getTestEnv();
+				
+				// Arguments are intentionally specified in a non-canonical order
+				const scriptSource = `
+					cli.accept({
+						fifthArg: ['#4 --5', String, required()],
+						fourthArg: ['#3', String],
+						thirdArg: ['#2', String, required()],
+						secondArg: ['#1 --2', String, required()],
+						firstArg: ['#0', String, required()]
+					});
+				`;
+				
+				const scriptRunError = await testEnv.runLemonScript(scriptSource, ['0', '1', '--5', 'fifth'])
+					.catch(error => error);
+				
+				expect(scriptRunError.toString()).toContain('Argument error: expected 3 positional arguments, got 2 instead');
+			});
 		});
 	});
 	
