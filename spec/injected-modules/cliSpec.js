@@ -358,8 +358,40 @@ describe('Argument parsing', function() {
 				
 				expect(scriptRunError.toString()).toContain('Argument error: expected 3 positional arguments, got 2 instead');
 			});
+			
+			it('should fail when non-contiguous positional arguments are marked as required', async function() {
+				const testEnv = this.getTestEnv();
+				
+				const scriptSource = `
+					cli.accept({
+						firstArg: ['#0', String, required()],
+						secondArg: ['#1', String],
+						thirdArg: ['#2', String, required()]
+					});
+				`;
+				
+				const scriptRunError = await testEnv.runLemonScript(scriptSource)
+					.catch(error => error);
+				
+				expect(scriptRunError.toString()).toContain('Argument definition error: positional argument `thirdArg` is required, but the preceding arguments are not');
+			});
+			
+			it('should fail when a rest argument is marked as required', async function() {
+				const testEnv = this.getTestEnv();
+				
+				const scriptSource = `
+					cli.accept({
+						restArg: ['#+', String, required()]
+					});
+				`;
+				
+				const scriptRunError = await testEnv.runLemonScript(scriptSource)
+					.catch(error => error);
+				
+				expect(scriptRunError.toString()).toContain('Argument definition error: rest argument `restArg` cannot be set as required');
+			});
 		});
 	});
 	
-	// TODO: Test input errors: unknown args, duplicate args, named arg without its expected value. Can't be done right now, since the code calls process.exit() when user input is incorrect.
+	// TODO: Test input errors: unexpected args, duplicate args, arg specified without its expected value.
 });

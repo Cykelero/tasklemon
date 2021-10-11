@@ -137,6 +137,10 @@ function checkArgumentDefinitionSyntax(argumentDefinitions) {
 				if (argumentDefinition.alternatives.length > 1) {
 					throwForThisDefinition('“#+” cannot have alternatives');
 				}
+				
+				if (argumentDefinition.omitBehavior && argumentDefinition.omitBehavior.type === 'required') {
+					throw Error(`Argument definition error: rest argument \`${argumentDefinition.name}\` cannot be set as required`);
+				}
 			} else if (firstCharacter === '#') {
 				// Positional argument
 				const positionalAlternatives = argumentDefinition.alternatives.filter(alternative => /#\d/.test(alternative));
@@ -150,6 +154,32 @@ function checkArgumentDefinitionSyntax(argumentDefinitions) {
 			}
 		});
 	});
+	
+	// Non-contiguous required positional arguments
+	const orderedPositionalArgs = argumentDefinitions
+		.filter(argumentDefinition => positionForArg(argumentDefinition) !== null)
+		.sort((a, b) => positionForArg(a) - positionForArg(b));
+	
+	const firstOptionalPositionalArgIndex = orderedPositionalArgs.findIndex(
+		argumentDefinition =>
+			!argumentDefinition.omitBehavior || argumentDefinition.omitBehavior.type !== 'required'
+	);
+	
+	if (firstOptionalPositionalArgIndex !== -1) {
+		const firstSubsequentRequiredArg =
+			orderedPositionalArgs.slice(firstOptionalPositionalArgIndex + 1)
+			.filter(
+				argumentDefinition =>
+					!argumentDefinition.alternatives.some(alternative => alternative[0] === '-')
+			)
+			.find(
+				argumentDefinition =>
+					argumentDefinition.omitBehavior && argumentDefinition.omitBehavior.type === 'required'
+			);
+		if (firstSubsequentRequiredArg) {
+			throw Error(`Argument definition error: positional argument \`${firstSubsequentRequiredArg.name}\` is required, but the preceding arguments are not`);
+		}
+	}
 }
 
 function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
