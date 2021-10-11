@@ -154,6 +154,21 @@ describe('Argument parsing', function() {
 			expect(cli.args.positionalArgument1).toBe('--value1');
 			expect(cli.args.positionalArgument2).toBe('--value2');
 		});
+		
+		it('should fail if a single definition has multiple positional arguments', async function() {
+				const testEnv = this.getTestEnv();
+				
+				const scriptSource = `
+					cli.accept({
+						someArg: ['#0 #1']
+					});
+				`;
+				
+				const scriptRunError = await testEnv.runLemonScript(scriptSource)
+					.catch(error => error);
+				
+				expect(scriptRunError.toString()).toContain('Syntax for `someArg` is invalid: cannot have more than one positional identifier');
+		});
 	});
 	
 	describe('rest argument', function() {

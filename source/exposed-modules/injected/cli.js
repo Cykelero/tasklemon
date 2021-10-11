@@ -118,16 +118,23 @@ function checkArgumentDefinitionSyntax(argumentDefinitions) {
 			const firstCharacter = alternative[0];
 			
 			if (alternative.slice(0, 2) === '--') {
-				// Named argument: Everything goes.
+				// Named argument: everything goes
 			} else if (firstCharacter === '-') {
-				// Shorthand
+				// Shorthand argument
 				if (alternative.length > 2) {
 					throwForThisDefinition('shorthand names must be a single character');
 				}
+			} else if (alternative === '#+') {
+				// Rest argument
+				if (argumentDefinition.alternatives.length > 1) {
+					throwForThisDefinition('“#+” cannot have alternatives');
+				}
 			} else if (firstCharacter === '#') {
 				// Positional argument
-				if (alternative === '#+' && argumentDefinition.alternatives.length > 1) {
-					throwForThisDefinition('“#+” cannot have alternatives');
+				const positionalAlternatives = argumentDefinition.alternatives.filter(alternative => /#\d/.test(alternative));
+				
+				if (positionalAlternatives.length > 1) {
+					throwForThisDefinition(`cannot have more than one positional identifier`);
 				}
 			} else {
 				// Neither of these: invalid
