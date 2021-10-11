@@ -15,7 +15,9 @@ const injectableModuleNames = [
 	
 	'Item',
 	'File',
-	'Folder'
+	'Folder',
+	
+	'required'
 ];
 
 module.exports = function(scope) {

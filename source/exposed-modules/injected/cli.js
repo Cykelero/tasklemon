@@ -1,5 +1,6 @@
 /* Exposes command-line arguments passed to the currently running TL script, and allows interacting with the user through input and output. */
 
+const OmitBehavior = require('../OmitBehavior');
 const ScriptEnvironment = require('../../ScriptEnvironment');
 const TypeDefinition = require('../../TypeDefinition');
 const Tools = require('../../Tools');
@@ -77,23 +78,30 @@ cli.tellWhile = async function(promptText, awaitable) {
 function parseArgumentDefinitions(argumentDefinitions) {
 	return Object.entries(argumentDefinitions)
 		.map(([name, definition]) => {
-			let syntax, type, description;
+			let syntax, type, omitBehavior, description;
 			
 			if (typeof definition === 'string') {
 				syntax = definition;
 			} else {
-				[syntax, type, description] = definition;
+				[syntax, type, omitBehaviorOrDescription, maybeDescription] = definition;
+				
+				if (omitBehaviorOrDescription instanceof OmitBehavior) {
+					omitBehavior = omitBehaviorOrDescription;
+					description = maybeDescription;
+				} else {
+					description = omitBehaviorOrDescription;
+				}
 			}
-			
-			if (!type) type = String;
-			if (!description) description = `Also called “${name}”`;
 			
 			const alternatives = syntax
 				.split(' ')
 				.map(alternative => alternative.trim())
 				.filter(alternative => alternative.length > 0);
 			
-			return {name, alternatives, type, description};
+			if (!type) type = String;
+			if (!description) description = `Also called “${name}”`;
+			
+			return {name, alternatives, type, omitBehavior, description};
 		});	
 }
 
@@ -273,11 +281,40 @@ function applyArgumentDefinitions(argumentDefinitions, rawArguments) {
 		nextPositionalIndex++;
 	});
 	
+	// Fail if the last argument needed a value
 	if (expectValueFor !== null) {
 		// Last argument didn't get its value
 		const userString = firstOccurrences[expectValueFor.name];
 		Tools.exitWithError(`Argument error: “${userString}” requires a value`);
 	}
 	
+	// Enforce require()
+	// // For named arguments
+	const missingNamedArguments = argumentDefinitions
+		.filter(argumentDefinition => argumentDefinition.alternatives.some(
+			alternative => alternative[0] === '-')
+		)
+		.filter(argumentDefinition => {
+			const omitBehavior = argumentDefinition.omitBehavior;
+			const argumentIsRequired = omitBehavior && omitBehavior.type === 'required';
+			
+			return argumentIsRequired && !(argumentDefinition.name in firstOccurrences);
+		});
+	
+	if (missingNamedArguments.length > 0) {
+		const missingNamedArgumentsStrings = missingNamedArguments
+			.map(argumentDefinition =>
+				argumentDefinition.alternatives.find(a => a.slice(0, 2) === '--')
+				|| argumentDefinition.alternatives.find(a => a[0] === '-')
+				|| argumentDefinition.alternatives[0]
+			);
+		const quotedArguments = missingNamedArgumentsStrings.map(missingArgument => `“${missingArgument}”`);
+		const lastTwoArgumentsString = quotedArguments.slice(-2).join(' and ');
+		const allArgumentsString = [...quotedArguments.slice(0, -2), lastTwoArgumentsString].join(', ');
+		
+		const are = missingNamedArguments.length > 1 ? 'are' : 'is';
+		
+		Tools.exitWithError(`Argument error: ${allArgumentsString} ${are} required`);
+	}
 	return result;
 }

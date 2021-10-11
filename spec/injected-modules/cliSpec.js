@@ -288,5 +288,43 @@ describe('Argument parsing', function() {
 		});
 	});
 	
+	describe('omit behavior', function() {
+		describe('for required()', function() {
+			it('should support identified arguments', async function() {
+				const testEnv = this.getTestEnv();
+				
+				const scriptSource = `
+					cli.accept({
+						namedArg: ['-n --named', String, required()]
+					});
+				`;
+				
+				const scriptRunError = await testEnv.runLemonScript(scriptSource)
+					.catch(error => error);
+				
+				expect(scriptRunError.toString()).toContain('Argument error: “--named” is required');
+			});
+			
+			it('should support multiple identified arguments', async function() {
+				const testEnv = this.getTestEnv();
+				
+				const scriptSource = `
+					cli.accept({
+						firstArg: ['-1', Boolean, required()],
+						secondArg: ['-2', Boolean, required()],
+						thirdArg: ['-3', Boolean, required()],
+						fourthArg: ['-4', Boolean, required()],
+						fifthArg: ['-5', Boolean]
+					});
+				`;
+				
+				const scriptRunError = await testEnv.runLemonScript(scriptSource, ['-2'])
+					.catch(error => error);
+				
+				expect(scriptRunError.toString()).toContain('Argument error: “-1”, “-3” and “-4” are required');
+			});
+		});
+	});
+	
 	// TODO: Test input errors: unknown args, duplicate args, named arg without its expected value. Can't be done right now, since the code calls process.exit() when user input is incorrect.
 });
