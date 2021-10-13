@@ -9,7 +9,7 @@ describe('Argument parsing', function() {
 		cli.args = null;
 	});
 	
-	describe('named argument', function() {
+	describe('longhand argument', function() {
 		it('should accept a string', function() {
 			ScriptEnvironment.rawArguments = ['--named', 'value'];
 			
@@ -193,6 +193,16 @@ describe('Argument parsing', function() {
 		});
 	});
 	
+	describe('implicit rest argument', function() {
+		it('should accept strings', function() {
+			ScriptEnvironment.rawArguments = ['value0', 'value1'];
+			
+			cli.accept({});
+			
+			expect(cli.args.rest).toEqual(['value0', 'value1']);
+		});
+	});
+	
 	describe('mixed argument types', function() {
 		it('should allow missing arguments', function() {
 			ScriptEnvironment.rawArguments = ['rest0', '-s', 'shorthand', 'rest1'];
@@ -220,6 +230,22 @@ describe('Argument parsing', function() {
 			expect(cli.args.positionalArgument0).toEqual('value0');
 			expect(cli.args.positionalArgument2).toEqual('value2');
 			expect(cli.args.restArgument).toEqual(['value1', 'value3']);
+		});
+		
+		it('should fail when multiple arguments use the same identifier', async function() {
+			const testEnv = this.getTestEnv();
+			
+			const scriptSource = `
+				cli.accept({
+					argument0: ['--arg', String],
+					argument1: ['--arg', String]
+				});
+			`;
+			
+			const scriptRunError = await testEnv.runLemonScript(scriptSource)
+				.catch(error => error);
+			
+			expect(scriptRunError.toString()).toContain('Syntax for `argument1` is invalid: “--arg” is already used for `argument0`');
 		});
 	});
 	
@@ -393,5 +419,48 @@ describe('Argument parsing', function() {
 		});
 	});
 	
-	// TODO: Test input errors: unexpected args, duplicate args, arg specified without its expected value.
+	describe('incorrect input', function() {
+		it('should fail when an unknown argument is passed', async function() {
+			const testEnv = this.getTestEnv();
+			
+			const scriptSource = `
+				cli.accept({});
+			`;
+			
+			const scriptRunError = await testEnv.runLemonScript(scriptSource, ['--unknown'])
+				.catch(error => error);
+			
+			expect(scriptRunError.toString()).toContain('Argument error: “--unknown” unexpected');
+		});
+		
+		it('should fail when a duplicate argument is passed', async function() {
+			const testEnv = this.getTestEnv();
+			
+			const scriptSource = `
+				cli.accept({
+					someArg: ['-s --some', String]
+				});
+			`;
+			
+			const scriptRunError = await testEnv.runLemonScript(scriptSource, ['-s', '0', '--some', '1'])
+				.catch(error => error);
+			
+			expect(scriptRunError.toString()).toContain('Argument error: “--some” already specified as “-s”');
+		});
+		
+		it('should fail when no value is passed for an argument expecting one', async function() {
+			const testEnv = this.getTestEnv();
+			
+			const scriptSource = `
+				cli.accept({
+					someArg: ['-s', String]
+				});
+			`;
+			
+			const scriptRunError = await testEnv.runLemonScript(scriptSource, ['-s'])
+				.catch(error => error);
+			
+			expect(scriptRunError.toString()).toContain('Argument error: “-s” requires a value');
+		});
+	});
 });
