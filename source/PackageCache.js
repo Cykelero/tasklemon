@@ -165,7 +165,7 @@ module.exports = {
 			importPath = importPath.replace(/\//g, ':');
 		}
 		
-		return importPath.split(":")[0];
+		return importPath.split(':')[0];
 	},
 	
 	_normalizePackageList(packageList, packageVersions = {}) {

@@ -1,5 +1,3 @@
-const moment = require('moment');
-
 const cli = require('../../source/exposed-modules/injected/cli');
 const ScriptEnvironment = require('../../source/ScriptEnvironment');
 

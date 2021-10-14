@@ -10,30 +10,32 @@ module.exports = {
     },
     extends: 'eslint:recommended',
     rules: {
-        'no-mixed-spaces-and-tabs': 1,
-        'dot-location': [1, 'property'],
-        'no-multi-spaces': 1,
+        'no-mixed-spaces-and-tabs': 'warn',
+        'dot-location': ['warn', 'property'],
+        'no-multi-spaces': 'warn',
+        'quotes': ['warn', 'single', { allowTemplateLiterals: true }],
         'no-multi-str': 'error',
-        'grouped-accessor-pairs': [1, 'getBeforeSet'],
+        'grouped-accessor-pairs': ['warn', 'getBeforeSet'],
         
         'consistent-return': 'error',
         'no-var': 'error',
         
-        'no-unused-vars': 1,
-        'no-constant-condition': [1, {checkLoops: false }],
+        'no-unused-vars': 'warn',
+        'no-unreachable': 'warn',
+        'no-constant-condition': ['warn', { checkLoops: false }],
         'accessor-pairs': 'error',
         'default-param-last': 'error',
         'require-atomic-updates': 'error',
         'array-callback-return': 'error',
         'no-return-assign': 'error',
         'no-self-compare': 'error',
-        'no-useless-backreference': 1,
+        'no-useless-backreference': 'warn',
         'no-sequences': 'error',
-        'no-unused-expressions': 1,
-        'no-empty': [1, {allowEmptyCatch: true}],
+        'no-unused-expressions': 'warn',
+        'no-empty': ['warn', { allowEmptyCatch: true }],
         
         'no-implied-eval': 'error',
-        'no-warning-comments': 1
+        'no-warning-comments': 'warn'
     },
     overrides: [
         {

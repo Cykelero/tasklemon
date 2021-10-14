@@ -1,12 +1,6 @@
 const ScriptParser = require('../../source/ScriptParser');
 
 describe('ScriptParser', function() {
-	let testEnv;
-	
-	beforeEach(function() {
-		testEnv = this.getTestEnv();
-	});
-	
 	describe('#requiredRuntimeVersion', function() {
 		it('should return the requested version', async function() {
 			const scriptSource = '#! /usr/bin/env tasklemon-v0.3' + '\n';
