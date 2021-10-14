@@ -2,7 +2,7 @@
 
 module.exports = class OmitBehavior {
   constructor(type, args = []) {
-    this.type = type;
+    this.type = type; // 'none' or 'required'
     this.args = args;
   }
 };
