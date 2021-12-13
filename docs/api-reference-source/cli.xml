@@ -37,7 +37,7 @@
 					</div>
 					<p>
 						The argument value is sourced differently depending on the definition's type.<br>
-						If the type is <code>Boolean</code>, the value is set to true if the argument is present, or false.<br>
+						If the type is <code>Boolean</code>, the value is set to true if the argument is present, and otherwise to false.<br>
 						If the type is other than <code>Boolean</code>, the next program argument is consumed as a value.
 					</p>
 					<div class="df-list-with-title">
