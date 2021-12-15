@@ -66,18 +66,22 @@ module.exports = class ParsedArguments {
 				argument => definition.matchesIdentifierString(argument.usedIdentifier)
 			);
 			
+			// // Set implicit default value
+			if (definition.type === Boolean) {
+				resolvedValue = false;
+			} else {
+				resolvedValue = null;
+			}
+			
 			// Resolve value
 			if (matchingArgumentIndex === -1) {
 				// No matching argument
-				if (definition.omitBehavior.type === 'required') {
-					missingRequiredDefinitions.push(definition);
-				}
+				const omitBehavior = definition.omitBehavior;
 				
-				// // Set implicit default value
-				if (definition.type === Boolean) {
-					resolvedValue = false;
-				} else {
-					resolvedValue = null;
+				if (omitBehavior.type === 'required') {
+					missingRequiredDefinitions.push(definition);
+				} else if (omitBehavior.type === 'defaultsTo') {
+					resolvedValue = omitBehavior.args.defaultValue;
 				}
 			} else {
 				// Matching argument found

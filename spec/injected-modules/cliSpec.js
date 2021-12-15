@@ -1,4 +1,6 @@
 const cli = require('../../source/exposed-modules/injected/cli');
+const defaultsTo = require('../../source/exposed-modules/injected/defaultsTo');
+
 const ScriptEnvironment = require('../../source/ScriptEnvironment');
 
 describe('Argument parsing', function() {
@@ -413,6 +415,47 @@ describe('Argument parsing', function() {
 					.catch(error => error);
 				
 				expect(scriptRunError.toString()).toContain('Argument definition error: rest argument `restArg` cannot be set as required');
+			});
+		});
+		
+		describe('for defaultsTo()', function() {
+			it('should support identified arguments', async function() {
+				ScriptEnvironment.rawArguments = ['--named2', 'Strange'];
+				
+				cli.accept({
+					namedArg: ['-n --named', String, defaultsTo('Steven')],
+					namedArg2: ['-m --named2', String, defaultsTo('Universe')]
+				});
+				
+				expect(cli.args.namedArg).toEqual('Steven');
+				expect(cli.args.namedArg2).toEqual('Strange');
+			});
+			
+			it('should support positional arguments', async function() {
+				ScriptEnvironment.rawArguments = ['Greg'];
+				
+				cli.accept({
+					firstArg: ['#0', String, defaultsTo('Steven')],
+					secondArg: ['#1', String, defaultsTo('Universe')]
+				});
+				
+				expect(cli.args.firstArg).toEqual('Greg');
+				expect(cli.args.secondArg).toEqual('Universe');
+			});
+			
+			it('should fail when a rest argument is given a default value', async function() {
+				const testEnv = this.getTestEnv();
+				
+				const scriptSource = `
+					cli.accept({
+						restArg: ['#+', String, defaultsTo('Some value')]
+					});
+				`;
+				
+				const scriptRunError = await testEnv.runLemonScript(scriptSource)
+					.catch(error => error);
+				
+				expect(scriptRunError.toString()).toContain('Argument definition error: rest argument `restArg` cannot have a default value');
 			});
 		});
 	});

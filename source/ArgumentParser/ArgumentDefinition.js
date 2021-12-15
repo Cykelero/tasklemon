@@ -73,6 +73,8 @@ module.exports = class ArgumentDefinition {
 				
 				if (this.omitBehavior.type === 'required') {
 					throw Error(`Argument definition error: rest argument \`${this.name}\` cannot be set as required`);
+				} else if (this.omitBehavior.type === 'defaultsTo') {
+					throw Error(`Argument definition error: rest argument \`${this.name}\` cannot have a default value`);
 				}
 			} else if (identifier[0] === '#') {
 				// Positional argument
