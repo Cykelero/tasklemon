@@ -416,6 +416,21 @@ describe('Argument parsing', function() {
 				
 				expect(scriptRunError.toString()).toContain('Argument definition error: rest argument `restArg` cannot be set as required');
 			});
+			
+			it('should fail when specified without parentheses', async function() {
+				const testEnv = this.getTestEnv();
+				
+				const scriptSource = `
+					cli.accept({
+						namedArg: ['-n --named', String, required]
+					});
+				`;
+				
+				const scriptRunError = await testEnv.runLemonScript(scriptSource)
+					.catch(error => error);
+				
+				expect(scriptRunError.toString()).toContain('Argument definition error: in `namedArg` definition, `required` must be called as a function');
+			});
 		});
 		
 		describe('for defaultsTo()', function() {

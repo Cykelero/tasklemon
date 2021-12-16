@@ -1,6 +1,7 @@
 /* Represents an accepted argument. Knows its name, type, identifiers, etc. */
 
 const OmitBehavior = require('./OmitBehavior');
+const required = require('../exposed-modules/injected/required');
 
 module.exports = class ArgumentDefinition {
 	constructor(name, rawDefinition) {
@@ -54,6 +55,12 @@ module.exports = class ArgumentDefinition {
 			throw Error(`Syntax for \`${this.name}\` is invalid: ${reason}`);
 		}
 		
+		// Check for forgotten parentheses for omit behavior
+		if (this.description === required) {
+			throw Error(`Argument definition error: in \`${this.name}\` definition, \`required\` must be called as a function`);
+		}
+		
+		// Check identifiers and related requirements
 		this.identifiers.forEach(identifier => {
 			if (identifier.slice(0, 2) === '--') {
 				// Longhand argument
