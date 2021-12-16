@@ -51,7 +51,7 @@ module.exports = class ArgumentDefinition {
 	}
 	
 	checkForErrors() {
-		const throwWithReason = reason => {
+		const throwSyntaxError = reason => {
 			throw Error(`Syntax for \`${this.name}\` is invalid: ${reason}`);
 		}
 		
@@ -65,17 +65,17 @@ module.exports = class ArgumentDefinition {
 			if (identifier.slice(0, 2) === '--') {
 				// Longhand argument
 				if (identifier.length === 2) {
-					throwWithReason('`--` is not a valid identifier');
+					throwSyntaxError('`--` is not a valid identifier');
 				}
 			} else if (identifier[0] === '-') {
 				// Shorthand argument
 				if (identifier.length > 2) {
-					throwWithReason('shorthand names must be a single character');
+					throwSyntaxError('shorthand names must be a single character');
 				}
 			} else if (identifier === '#+') {
 				// Rest argument
 				if (this.identifiers.length > 1) {
-					throwWithReason('“#+” cannot have alternatives');
+					throwSyntaxError('“#+” cannot have alternatives');
 				}
 				
 				if (this.omitBehavior.type === 'required') {
@@ -87,7 +87,7 @@ module.exports = class ArgumentDefinition {
 				// Positional argument
 			} else {
 				// Neither of these: invalid
-				throwWithReason(`expected “#” or “-”, found “${identifier[0]}”`);
+				throwSyntaxError(`expected “#” or “-”, found “${identifier[0]}”`);
 			}
 		});
 		
@@ -97,7 +97,7 @@ module.exports = class ArgumentDefinition {
 		);
 		
 		if (positionalIdentifiers.length > 1) {
-			throwWithReason(`cannot have more than one positional identifier`);
+			throwSyntaxError(`cannot have more than one positional identifier`);
 		}
 	}
 	
