@@ -136,7 +136,7 @@ console.log(cli.args); // will be {username: 'Rose', isAdmin: true}
 Then, run the script:
 
 ```bash
-$ lemon adduser.js -a --name Rose
+$ lemon adduser.js -a --name=Rose
 ```
 
 ### Format data for display

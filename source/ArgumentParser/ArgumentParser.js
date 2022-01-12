@@ -116,12 +116,23 @@ module.exports = class ArgumentParser {
 			// Longhand argument
 			if (rawArgument.slice(0, 2) === '--') {
 				// Named argument
-				const definition = this.getDefinitionFor(rawArgument, true);
+				const namedArgumentParts = /^(--.+?)(=(.+))?$/.exec(rawArgument);
+				const [, argumentIdentifier, , argumentValue] = namedArgumentParts;
+				
+				const definition = this.getDefinitionFor(argumentIdentifier, true);
 				
 				if (definition.type === Boolean) {
-					result.addIdentifiedValue(rawArgument, 'true');
+					if (argumentValue !== undefined) {
+						Tools.exitWithError(`Argument error: “${argumentIdentifier}” is a boolean flag, and so doesn't need a value`);
+					}
+					
+					result.addIdentifiedValue(argumentIdentifier, 'true');
 				} else {
-					expectValueFor = rawArgument;
+					if (argumentValue === undefined) {
+						expectValueFor = argumentIdentifier;
+					} else {
+						result.addIdentifiedValue(argumentIdentifier, argumentValue);
+					}
 				}
 				continue;
 			}

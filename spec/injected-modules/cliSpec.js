@@ -10,14 +10,48 @@ describe('Argument parsing', function() {
 	});
 	
 	describe('longhand argument', function() {
-		it('should accept a string', function() {
-			ScriptEnvironment.rawArguments = ['--named', 'value'];
-			
-			cli.accept({
-				namedArg: ['--named', String]
+		describe('with an equal sign separator', function() {
+			it('should accept a string', function() {
+				ScriptEnvironment.rawArguments = ['--named=value'];
+				
+				cli.accept({
+					namedArg: ['--named', String]
+				});
+				
+				expect(cli.args.namedArg).toEqual('value');
 			});
 			
-			expect(cli.args.namedArg).toEqual('value');
+			it('should accept a negative number', function() {
+				ScriptEnvironment.rawArguments = ['--named=-34'];
+				
+				cli.accept({
+					namedArg: ['--named', Number]
+				});
+				
+				expect(cli.args.namedArg).toEqual(-34);
+			});
+		});
+		
+		describe('with a space separator', function() {
+			it('should accept a string', function() {
+				ScriptEnvironment.rawArguments = ['--named', 'value'];
+				
+				cli.accept({
+					namedArg: ['--named', String]
+				});
+				
+				expect(cli.args.namedArg).toEqual('value');
+			});
+			
+			it('should accept a negative number', function() {
+				ScriptEnvironment.rawArguments = ['--named', '-34'];
+				
+				cli.accept({
+					namedArg: ['--named', Number]
+				});
+				
+				expect(cli.args.namedArg).toEqual(-34);
+			});
 		});
 		
 		it('should accept a boolean (true)', function() {
@@ -38,16 +72,6 @@ describe('Argument parsing', function() {
 			});
 			
 			expect(cli.args.namedArg).toEqual(false);
-		});
-		
-		it('should accept a negative number', function() {
-			ScriptEnvironment.rawArguments = ['--named', '-34'];
-			
-			cli.accept({
-				namedArg: ['--named', Number]
-			});
-			
-			expect(cli.args.namedArg).toEqual(-34);
 		});
 	});
 	

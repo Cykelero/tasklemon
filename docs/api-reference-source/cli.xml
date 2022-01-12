@@ -75,7 +75,7 @@
 				</discussion>
 				<sample name="Named argument and shorthand argument">
 				<![CDATA[
-// $ lemon adduser.js -a --name Rose
+// $ lemon adduser.js -a --name=Rose
 
 cli.accept({
 	username: ['--name', String, 'Name of user to add'],
