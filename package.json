@@ -5,8 +5,8 @@
   "main": "source/tasklemon.js",
   "bin": {
     "lemon": "source/tasklemon.js",
-    "tasklemon-v0.2": "source/version-bin/tasklemon-v0.2.js",
-    "tasklemon-v0.3": "source/version-bin/tasklemon-v0.3.js"
+    "tasklemon-v0.3": "source/version-bin/tasklemon-v0.3.js",
+    "tasklemon-v0.4": "source/version-bin/tasklemon-v0.4.js"
   },
   "repository": {
     "type": "git",
