@@ -19,7 +19,7 @@ cli.accept = function(argumentDefinitions) {
 };
 
 cli.tell = function(text) {
-	process.stdout.write(text + '\n');
+	console.log(text);
 };
 
 cli.ask = function(promptText, type, skippable) {
