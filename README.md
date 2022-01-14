@@ -1,4 +1,4 @@
-# <img alt="Tasklemon" src="docs/readme-logo.png" width=250 height=42>
+# <img alt="Tasklemon" src="docs/readme-logo.png" width=254 height=42>
 <sup>🛠 [Usage](#-usage)   📚 [Learning](#-learning)   ☀️ [Samples](#%EF%B8%8F-samples)   💬 [Caveats](#-caveats)   👩🏿‍💻 [Contributing](#-contributing)   ❤️ [Thanks](#%EF%B8%8F-thanks)</sup>
 
 Write scripts that manipulate files, make network requests, get user input, all with a delightfully clear API and exceptional documentation. If you want to script things but don't want to use Bash, Tasklemon is what you've been wishing for all along! ✨
