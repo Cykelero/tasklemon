@@ -30,9 +30,10 @@
 					<div class="df-list-with-title">
 						A definition is an <code>Array</code> with the following values:
 						<ul>
-							<li>Identifier list: A space-separated string of possible names or indices that identify the argument. At least one identifier is required. See below for identifier syntax.</li>
-							<li>Type (optional): A <df-link target="TypeDefinition">type definition</df-link> to apply to the argument value. Defaults to <code>String</code>.</li>
-							<li>Description (optional): A description of the argument. Currently unused, but will eventually be displayed to the user when requested.</li>
+							<li><strong>Identifier list:</strong> A space-separated string of possible names or indices that identify the argument. At least one identifier is required. See below for identifier syntax.</li>
+							<li><strong>Type (optional):</strong> A <df-link target="TypeDefinition">type definition</df-link> to apply to the argument value. Defaults to <code>String</code>.</li>
+							<li><strong>Omit behavior (optional):</strong> Either <code>required()</code> or <code>defaultsTo(value)</code>. Applied when the argument isn't provided by the user.</li>
+							<li><strong>Description (optional):</strong> A description of the argument. Currently unused, but will eventually be displayed to the user when requested.</li>
 						</ul>
 					</div>
 					<p>
@@ -109,6 +110,19 @@ cli.accept({
 });
 
 return cli.args; // {paths: [File('catfacts.txt'), File('dogfacts.txt')], verbose: true, strictMode: true}
+				]]>
+				</sample>
+				<sample name="Required arguments and default values">
+				<![CDATA[
+// $ lemon delete-big-files.js cat-videos
+
+cli.accept({
+	inputFolder: ['#0', Folder, required(), 'The folder to clean up'],
+	maximumSize: ['-s --size', Number, defaultsTo(1000), 'The maximum file size in MB'],
+	extensionFilter: ['-e --extension', String, 'Only delete files with this extension']
+});
+
+return cli.args; // {inputFolder: Folder('cat-videos/'), maximumSize: 1000, extensionFilter: null}
 				]]>
 				</sample>
 			</method>
