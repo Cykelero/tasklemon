@@ -1,9 +1,15 @@
 const InjectedFolder = require('../../source/exposed-modules/injected/Folder');
 
 describe('Folder (injected)', function() {
+	let testEnv;
+	
+	beforeEach(function() {
+		testEnv = this.getTestEnv();
+	});
+	
 	describe('()', function() {
 		it('should accept an absolute path', function() {
-			const folderPath = '/folder/';
+			const folderPath = testEnv.createFolder('folder');
 			const nativeFolderPath = this.toNativePath(folderPath);
 			
 			const folderItem = InjectedFolder(nativeFolderPath);

@@ -1,9 +1,15 @@
 const InjectedFile = require('../../source/exposed-modules/injected/File');
 
 describe('File (injected)', function() {
+	let testEnv;
+	
+	beforeEach(function() {
+		testEnv = this.getTestEnv();
+	});
+	
 	describe('()', function() {
 		it('should accept an absolute path', function() {
-			const filePath = '/file';
+			const filePath = testEnv.createFile('file');
 			const nativeFilePath = this.toNativePath(filePath);
 			
 			const fileItem = InjectedFile(nativeFilePath);
