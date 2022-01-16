@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "chokidar-cli": "^2.1.0",
-    "docfish": "^1.4.0",
+    "docfish": "^1.5.1",
     "eslint": "^7.0.0",
     "jasmine": "^2.99.0",
     "jasmine-spec-reporter": "^4.2.1"
