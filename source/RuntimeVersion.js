@@ -18,6 +18,17 @@ module.exports = {
 			|| active.minor < reference.minor;
 	},
 	
+	isAtLeast(referenceString) {
+		const active = this._parseVersionString(this.stringValue);
+		const reference = this._parseVersionString(referenceString);
+		
+		return active.major > reference.major
+			|| (
+				active.major === reference.major
+				&& active.minor >= reference.minor
+			);
+	},
+	
 	_parseVersionString(versionString) {
 		const versionParts = versionString.split('.');
 		

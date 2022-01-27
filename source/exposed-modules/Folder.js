@@ -7,6 +7,7 @@ const glob = require('glob');
 
 const Item = require('./Item');
 const TypeDefinition = require('../TypeDefinition');
+const RuntimeVersion = require('./RuntimeVersion');
 
 let didShowFileMethodDeprecationWarning = false;
 let didShowFolderMethodDeprecationWarning = false;
@@ -58,7 +59,7 @@ class Folder extends Item {
 		if (Item._isAbsolutePath(nativePath)) {
 			if (!this._isRoot) throw Error(`“${cleanPath}” is an absolute path but the folder is not a root folder`);
 			
-			if (!didShowFileMethodDeprecationWarning) {
+			if (!didShowFileMethodDeprecationWarning && RuntimeVersion.isAtLeast('0.4')) {
 				didShowFileMethodDeprecationWarning = true;
 				console.trace('Calling the file() method with an absolute path is deprecated. Call the File() global instead.');
 			}
@@ -78,7 +79,7 @@ class Folder extends Item {
 			if (!this._isRoot) throw Error(`“${cleanPath}” is an absolute path but the folder is not a root folder`);
 			
 						
-			if (!didShowFolderMethodDeprecationWarning) {
+			if (!didShowFolderMethodDeprecationWarning && RuntimeVersion.isAtLeast('0.4')) {
 				didShowFolderMethodDeprecationWarning = true;
 				console.trace('Calling the folder() method with an absolute path is deprecated. Call the Folder() global instead.');
 			}
