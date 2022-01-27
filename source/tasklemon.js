@@ -24,7 +24,7 @@ const validNodeArguments = ['--inspect', '--inspect-brk'];
 function parseProgramArguments(argumentList) {
 	let rawArguments = argumentList.slice(2); // skip “node” and “tasklemon”
 	
-	// Consume legacy runtime version
+	// Skip legacy runtime version
 	// Tasklemon used to accept a runtime version number as its first argument
 	const firstArg = rawArguments[0];
 	if (/^v\d(\.\d(\.\d)?)?$/.test(firstArg)) {
