@@ -12,7 +12,7 @@ module.exports = {
 	
 	isLowerThan(referenceString) {
 		const active = this._parseVersionString(this.stringValue);
-		const reference = this._parseVersionString(referenceString);
+		const reference = this._parseVersionString(referenceString, true);
 		
 		return active.major < reference.major
 			|| active.minor < reference.minor;
@@ -20,7 +20,7 @@ module.exports = {
 	
 	isAtLeast(referenceString) {
 		const active = this._parseVersionString(this.stringValue);
-		const reference = this._parseVersionString(referenceString);
+		const reference = this._parseVersionString(referenceString, true);
 		
 		return active.major > reference.major
 			|| (
@@ -29,8 +29,12 @@ module.exports = {
 			);
 	},
 	
-	_parseVersionString(versionString) {
+	_parseVersionString(versionString, throwIfPatchSpecified) {
 		const versionParts = versionString.split('.');
+		
+		if (throwIfPatchSpecified && versionParts[2] !== undefined) {
+			throw new Error(`Patch version is not currently supported by RuntimeVersion`);
+		}
 		
 		return {
 			major: Number(versionParts[0]),
