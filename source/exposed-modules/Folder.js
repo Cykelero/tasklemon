@@ -7,7 +7,7 @@ const glob = require('glob');
 
 const Item = require('./Item');
 const TypeDefinition = require('../TypeDefinition');
-const RuntimeVersion = require('./RuntimeVersion');
+const RuntimeVersion = require('../RuntimeVersion');
 
 let didShowFileMethodDeprecationWarning = false;
 let didShowFolderMethodDeprecationWarning = false;
