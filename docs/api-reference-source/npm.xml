@@ -5,8 +5,12 @@
 		<discussion>
 		<![CDATA[
 			<p>
-				The <code>npm</code> object provides access to all <a href="https://www.npmjs.com">npm</a> packages.
-			</p>	
+				The <code>npm</code> object provides access to all <a href="https://www.npmjs.com">npm</a> packages.<br>
+				Both <a href="https://nodejs.org/api/esm.html#modules-ecmascript-modules">ESM</a> and <a href="https://nodejs.org/api/modules.html#modules-commonjs-modules">CommonJS</a> exports are supported.
+			</p>
+			<p>
+				You do <em>not</em> need to import or install the packages you use in any way; Tasklemon will automatically download and inject any package you access.
+			</p>
 		]]>
 		</discussion>
 		<related>
@@ -16,11 +20,54 @@
 		</related>
 	</metadata>
 	<details>
-		<detail name="Using packages" id="using-packages">
+		<detail name="Using ESM packages" id="using-esm-packages">
 			<discussion>
 			<![CDATA[
 				<p>
-					To use a package, simply get it by name from <code>npm</code>'s properties.
+					Modern npm packages usually expose their functionality as ESM modules.
+				</p>
+				
+				<p>	
+					To use such a package, access it through the <code>npm</code> global:
+					<ul>
+						<li>
+							The package's <strong>default export</strong> is exposed directly.<br>
+							For instance, <code>npm.chalk</code> returns the default export of the <code>chalk</code> package.
+						</li>
+						<li>
+							The package's <strong>named exports</strong> are exposed as properties.<br>
+							For instance, <code>npm.telegram.TelegramClient</code> returns the <code>TelegramClient</code> export of the <code>telegram</code> package.
+						</li>
+					</ul>
+				</p>
+			
+				<df-sample name="Use the boxen package's default export">
+cli.tell(npm.boxen(" Hello! "));
+/*            ┌────────┐
+   Displays:  │ Hello! │
+              └────────┘ */
+				</df-sample>
+			
+				<df-sample name="Use the “length” named export of the stringz package">
+cli.tell(npm.stringz.length("👩🏿‍💻 Contributing"));
+// Displays “14”
+				</df-sample>
+				
+				<p>
+					In rare cases, there can be collisions between injected named exports, and default export properties. See <df-link target="#accessing-shadowed-default-export-properties">Accessing shadowed default export properties</df-link> for a solution.
+				</p>
+			]]>
+			</discussion>
+		</detail>
+		<detail name="Using CommonJS packages" id="using-commonjs-packages">
+			<discussion>
+			<![CDATA[
+				<p>
+					Many other packages, including older ones, expose their functionality as CommonJS modules.
+				</p>
+				
+				<p>
+					You can use these packages in the same way as ESM-based packages, by accessing them directly on the <code>npm</code> global.
 				</p>
 			
 				<df-sample name="Use the dedupe package">
@@ -29,19 +76,10 @@ const uniqueFriendNames = npm.dedupe(friendNames);
 
 cli.tell('Total count of unique friend names: ' + uniqueFriendNames.length);
 				</df-sample>
-			
-				<p>
-					You do not need to import or install the packages you use in any way; Tasklemon will automatically install and inject any package you use.
-				</p>
 				
 				<p>
-					To access a package with special characters in its name, use bracket notation.
+					If a package has conflicting ESM and CommonJS exports, Tasklemon will return the ESM export.
 				</p>
-				
-				<df-sample name="Use the UUID package from Allthings">
-const uuid = npm['@allthings/uuid'];
-cli.tell('New unique identifier: ' + uuid());
-				</df-sample>
 			]]>
 			</discussion>
 		</detail>
@@ -60,7 +98,7 @@ cli.tell('Hello, ' + await npm.username() + '!');
 				</df-sample>
 				
 				<p>
-					It's a good idea to do this, to ensure your script keeps the same behavior over time, even after new versions of the packages are released.
+					It's a good idea to do this, to ensure your script's behavior stays the same over time, even after new versions of the packages are released.
 					To have Tasklemon automatically add a <code>tl:require</code> directive for all the packages used by your script, setting them to their latest available version, you can use the <code>--pin-pkg</code> command-line action.<br>
 				</p>
 				
@@ -70,17 +108,52 @@ $ lemon --pin-pkg script.js
 			]]>
 			</discussion>
 		</detail>
-		<detail name="Requiring other files" id="requiring-sub-files">
+		<detail name="Using packages named with special characters" id="using-packages-named-with-special-characters">
 			<discussion>
 			<![CDATA[
 				<p>
-					If your script needs to use a specific sub-file of a package, rather than the package's main file, you can specify it by using a colon to separate the package name from the sub-file path.
+					To access a package with special characters in its name, such as a scoped package, use bracket notation.
 				</p>
 				
-				<df-sample name="Use the uuid package">
+				<df-sample name="Use the UUID package from Allthings">
+const uuid = npm['@allthings/uuid'];
+cli.tell('New unique identifier: ' + uuid());
+				</df-sample>
+			]]>
+			</discussion>
+		</detail>
+		<detail name="Requiring nested files" id="requiring-sub-files">
+			<discussion>
+			<![CDATA[
+				<p>
+					If your script needs to use a specific sub-file of a package, rather than the package's main file, you can specify the file's path, separated by a colon.
+				</p>
+				
+				<df-sample name="Use the v4 mode of the uuid package">
 const uuid = npm['uuid:v4'];
 cli.tell('New unique identifier: ' + uuid());
 				</df-sample>
+			]]>
+			</discussion>
+		</detail>
+		<detail name="Accessing shadowed default export properties" id="accessing-shadowed-default-export-properties">
+			<discussion>
+			<![CDATA[
+				<p>
+					Most of the time, when using ESM packages, there is no collision between named exports, and properties on the default export.<br>
+					However, if you do need to access a property that's been shadowed, you can do so through the raw default export, accessible as the <code>unmodifiedDefaultExport</code> property.
+				</p>
+				<p>
+					For example, consider a package named <code>contrivedExample</code>. Its default export has an <code>ambiguousLabel</code> property; and one of its named exports happens to be named <code>ambiguousLabel</code> as well. In this situation:
+					<ul>
+						<li>
+							<code>npm.contrivedExample.ambiguousLabel</code> returns the <code>ambiguousLabel</code> named export.
+						</li>
+						<li>
+							<code>npm.contrivedExample.unmodifiedDefaultExport.ambiguousLabel</code> returns the <code>ambiguousLabel</code> property of the default export.
+						</li>
+					</ul>
+				</p>
 			]]>
 			</discussion>
 		</detail>
