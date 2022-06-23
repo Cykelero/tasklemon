@@ -105,83 +105,85 @@ function exitIfContainsInvalidArguments(args) {
 }
 
 // Run
-const programArgs = parseProgramArguments(process.argv);
-const actionsToPerform = getActionsForForArguments(programArgs.lemonArguments);
-const scriptFile = new ScriptFile(programArgs.scriptPath);
-
-// Clear package cache
-if (actionsToPerform.clearPackageCache) {
-	const deletedBundleCount = PackageCache.clearAll();
+(async function() {
+	const programArgs = parseProgramArguments(process.argv);
+	const actionsToPerform = getActionsForForArguments(programArgs.lemonArguments);
+	const scriptFile = new ScriptFile(programArgs.scriptPath);
 	
-	if (deletedBundleCount > 0) {
-		const deletedBundleCountString = (deletedBundleCount > 1) ? deletedBundleCount + ' bundles' : '1 bundle';
-		process.stdout.write(`Cleared package cache (deleted ${deletedBundleCountString}).\n`);
-	} else {
-		process.stdout.write('Package cache is already empty.\n');
-	}
-}
-
-// Pin runtime version
-if (actionsToPerform.pinRuntimeVersion) {
-	const parser = new ScriptParser(scriptFile.source);
-	const didPin = parser.pinRuntimeVersion();
-	
-	if (didPin) {
-		Tools.tryOrExitWithError(() => {
-			scriptFile.setSourceOrThrow(parser.source);
-		}, `Couldn't pin runtime version of “${scriptFile.name}” because of error: “$0”`
-			+ `\nTo execute the script without automatic pinning, specify the \`--no-pin\` option.`
-		);
-	}
-}
-
-// Pin package versions
-if (actionsToPerform.pinPackageVersions) {
-	// Pin
-	const parser = new ScriptParser(scriptFile.source);
-	const pinnedInfo = parser.pinPackageVersions();
-	scriptFile.source = parser.source;
-	
-	// Display outcome
-	if (pinnedInfo.length > 0) {
-		const pinnedList = pinnedInfo
-			.map(info => info.name + '@' + info.version)
-			.join(', ');
-
-		process.stdout.write(`Pinned ${pinnedList}.\n`);
-	} else {
-		process.stdout.write(`Pinned nothing.\n`);
-	}
-}
-
-// Preload packages
-if (actionsToPerform.preloadPackages) {
-	const parser = new ScriptParser(scriptFile.source);
-	if (parser.requiredPackages.length > 0) {
-		PackageCache.loadPackageBundleSync(parser.requiredPackages, parser.requiredPackageVersions);
+	// Clear package cache
+	if (actionsToPerform.clearPackageCache) {
+		const deletedBundleCount = PackageCache.clearAll();
 		
-		const readablePackageList = PackageCache.readableRequiredPackageListFor(parser.requiredPackages, parser.requiredPackageVersions);
-		process.stdout.write(`Preloaded ${readablePackageList}.\n`);
-	} else {
-		process.stdout.write('Preloaded nothing: script requires no package.\n');
+		if (deletedBundleCount > 0) {
+			const deletedBundleCountString = (deletedBundleCount > 1) ? deletedBundleCount + ' bundles' : '1 bundle';
+			process.stdout.write(`Cleared package cache (deleted ${deletedBundleCountString}).\n`);
+		} else {
+			process.stdout.write('Package cache is already empty.\n');
+		}
 	}
-}
-
-// Run script
-if (actionsToPerform.runScript) {
-	if (programArgs.nodeArguments.length > 0) {
-		// As separate process
-		ScriptRunner.runInNewProcess(
-			programArgs.scriptPath,
-			programArgs.scriptArguments,
-			programArgs.nodeArguments
-		);
-	} else {
-		// In place
-		ScriptRunner.run(
-			scriptFile.source,
-			scriptFile.path, 
-			programArgs.scriptArguments
-		);
+	
+	// Pin runtime version
+	if (actionsToPerform.pinRuntimeVersion) {
+		const parser = new ScriptParser(scriptFile.source);
+		const didPin = parser.pinRuntimeVersion();
+		
+		if (didPin) {
+			Tools.tryOrExitWithError(() => {
+				scriptFile.setSourceOrThrow(parser.source);
+			}, `Couldn't pin runtime version of “${scriptFile.name}” because of error: “$0”`
+				+ `\nTo execute the script without automatic pinning, specify the \`--no-pin\` option.`
+			);
+		}
 	}
-}
+	
+	// Pin package versions
+	if (actionsToPerform.pinPackageVersions) {
+		// Pin
+		const parser = new ScriptParser(scriptFile.source);
+		const pinnedInfo = parser.pinPackageVersions();
+		scriptFile.source = parser.source;
+		
+		// Display outcome
+		if (pinnedInfo.length > 0) {
+			const pinnedList = pinnedInfo
+				.map(info => info.name + '@' + info.version)
+				.join(', ');
+	
+			process.stdout.write(`Pinned ${pinnedList}.\n`);
+		} else {
+			process.stdout.write(`Pinned nothing.\n`);
+		}
+	}
+	
+	// Preload packages
+	if (actionsToPerform.preloadPackages) {
+		const parser = new ScriptParser(scriptFile.source);
+		if (parser.requiredPackages.length > 0) {
+			PackageCache.loadPackageBundleSync(parser.requiredPackages, parser.requiredPackageVersions);
+			
+			const readablePackageList = PackageCache.readableRequiredPackageListFor(parser.requiredPackages, parser.requiredPackageVersions);
+			process.stdout.write(`Preloaded ${readablePackageList}.\n`);
+		} else {
+			process.stdout.write('Preloaded nothing: script requires no package.\n');
+		}
+	}
+	
+	// Run script
+	if (actionsToPerform.runScript) {
+		if (programArgs.nodeArguments.length > 0) {
+			// As separate process
+			ScriptRunner.runInNewProcess(
+				programArgs.scriptPath,
+				programArgs.scriptArguments,
+				programArgs.nodeArguments
+			);
+		} else {
+			// In place
+			ScriptRunner.run(
+				scriptFile.source,
+				scriptFile.path, 
+				programArgs.scriptArguments
+			);
+		}
+	}
+})();
