@@ -14,6 +14,12 @@ const RuntimeVersion = require('./RuntimeVersion');
 module.exports = {
 	PACKAGE_CACHE_PATH: path.join(Constants.CACHE_PATH, 'npm-packages', path.sep),
 	INDEX_FILE_NAME: 'index.js',
+	CACHE_BUNDLE_VERSION_COMMENT:
+		fs.readFileSync(
+			path.join(__dirname, 'packageCacheBundleIndexFile.template.js'),
+			{ encoding: 'utf8' }
+		)
+		.split('\n')[0],
 	
 	_synchronouslyPreparedPackages: new Set(),
 	
@@ -190,9 +196,13 @@ module.exports = {
 	},
 	
 	_bundleHashForList(packageList) {
+		// The hash depends on included packages, their versions, and the cache bundle version
 		const sortedList = packageList.slice(0).sort();
-		const result = crypto.createHash('sha256').update(sortedList.join()).digest('hex');
-		return result;
+		
+		return crypto.createHash('sha256')
+			.update(sortedList.join())
+			.update(this.CACHE_BUNDLE_VERSION_COMMENT)
+			.digest('hex');
 	},
 	
 	_bundlePathForList(packageList) {
