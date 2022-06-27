@@ -8,7 +8,13 @@ module.exports = {
         ecmaVersion: 11,
         sourceType: 'module'
     },
-    extends: 'eslint:recommended',
+    plugins: [
+        'require-path-exists'
+    ],
+    extends: [
+        'eslint:recommended',
+        'plugin:require-path-exists/recommended'
+    ],
     rules: {
         'no-mixed-spaces-and-tabs': 'warn',
         'dot-location': ['warn', 'property'],
