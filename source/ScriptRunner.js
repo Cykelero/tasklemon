@@ -28,6 +28,7 @@ module.exports = {
 		ScriptEnvironment.rawArguments = args;
 		ScriptEnvironment.defaultBundlePackageList = requiredPackages;
 		ScriptEnvironment.requiredPackageVersions = requiredPackageVersions;
+		//ScriptEnvironment.muteInfoMessages // Set in tasklemon.js
 	
 		// Write script to stage
 		stagePath = fs.mkdtempSync(os.tmpdir() + path.sep);

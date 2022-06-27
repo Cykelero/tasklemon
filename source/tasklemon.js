@@ -8,6 +8,7 @@ const PackageCache = require('./PackageCache');
 const ScriptFile = require('./ScriptFile');
 const ScriptRunner = require('./ScriptRunner');
 const ScriptParser = require('./ScriptParser');
+const ScriptEnvironment = require('./ScriptEnvironment');
 const Tools = require('./Tools');
 
 const validLemonArguments = [
@@ -17,7 +18,10 @@ const validLemonArguments = [
 	
 	// Package/runtime pinning
 	'--pin-pkg',
-	'--no-pin'
+	'--no-pin',
+	
+	// Other
+	'--no-msg'
 ];
 const validNodeArguments = ['--inspect', '--inspect-brk'];
 
@@ -109,6 +113,8 @@ function exitIfContainsInvalidArguments(args) {
 	const programArgs = parseProgramArguments(process.argv);
 	const actionsToPerform = getActionsForForArguments(programArgs.lemonArguments);
 	const scriptFile = new ScriptFile(programArgs.scriptPath);
+	
+	ScriptEnvironment.muteInfoMessages = programArgs.lemonArguments.includes('--no-msg');
 	
 	// Clear package cache
 	if (actionsToPerform.clearPackageCache) {

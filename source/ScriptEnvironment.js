@@ -6,5 +6,6 @@ module.exports = {
 	requiredRuntimeVersion: null,
 	rawArguments: null,
 	defaultBundlePackageList: null,
-	requiredPackageVersions: null
+	requiredPackageVersions: null,
+	muteInfoMessages: null
 };

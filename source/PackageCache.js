@@ -8,8 +8,9 @@ const crossSpawn = require('cross-spawn');
 const rimraf = require('rimraf');
 
 const Constants = require('./Constants');
-const Tools = require('./Tools');
+const ScriptEnvironment = require('./ScriptEnvironment');
 const RuntimeVersion = require('./RuntimeVersion');
+const Tools = require('./Tools');
 
 module.exports = {
 	PACKAGE_CACHE_PATH: path.join(Constants.CACHE_PATH, 'npm-packages', path.sep),
@@ -249,7 +250,9 @@ module.exports = {
 	
 	_showPreparingMessage() {
 		if (!this._didRecentlyShowPreparingMessage) {
-			process.stdout.write('Preparing packages...\n');
+			if (!ScriptEnvironment.muteInfoMessages) {
+				process.stdout.write('Preparing packages...\n');
+			}
 			
 			this._didRecentlyShowPreparingMessage = true;
 			setImmediate(() => {

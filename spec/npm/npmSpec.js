@@ -11,7 +11,7 @@ describe('npm', function() {
 			process.stdout.write(String(uniqueCount));
 		`;
 		
-		let scriptOutput = await testEnv.runLemonScript(scriptSource);
+		let scriptOutput = await testEnv.runLemonScript(scriptSource, [], ['--no-msg']);
 		
 		expect(scriptOutput).toBe('3');
 	});
@@ -26,7 +26,7 @@ describe('npm', function() {
 			}
 		`;
 		
-		let scriptOutput = await testEnv.runLemonScript(scriptSource);
+		let scriptOutput = await testEnv.runLemonScript(scriptSource, [], ['--no-msg']);
 		
 		expect(scriptOutput).toBe('success');
 	});
@@ -37,7 +37,7 @@ describe('npm', function() {
 			process.stdout.write(String(uniqueCount));
 		`;
 		
-		let scriptOutput = await testEnv.runLemonScript(scriptSource);
+		let scriptOutput = await testEnv.runLemonScript(scriptSource, [], ['--no-msg']);
 		
 		expect(scriptOutput).toBe('3');
 	});
@@ -48,7 +48,7 @@ describe('npm', function() {
 			process.stdout.write(String(stryker.cliOptions.concurrency));
 		`;
 		
-		let scriptOutput = await testEnv.runLemonScript(scriptSource);
+		let scriptOutput = await testEnv.runLemonScript(scriptSource, [], ['--no-msg']);
 		
 		expect(scriptOutput).toBe('4');
 	});
@@ -59,7 +59,7 @@ describe('npm', function() {
 			process.stdout.write(String(npm['@octokit/core'].Octokit.VERSION));
 		`;
 		
-		let scriptOutput = await testEnv.runLemonScript(scriptSource);
+		let scriptOutput = await testEnv.runLemonScript(scriptSource, [], ['--no-msg']);
 		
 		expect(scriptOutput).toBe('3.2.4');
 	});
@@ -73,7 +73,7 @@ describe('npm', function() {
 			}
 		`;
 		
-		let scriptOutput = await testEnv.runLemonScript(scriptSource);
+		let scriptOutput = await testEnv.runLemonScript(scriptSource, [], ['--no-msg']);
 		
 		expect(scriptOutput).toBe('success');
 	});
@@ -88,7 +88,7 @@ describe('npm', function() {
 			}
 		`;
 		
-		let scriptOutput = await testEnv.runLemonScript(scriptSource);
+		let scriptOutput = await testEnv.runLemonScript(scriptSource, [], ['--no-msg']);
 		
 		expect(scriptOutput).toBe('success');
 	});
@@ -105,7 +105,7 @@ describe('npm', function() {
 				}
 			`;
 			
-			let scriptOutput = await testEnv.runLemonScript(scriptSource, [], ['--no-pin']);
+			let scriptOutput = await testEnv.runLemonScript(scriptSource, [], ['--no-msg', '--no-pin']);
 			
 			expect(scriptOutput).toBe('success');
 		});
