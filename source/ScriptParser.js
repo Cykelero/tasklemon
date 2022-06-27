@@ -105,9 +105,9 @@ module.exports = class ScriptParser {
 		return false;
 	}
 	
-	pinPackageVersions() {
+	async pinPackageVersions() {
 		// Run a synchronous install for the detected packages
-		PackageCache.loadPackageBundleSync(this.requiredPackages, this.requiredPackageVersions);
+		await PackageCache.preloadPackagesForScript(this);
 		
 		// Load package lock file; parse it for the versions
 		const bundlePath = PackageCache.bundlePathForList(this.requiredPackages, this.requiredPackageVersions);

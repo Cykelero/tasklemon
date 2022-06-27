@@ -116,7 +116,7 @@ cli.tell(await npm['username']());
 			`;
 			
 			const scriptParser = new ScriptParser(scriptSource);
-			scriptParser.pinPackageVersions();
+			await scriptParser.pinPackageVersions();
 			
 			expect(scriptParser.source).toMatch(
 				new RegExp(
@@ -133,7 +133,7 @@ cli.tell(await npm['username']());
 			`;
 			
 			const scriptParser = new ScriptParser(scriptSource);
-			scriptParser.pinPackageVersions();
+			await scriptParser.pinPackageVersions();
 			
 			expect(scriptParser.source).toMatch(
 				new RegExp(

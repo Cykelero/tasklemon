@@ -21,22 +21,36 @@ module.exports = {
 		)
 		.split('\n')[0],
 	
-	_synchronouslyPreparedPackages: new Set(),
+	_loadedESMExports: {},
+	
+	_didRecentlyShowPreparingMessage: false,
 	
 	// Exposed
-	loadPackageBundle(rawPackageList, packageVersions) {
-		const packageList = this._normalizePackageList(rawPackageList, packageVersions);
+	async preloadPackagesForScript(scriptParser) {
+		const packageList = this._normalizePackageList(scriptParser.requiredPackages, scriptParser.requiredPackageVersions);
 		
 		if (packageList.length > 0) {
-			this._prepareBundleForList(packageList);
-		}
-	},
-
-	loadPackageBundleSync(rawPackageList, packageVersions) {
-		const packageList = this._normalizePackageList(rawPackageList, packageVersions);
-		
-		if (packageList.length > 0) {
-			this._prepareBundleForListSync(packageList);
+			// Prepare package bundle
+			const bundleIndexPath = this._bundlePathForList(packageList) + this.INDEX_FILE_NAME;
+			if (!fs.existsSync(bundleIndexPath)) {
+				this._showPreparingMessage();
+				this._prepareBundleForListSync(packageList);
+			}
+			
+			// Preload all ESM exports
+			if (RuntimeVersion.isAtLeast('0.5')) {
+				for (let importPath of scriptParser.requiredPackages) {
+					const moduleExports = await this._loadESMModuleExports(
+						importPath,
+						scriptParser.requiredPackages,
+						scriptParser.requiredPackageVersions
+					);
+					
+					if (moduleExports) {
+						this._loadedESMExports[importPath] = moduleExports;
+					}
+				}
+			}
 		}
 	},
 	
@@ -48,38 +62,6 @@ module.exports = {
 		rimraf.sync(this.PACKAGE_CACHE_PATH + '*');
 		
 		return deletedBundleCount;
-	},
-	
-	get(importPath, rawRequestedBundlePackageList, packageVersions) {
-		const requestedBundlePackageList = this._normalizePackageList(rawRequestedBundlePackageList, packageVersions);
-		const dedicatedBundlePackageList = this._dedicatedBundlePackageListFor(importPath, packageVersions);
-		
-		let packageObject;
-		
-		// Try loading package from requested bundle
-		if (requestedBundlePackageList) {
-			packageObject = this._getFromBundle(importPath, requestedBundlePackageList);
-		}
-		
-		// Try loading package from dedicated bundle
-		if (!packageObject) {
-			packageObject = this._getFromBundle(importPath, dedicatedBundlePackageList);
-		}
-		
-		// If the dedicated bundle was present but incorrectly prepared, try again
-		if (!packageObject) {
-			packageObject = this._getFromBundle(importPath, dedicatedBundlePackageList);
-		}
-		
-		// Couldn't load bundle
-		if (!packageObject) {
-			this._markBundleForDeletion(dedicatedBundlePackageList);
-			
-			const packageName = this.packageNameForImportPath(importPath);
-			throw Error(`Package “${packageName}” could not be retrieved. Make sure its name is correct and that you are connected to the Internet.`);
-		}
-		
-		return packageObject;
 	},
 	
 	bundlePathForHash(packageHash) {
@@ -95,29 +77,82 @@ module.exports = {
 		return this._normalizePackageList(rawPackageList, packageVersions).join(', ');
 	},
 	
-	// Internal
-	_prepareBundleForList(packageList) {
-		this._ensurePackageCacheFolderExists();
-		
-		const preparationProcess = crossSpawn(
-			'node',
-			this._nodeArgumentsForList(packageList),
-			{
-				detached: true,
-				stdio: 'ignore'
-			}
-		);
-		preparationProcess.unref();
+	getModuleESMExports(importPath) {
+		return this._loadedESMExports[importPath] || null;
 	},
 	
+	getModuleCommonJSExports(importPath, rawRequestedBundlePackageList, packageVersions) {
+		return this._loadCommonJSModuleExports(importPath, rawRequestedBundlePackageList, packageVersions);
+	},
+	
+	// Internal
 	_prepareBundleForListSync(packageList) {
 		this._ensurePackageCacheFolderExists();
 		
 		crossSpawn.sync('node', this._nodeArgumentsForList(packageList));
 	},
 	
-	_getFromBundle(importPath, packageList) {
-		const packageName = this.packageNameForImportPath(importPath);
+	/// Returns the exports of an ESM module. Doesn't do anything with the network.
+	async _loadESMModuleExports(importPath, rawRequestedBundlePackageList, packageVersions) {
+		const requestedBundlePackageList = this._normalizePackageList(rawRequestedBundlePackageList, packageVersions);
+		const packageName = this._packageNameForImportPath(importPath);
+		const flattenedImportPath = importPath.replace(/:/g, '/');
+		
+		const bundleIndex = this._loadBundleIndex(requestedBundlePackageList, packageName);
+		
+		return await bundleIndex.importModuleAtPath(flattenedImportPath);
+	},
+	
+	/// Returns the exports of a CommonJS module. Tries loading the requested bundle first, and fallbacks to a dedicated bundle for the package.
+	_loadCommonJSModuleExports(importPath, rawRequestedBundlePackageList, packageVersions) {
+		const requestedBundlePackageList = this._normalizePackageList(rawRequestedBundlePackageList, packageVersions);
+		const dedicatedBundlePackageList = this._dedicatedBundlePackageListFor(importPath, packageVersions);
+		const packageName = this._packageNameForImportPath(importPath);
+		const flattenedImportPath = importPath.replace(/:/g, '/');
+		
+		let packageObject;
+		
+		// Try loading package from requested bundle
+		if (requestedBundlePackageList) {
+			packageObject =
+				this._loadBundleIndex(requestedBundlePackageList, packageName)
+				.requireModuleAtPath(flattenedImportPath);
+		}
+		
+		// Try loading package from dedicated bundle
+		if (!packageObject) {
+			packageObject =
+				this._loadBundleIndex(dedicatedBundlePackageList, packageName)
+				.requireModuleAtPath(flattenedImportPath);
+		}
+		
+		// If the dedicated bundle was present but incorrectly prepared, try again
+		if (!packageObject) {
+			this._markBundleForDeletion(dedicatedBundlePackageList);
+			
+			packageObject =
+				this._loadBundleIndex(dedicatedBundlePackageList, packageName)
+				.requireModuleAtPath(flattenedImportPath);
+		}
+		
+		// Couldn't load bundle
+		if (!packageObject) {
+			this._markBundleForDeletion(dedicatedBundlePackageList);
+			
+			const relativeImportPath = importPath.slice(packageName.length + 1);
+			if (relativeImportPath !== '') {
+				throw Error(`Module “${relativeImportPath}” from package “${packageName}” could not be loaded. Make sure the package name and import path are correct, and that you are connected to the Internet.`);
+			} else {
+				throw Error(`Package “${packageName}” could not be loaded. Make sure its name is correct and that you are connected to the Internet.`);
+			}
+		}
+		
+		return packageObject;
+	},
+	
+	/// Tries to require the bundle's index. If initially unsuccessful, tries preparing the bundle once.
+	/// Preparing the bundle should only happen for dedicated bundles for CommonJS packages, as ESM packages can only be loaded ahead of time.
+	_loadBundleIndex(packageList, packageName) {
 		const bundleIndexPath = this._bundlePathForList(packageList) + this.INDEX_FILE_NAME;
 		
 		let bundleIndex;
@@ -128,10 +163,7 @@ module.exports = {
 			bundleIndex = require(bundleIndexPath);
 		} catch(e) {
 			// Loading failed: try installing
-			if (!this._synchronouslyPreparedPackages.has(packageName)) {
-				this._synchronouslyPreparedPackages.add(packageName);
-				process.stdout.write('Preparing packages...\n');
-			}
+			this._showPreparingMessage();
 			this._prepareBundleForListSync(packageList);
 		}
 		
@@ -141,12 +173,11 @@ module.exports = {
 				bundleIndex = require(bundleIndexPath);
 			} catch(e) {
 				// Something is very wrong: preparePackageCacheBundle.js shouldn't ever fail, as it installs all packages as optional dependencies
-				throw Error(`Package “${packageName}” could not be retrieved: the package cache bundle preparation process is failing. Make sure the names of your packages are correct.`);
+				throw Error(`Package “${packageName}” could not be retrieved: the package cache bundle preparation process is failing. Make sure the names of your packages are correct and that you are connected to the Internet.`);
 			}
 		}
 		
-		const flattenedImportPath = importPath.replace(/:/g, '/');
-		return bundleIndex(flattenedImportPath);
+		return bundleIndex;
 	},
 	
 	_markBundleForDeletion(packageList) {
@@ -166,7 +197,7 @@ module.exports = {
 	},
 	
 	// // Tools
-	packageNameForImportPath(importPath) {
+	_packageNameForImportPath(importPath) {
 		if (RuntimeVersion.isLowerThan('0.3')) {
 			importPath = importPath.replace(/\//g, ':');
 		}
@@ -177,7 +208,7 @@ module.exports = {
 	_normalizePackageList(packageList, packageVersions = {}) {
 		const normalized = packageList
 			.map(importPath => {
-				const packageName = this.packageNameForImportPath(importPath);
+				const packageName = this._packageNameForImportPath(importPath);
 				const packageVersion = packageVersions[packageName];
 				
 				if (packageVersion) {
@@ -214,5 +245,16 @@ module.exports = {
 			path.join(__dirname, 'preparePackageCacheBundle.js'),
 			...packageList
 		];
+	},
+	
+	_showPreparingMessage() {
+		if (!this._didRecentlyShowPreparingMessage) {
+			process.stdout.write('Preparing packages...\n');
+			
+			this._didRecentlyShowPreparingMessage = true;
+			setImmediate(() => {
+				this._didRecentlyShowPreparingMessage = false;
+			});
+		}
 	}
 };

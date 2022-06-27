@@ -13,7 +13,7 @@ const PackageCache = require('./PackageCache');
 const ScriptEnvironment = require('./ScriptEnvironment');
 
 module.exports = {
-	run(scriptSource, scriptPath, args) {
+	async run(scriptSource, scriptPath, args) {
 		const parser = new ScriptParser(scriptSource);
 		
 		const requiredPackages = parser.requiredPackages;
@@ -34,8 +34,8 @@ module.exports = {
 		preparedScriptPath = path.join(stagePath, path.basename(scriptPath));
 		fs.writeFileSync(preparedScriptPath, parser.preparedSource);
 	
-		// Preload packages asynchronously
-		PackageCache.loadPackageBundle(requiredPackages, requiredPackageVersions);
+		// Preload packages
+		await PackageCache.preloadPackagesForScript(parser);
 
 		// Execute script
 		require(preparedScriptPath);

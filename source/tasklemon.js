@@ -140,8 +140,8 @@ function exitIfContainsInvalidArguments(args) {
 	if (actionsToPerform.pinPackageVersions) {
 		// Pin
 		const parser = new ScriptParser(scriptFile.source);
-		const pinnedInfo = parser.pinPackageVersions();
-		scriptFile.source = parser.source;
+		const pinnedInfo = await parser.pinPackageVersions();
+		scriptFile.source = parser.source; // eslint-disable-line require-atomic-updates
 		
 		// Display outcome
 		if (pinnedInfo.length > 0) {
@@ -159,7 +159,7 @@ function exitIfContainsInvalidArguments(args) {
 	if (actionsToPerform.preloadPackages) {
 		const parser = new ScriptParser(scriptFile.source);
 		if (parser.requiredPackages.length > 0) {
-			PackageCache.loadPackageBundleSync(parser.requiredPackages, parser.requiredPackageVersions);
+			await PackageCache.preloadPackagesForScript(parser);
 			
 			const readablePackageList = PackageCache.readableRequiredPackageListFor(parser.requiredPackages, parser.requiredPackageVersions);
 			process.stdout.write(`Preloaded ${readablePackageList}.\n`);
