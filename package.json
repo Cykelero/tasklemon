@@ -32,10 +32,10 @@
     "chokidar": "^3.4.0",
     "cross-spawn": "^6.0.5",
     "glob": "^7.1.2",
-    "jsdom": "^11.3.0",
+    "jsdom": "^19.0.0",
     "md5-file": "^3.2.3",
     "moment": "^2.19.1",
-    "node-fetch": "^1.7.3",
+    "node-fetch": "^2.6.7",
     "rimraf": "^2.6.2",
     "trash": "^4.2.1"
   },

@@ -5,10 +5,12 @@ const fetch = require('node-fetch');
 let net = module.exports;
 
 net.getText = async function(url, options) {
-	return (await fetch(url, options)).text();
+	if (typeof options !== 'object') options = undefined;
+	return (await fetch(url, options)).textConverted();
 };
 
 net.getJSON = async function(url, options) {
+	if (typeof options !== 'object') options = undefined;
 	return (await fetch(url, options)).json();
 };
 
