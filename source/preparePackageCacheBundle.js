@@ -4,6 +4,7 @@
 const autopromise = require('./autopromise');
 const path = require('path');
 const fs = autopromise(require('fs'));
+const readline = require('readline');
 
 const rimraf = require('rimraf');
 const crossSpawn = require('cross-spawn');
@@ -31,6 +32,17 @@ async function sleep(time) {
 
 async function doesItemExist(path) {
 	return fs.lstat(path).then(() => true, () => false);
+}
+
+function logError(message) {
+	console.error(message);
+	
+	errorLogStream.write(
+		new Date().toISOString()
+		+ ' '
+		+ message
+		+ '\n'
+	);
 }
 
 // // Installation process
@@ -123,14 +135,26 @@ async function generatePackageFile() {
 }
 
 async function runNpmInstall() {
-	const installProcess = crossSpawn('npm', ['install'], {cwd: bundlePath});
+	// Run `npm install`
+	const installProcess = crossSpawn('npm', ['install'], { cwd: bundlePath });
 	
-	return new Promise(resolve => {
+	// Log any errors
+	const stderrReadline = readline.createInterface({
+		input: installProcess.stderr,
+		terminal: false
+	});
+	
+	stderrReadline.on('line', errorData => {
+		logError(errorData.toString());
+	});
+	
+	// Wait for exit
+	return new Promise((resolve, reject) => {
 		installProcess.on('exit', code => {
 			if (code === 0) {
 				resolve();
 			} else {
-				throw Error('`npm install` failed.');
+				reject(Error('`npm install` failed (code ' + code + ').'));
 			}
 		});
 	});
@@ -182,6 +206,8 @@ async function isPulseOld() {
 }
 
 // Run
+const errorLogStream = require('fs').createWriteStream(__dirname + '/../preparePackageCacheBundle.errors.log', { flags: 'a' });
+
 const packageList = process.argv.slice(2);
 packages = parsePackageList(packageList);
 
@@ -189,6 +215,6 @@ bundlePath = PackageCache._bundlePathForList(packageList);
 
 prepareBundle()
 	.catch(error => {
-		console.error(error.message);
+		logError(error.message);
 		process.exit(1);
 	});
