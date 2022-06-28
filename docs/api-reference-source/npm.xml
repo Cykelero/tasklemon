@@ -29,17 +29,17 @@
 				
 				<p>	
 					To use such a package, access it through the <code>npm</code> global:
-					<ul>
-						<li>
-							The package's <strong>default export</strong> is exposed directly.<br>
-							For instance, <code>npm.chalk</code> returns the default export of the <code>chalk</code> package.
-						</li>
-						<li>
-							The package's <strong>named exports</strong> are exposed as properties.<br>
-							For instance, <code>npm.telegram.TelegramClient</code> returns the <code>TelegramClient</code> export of the <code>telegram</code> package.
-						</li>
-					</ul>
 				</p>
+				<ul>
+					<li>
+						The package's <strong>default export</strong> is exposed directly.<br>
+						For instance, <code>npm.chalk</code> returns the default export of the <code>chalk</code> package.
+					</li>
+					<li>
+						The package's <strong>named exports</strong> are exposed as properties.<br>
+						For instance, <code>npm.telegram.TelegramClient</code> returns the <code>TelegramClient</code> export of the <code>telegram</code> package.
+					</li>
+				</ul>
 			
 				<df-sample name="Use the boxen package's default export">
 cli.tell(npm.boxen(" Hello! "));
@@ -145,15 +145,15 @@ cli.tell('New unique identifier: ' + uuid());
 				</p>
 				<p>
 					For example, consider a package named <code>contrivedExample</code>. Its default export has an <code>ambiguousLabel</code> property; and one of its named exports happens to be named <code>ambiguousLabel</code> as well. In this situation:
-					<ul>
-						<li>
-							<code>npm.contrivedExample.ambiguousLabel</code> returns the <code>ambiguousLabel</code> named export.
-						</li>
-						<li>
-							<code>npm.contrivedExample.unmodifiedDefaultExport.ambiguousLabel</code> returns the <code>ambiguousLabel</code> property of the default export.
-						</li>
-					</ul>
 				</p>
+				<ul>
+					<li>
+						<code>npm.contrivedExample.ambiguousLabel</code> returns the <code>ambiguousLabel</code> named export.
+					</li>
+					<li>
+						<code>npm.contrivedExample.unmodifiedDefaultExport.ambiguousLabel</code> returns the <code>ambiguousLabel</code> property of the default export.
+					</li>
+				</ul>
 			]]>
 			</discussion>
 		</detail>
