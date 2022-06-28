@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/cykelero/tasklemon#readme",
   "engines": {
-    "node": ">=8.7.0"
+    "node": ">=10.10.0"
   },
   "dependencies": {
     "chokidar": "^3.4.0",
