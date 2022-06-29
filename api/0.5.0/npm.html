@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>
+			npm — Tasklemon API
+		</title>
+		<meta name="viewport" content="width = device-width, initial-scale = 1, user-scalable = no" />
+		<link href="resources/main.css" type="text/css" rel="stylesheet" />
+		<link href="resources/580-.css" type="text/css" rel="stylesheet" media="(max-width: 580px)" />
+		<link href="resources/highlightjs.css" type="text/css" rel="stylesheet" />
+		<script src="resources/main.js" type="text/javascript"></script>
+	</head>
+	<body>
+		<nav>
+			<a href="./" style="color: #63C917">
+				<img class="product-logo" src="resources/nav-logo@3x.png" alt="" />
+				<span class="product-name">Tasklemon API</span>
+				<span class="product-version">0.5.0</span>
+			</a>
+		</nav>
+
+		<div class="page">
+			<div class="class">
+				<h1>npm</h1>
+				<h2 id="overview">Overview</h2>
+				<div class="discussion class-discussion">
+					<p>
+						The <code>npm</code> object provides access to all <a href="https://www.npmjs.com">npm</a> packages.<br />
+						Both <a href="https://nodejs.org/api/esm.html#modules-ecmascript-modules">ESM</a> and <a href="https://nodejs.org/api/modules.html#modules-commonjs-modules">CommonJS</a> exports are supported.
+					</p>
+					<p>You do <em>not</em> need to import or install the packages you use in any way; Tasklemon will automatically download and inject any package you access.</p>
+				</div>
+				<h2 id="using-esm-packages">Using ESM packages</h2>
+				<div class="discussion class-detail-discussion">
+					<p>
+						Modern npm packages usually expose their functionality as ESM modules.
+					</p>
+
+					<p>To use such a package, access it through the <code>npm</code> global:</p>
+					<ul>
+						<li>
+							The package's <strong>default export</strong> is exposed directly.<br />
+							For instance, <code>npm.chalk</code> returns the default export of the <code>chalk</code> package.
+						</li>
+						<li>
+							The package's <strong>named exports</strong> are exposed as properties.<br />
+							For instance, <code>npm.telegram.TelegramClient</code> returns the <code>TelegramClient</code> export of the <code>telegram</code> package.
+						</li>
+					</ul>
+
+					<h5><span class="caption">sample</span> Use the boxen package's default export</h5>
+					<pre class="sample free-sample hljs"><code>cli.<span class="hljs-title function_">tell</span>(npm.<span class="hljs-title function_">boxen</span>(<span class="hljs-string">&quot; Hello! &quot;</span>));
+<span class="hljs-comment">/*            ┌────────┐
+   Displays:  │ Hello! │
+              └────────┘ */</span></code></pre>
+
+					<h5><span class="caption">sample</span> Use the “length” named export of the stringz package</h5>
+					<pre class="sample free-sample hljs"><code>cli.<span class="hljs-title function_">tell</span>(npm.<span class="hljs-property">stringz</span>.<span class="hljs-title function_">length</span>(<span class="hljs-string">&quot;👩🏿‍💻 Contributing&quot;</span>));
+<span class="hljs-comment">// Displays “14”</span></code></pre>
+
+					<p>In rare cases, there can be collisions between injected named exports, and default export properties. See <a href="#accessing-shadowed-default-export-properties" title="">Accessing shadowed default export properties</a> for a solution.</p>
+				</div>
+
+				<h2 id="using-commonjs-packages">Using CommonJS packages</h2>
+				<div class="discussion class-detail-discussion">
+					<p>
+						Many other packages, including older ones, expose their functionality as CommonJS modules.
+					</p>
+
+					<p>You can use these packages in the same way as ESM-based packages, by accessing them directly on the <code>npm</code> global.</p>
+
+					<h5><span class="caption">sample</span> Use the dedupe package</h5>
+					<pre class="sample free-sample hljs"><code><span class="hljs-keyword">const</span> friendNames = <span class="hljs-keyword">await</span> cli.<span class="hljs-title function_">ask</span>(<span class="hljs-string">&#x27;What are your friends called?&#x27;</span>, <span class="hljs-title class_">Array</span>);
+<span class="hljs-keyword">const</span> uniqueFriendNames = npm.<span class="hljs-title function_">dedupe</span>(friendNames);
+
+cli.<span class="hljs-title function_">tell</span>(<span class="hljs-string">&#x27;Total count of unique friend names: &#x27;</span> + uniqueFriendNames.<span class="hljs-property">length</span>);</code></pre>
+
+					<p>
+						If a package has conflicting ESM and CommonJS exports, Tasklemon will return the ESM export.
+					</p>
+				</div>
+
+				<h2 id="specifying-versions">Requiring specific versions</h2>
+				<div class="discussion class-detail-discussion">
+					<p>
+						If your script needs a specific version of a package, you can add a package version directive at the top of your script.<br />
+						Add the directive below the shebang, if any, and above the script's code.
+					</p>
+
+					<h5><span class="caption">sample</span> Specify which version of username to use</h5>
+					<pre class="sample free-sample hljs"><code><span class="hljs-comment">// tl:require: username@5.0.0</span>
+
+cli.<span class="hljs-title function_">tell</span>(<span class="hljs-string">&#x27;Hello, &#x27;</span> + <span class="hljs-keyword">await</span> npm.<span class="hljs-title function_">username</span>() + <span class="hljs-string">&#x27;!&#x27;</span>);</code></pre>
+
+					<p>It's a good idea to do this, to ensure your script's behavior stays the same over time, even after new versions of the packages are released. To have Tasklemon automatically add a <code>tl:require</code> directive for all the packages used by your script, setting them to their latest available version, you can use the <code>--pin-pkg</code> command-line action.<br /></p>
+
+					<h5><span class="caption">sample</span> Automatically add version directives to a script</h5>
+					<pre class="sample free-sample hljs"><code>$ lemon --pin-pkg script.<span class="hljs-property">js</span></code></pre>
+				</div>
+
+				<h2 id="using-packages-named-with-special-characters">Using packages named with special characters</h2>
+				<div class="discussion class-detail-discussion">
+					<p>
+						To access a package with special characters in its name, such as a scoped package, use bracket notation.
+					</p>
+
+					<h5><span class="caption">sample</span> Use the UUID package from Allthings</h5>
+					<pre class="sample free-sample hljs"><code><span class="hljs-keyword">const</span> uuid = npm[<span class="hljs-string">&#x27;@allthings/uuid&#x27;</span>];
+cli.<span class="hljs-title function_">tell</span>(<span class="hljs-string">&#x27;New unique identifier: &#x27;</span> + <span class="hljs-title function_">uuid</span>());</code></pre>
+				</div>
+
+				<h2 id="requiring-sub-files">Requiring nested files</h2>
+				<div class="discussion class-detail-discussion">
+					<p>
+						If your script needs to use a specific sub-file of a package, rather than the package's main file, you can specify the file's path, separated by a colon.
+					</p>
+
+					<h5><span class="caption">sample</span> Use the v4 mode of the uuid package</h5>
+					<pre class="sample free-sample hljs"><code><span class="hljs-keyword">const</span> uuid = npm[<span class="hljs-string">&#x27;uuid:v4&#x27;</span>];
+cli.<span class="hljs-title function_">tell</span>(<span class="hljs-string">&#x27;New unique identifier: &#x27;</span> + <span class="hljs-title function_">uuid</span>());</code></pre>
+				</div>
+
+				<h2 id="accessing-shadowed-default-export-properties">Accessing shadowed default export properties</h2>
+				<div class="discussion class-detail-discussion">
+					<p>
+						Most of the time, when using ESM packages, there is no collision between named exports, and properties on the default export.<br />
+						However, if you do need to access a property that's been shadowed, you can do so through the raw default export, accessible as the <code>unmodifiedDefaultExport</code> property.
+					</p>
+					<p>For example, consider a package named <code>contrivedExample</code>. Its default export has an <code>ambiguousLabel</code> property; and one of its named exports happens to be named <code>ambiguousLabel</code> as well. In this situation:</p>
+					<ul>
+						<li><code>npm.contrivedExample.ambiguousLabel</code> returns the <code>ambiguousLabel</code> named export.</li>
+						<li><code>npm.contrivedExample.unmodifiedDefaultExport.ambiguousLabel</code> returns the <code>ambiguousLabel</code> property of the default export.</li>
+					</ul>
+				</div>
+
+				<h2 id="managing-the-cache">Managing the cache</h2>
+				<div class="discussion class-detail-discussion">
+					<p>
+						In order to ensure a script can execute offline, and without any download delays, you can ask Tasklemon to preload all of the script's required packages. These include packages you implicitely require, not just the packages pinned by version directives.<br />
+						This has no purpose for a script that's been run at least once, since Tasklemon will already have downloaded its packages.
+					</p>
+
+					<h5><span class="caption">sample</span> Preload the packages used by a script</h5>
+					<pre class="sample free-sample hljs"><code>$ lemon --preload-pkg script.<span class="hljs-property">js</span></code></pre>
+
+					<p>
+						Tasklemon's package cache is generally very resilient, and can recover from most download and installation issues. If something seems broken, however, you can try emptying the package cache.
+					</p>
+
+					<h5><span class="caption">sample</span> Empty the package cache</h5>
+					<pre class="sample free-sample hljs"><code>$ lemon --clear-pkg-cache</code></pre>
+				</div>
+
+				<h2 id="related">Related classes</h2>
+				<div class="discussion class-related">
+					To fetch arbitrary data from the Internet, use <a href="net.html" title="Allows retrieving and sending data"><code>net</code></a
+					>.
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

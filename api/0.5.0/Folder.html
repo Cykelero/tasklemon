@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>
+			Folder — Tasklemon API
+		</title>
+		<meta name="viewport" content="width = device-width, initial-scale = 1, user-scalable = no" />
+		<link href="resources/main.css" type="text/css" rel="stylesheet" />
+		<link href="resources/580-.css" type="text/css" rel="stylesheet" media="(max-width: 580px)" />
+		<link href="resources/highlightjs.css" type="text/css" rel="stylesheet" />
+		<script src="resources/main.js" type="text/javascript"></script>
+	</head>
+	<body>
+		<nav>
+			<a href="./" style="color: #63C917">
+				<img class="product-logo" src="resources/nav-logo@3x.png" alt="" />
+				<span class="product-name">Tasklemon API</span>
+				<span class="product-version">0.5.0</span>
+			</a>
+		</nav>
+
+		<div class="page">
+			<div class="class">
+				<h1>Folder</h1>
+				<h2 id="overview">Overview</h2>
+				<div class="discussion class-discussion">
+					<p><code>Folder</code> objects represent a folder on the file system, whether it exists or not, based on its path.</p>
+					<div class="df-list-with-title">
+						To get or create <code>Folder</code> objects, you can:
+						<ul>
+							<li>
+								use one of the <a href="root.html" title="Folder object for the file system root"><code>root</code></a
+								>/<a href="home.html" title="Folder object for the user's home"><code>home</code></a
+								>/<a href="here.html" title="Folder object for the working directory"><code>here</code></a> or <a href="scriptFolder.html" title="Folder object for the parent of the script being executed"><code>scriptFolder</code></a> globals
+							</li>
+							<li>
+								call one of the <a href="#Folder" title="Gets a folder by absolute path"><code>Folder()</code></a
+								>/<a href="Item.html#Item" title="Gets an item by absolute path"><code>Item()</code></a> globals with an absolute path
+							</li>
+							<li>
+								call <a href="#folder" title="Gets a folder by path"><code>folder()</code></a> on another <code>Folder</code>
+							</li>
+							<li>
+								ask the user through a <a href="cli.html" title="Allows user interaction through the command line"><code>cli</code></a> method, using the <code>Folder</code> <a href="TypeDefinition.html" title="Allows validating and casting a string">type definition</a>
+							</li>
+						</ul>
+					</div>
+					<p>
+						To check if a given <a href="Item.html" title="Describes an item on the file system"><code>Item</code></a> object is a <code>Folder</code>, you can use the <code>instanceof</code> operator.
+					</p>
+				</div>
+				<h2 id="members">Methods and properties</h2>
+				<div class="class-member-groups">
+					<div class="class-member-group">
+						<h3>Getting an instance from an absolute path</h3>
+						<div class="class-member class-method" id="Folder">
+							<h4 class="class-method-signatures" title="Gets a folder by absolute path">
+								<code class="class-method-returntype"><span class="df-kind-object">Folder</span></code>
+								<code class="class-method-signature"
+									>Folder(<span class="class-method-signature-argument-block"><span class="df-kind-string">String</span> <span class="class-method-argument">absolutePath</span></span
+									>)</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-method-discussion">
+									Returns a new <code>Folder</code> instance for <span class="class-method-argument">absolutePath</span>.<br />
+									On Windows, the path can optionally include a drive identifier.
+								</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-string">
+												<span class="class-method-argument">absolutePath</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The absolute path to the folder to get.
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Get a folder by absolute path</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> fonts = <span class="hljs-title class_">Folder</span>(<span class="hljs-string">&#x27;/System/Library/Fonts/&#x27;</span>);</code></pre>
+								<h5><span class="caption">sample</span> Get a file on a specific Windows drive</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> directXLog = <span class="hljs-title class_">File</span>(<span class="hljs-string">&#x27;C:/Windows/DirectX.log&#x27;</span>);</code></pre>
+							</div>
+						</div>
+					</div>
+					<div class="class-member-group">
+						<h3>Creating, deleting, checking existence and comparing</h3>
+						<div class="class-member class-property" id="exists">
+							<h4 title="Whether or not the folder exists">
+								<code class="class-property-name">exists</code>
+								<code class="class-property-type"><span class="df-kind-boolean">Boolean</span></code>
+							</h4>
+							<div class="class-member-content df-kindborder-boolean">
+								<div class="discussion class-property-discussion">
+									Whether or not the folder exists on disk.<br />
+									If there is an item of the same name which isn't a folder, returns <code>false</code>.
+								</div>
+								<span class="is-read-only">Read-only.</span>
+								<h5><span class="caption">sample</span> Check if a file exists</h5>
+								<pre class="sample class-property-sample hljs"><code><span class="hljs-keyword">let</span> newFile = here.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;new-file.txt&#x27;</span>);
+
+cli.<span class="hljs-title function_">tell</span>(newFile.<span class="hljs-property">exists</span>); <span class="hljs-comment">// `false`</span>
+
+newFile.<span class="hljs-title function_">make</span>();
+cli.<span class="hljs-title function_">tell</span>(newFile.<span class="hljs-property">exists</span>); <span class="hljs-comment">// now `true`</span></code></pre>
+							</div>
+						</div>
+						<div class="class-member class-method" id="make">
+							<h4 class="class-method-signatures" title="Creates the folder">
+								<code class="class-method-returntype"><span class="df-kind-object">self</span></code>
+								<code class="class-method-signature"
+									>make([<span class="class-method-signature-argument-block"><span class="df-kind-boolean">Boolean</span> <span class="class-method-argument">forgiving</span></span
+									>])</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-method-discussion">
+									Creates the folder based on its <a href="#path" title="The complete path to the folder"><code>path</code></a
+									>.<br />
+									Throws if the parent doesn't exist, or if there is already an item at that path.
+								</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-boolean">
+												<span class="class-method-argument">forgiving</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													If true:
+													<ul>
+														<li>If the parent doesn't exist, <code>make()</code> doesn't throw and creates the parent folder and any missing parent folder.</li>
+														<li>If there is already an item of the same name, only throws if the item is not a folder. If it is a folder, does not modify it.</li>
+													</ul>
+												</div>
+												<span class="default-value">Defaults to <code>false</code>.</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Create a file</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">let</span> newFile = here.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;new-file.txt&#x27;</span>);
+newFile.<span class="hljs-title function_">make</span>();
+
+cli.<span class="hljs-title function_">tell</span>(newFile.<span class="hljs-property">exists</span>); <span class="hljs-comment">// now `true`</span></code></pre>
+								<h5><span class="caption">sample</span> Create a file and its parents</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">let</span> packageFolder = here.<span class="hljs-title function_">folder</span>(<span class="hljs-string">&#x27;new-package/&#x27;</span>);
+<span class="hljs-keyword">let</span> packageMetadata = here.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;new-package/package.json&#x27;</span>);
+
+cli.<span class="hljs-title function_">tell</span>(packageFolder.<span class="hljs-property">exists</span>); <span class="hljs-comment">// `false`</span>
+cli.<span class="hljs-title function_">tell</span>(packageMetadata.<span class="hljs-property">exists</span>); <span class="hljs-comment">// `false`</span>
+
+packageMetadata.<span class="hljs-title function_">make</span>(<span class="hljs-literal">true</span>);
+
+cli.<span class="hljs-title function_">tell</span>(packageFolder.<span class="hljs-property">exists</span>); <span class="hljs-comment">// `true`</span>
+cli.<span class="hljs-title function_">tell</span>(packageMetadata.<span class="hljs-property">exists</span>); <span class="hljs-comment">// `true`</span></code></pre>
+							</div>
+						</div>
+						<div class="class-member class-method" id="copyTo">
+							<h4 class="class-method-signatures" title="Copies the folder to a folder">
+								<code class="class-method-returntype"><span class="df-kind-object">Folder</span></code>
+								<code class="class-method-signature"
+									>copyTo(<span class="class-method-signature-argument-block"><span class="df-kind-object">Folder</span> <span class="class-method-argument">destination</span>,</span> [<span class="class-method-signature-argument-block"><span class="df-kind-boolean">Boolean</span> <span class="class-method-argument">forgiving</span></span
+									>])</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-method-discussion">
+									Copies the folder into the <span class="class-method-argument">destination</span> folder, and returns a <code>Folder</code> object representing the copy.<br />
+									Throws if there already exists an item of the same name at the destination, or if the destination doesn't exist.
+								</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-object">
+												<span class="class-method-argument">destination</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The folder in which to create the copy.
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td class="df-kind-boolean">
+												<span class="class-method-argument">forgiving</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">If true, if <span class="class-method-argument">destination</span> doesn't exist, <code>copyTo()</code> doesn't throw and creates <span class="class-method-argument">destination</span> and any missing parent folder.</div>
+												<span class="default-value">Defaults to <code>false</code>.</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Copy a file and give the copy a new name</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> playerSheetTemplate = here.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;templates/player-sheet.template.md&#x27;</span>);
+
+<span class="hljs-keyword">let</span> newPlayerSheet = playerSheetTemplate.<span class="hljs-title function_">copyTo</span>(here);
+newPlayerSheet.<span class="hljs-property">name</span> = <span class="hljs-string">&#x27;player-sheet.md&#x27;</span>;</code></pre>
+							</div>
+						</div>
+						<div class="class-member class-method" id="duplicate">
+							<h4 class="class-method-signatures" title="Duplicates the folder in place.">
+								<code class="class-method-returntype"><span class="df-kind-object">Folder</span></code>
+								<code class="class-method-signature"
+									>duplicate([<span class="class-method-signature-argument-block"><span class="df-kind-string">String</span> <span class="class-method-argument">newName</span></span
+									>])</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-method-discussion">Creates a copy of the folder in the same folder, and returns a <code>Folder</code> object representing the copy. The name of the copy is derived from the folder's name.</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-string">
+												<span class="class-method-argument">newName</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">The name to use for the copy instead of an automatically-picked one. <code>duplicate()</code> will throw if the name is taken.</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Duplicate a file then move the copy somewhere else</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> playerSheetTemplate = here.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;templates/player-sheet.template.md&#x27;</span>);
+
+<span class="hljs-keyword">let</span> newPlayerSheet = playerSheetTemplate.<span class="hljs-title function_">duplicate</span>(<span class="hljs-string">&#x27;player-sheet.md&#x27;</span>);
+newPlayerSheet.<span class="hljs-title function_">moveTo</span>(here);</code></pre>
+							</div>
+						</div>
+						<div class="class-member class-method" id="delete">
+							<h4 class="class-method-signatures" title="Deletes the folder">
+								<code class="class-method-returntype"><span class="df-kind-object">self</span></code>
+								<code class="class-method-signature"
+									>delete([<span class="class-method-signature-argument-block"><span class="df-kind-boolean">Boolean</span> <span class="class-method-argument">immediately</span></span
+									>])</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-method-discussion">
+									Deletes the folder by moving it to the user's trash.<br />
+									Implemented using the <a href="https://www.npmjs.com/package/trash">trash</a> package.
+								</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-boolean">
+												<span class="class-method-argument">immediately</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													If true, the folder is deleted right away instead of being placed in the trash.
+												</div>
+												<span class="default-value">Defaults to <code>false</code>.</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Clean up after an operation</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> keepLog = <span class="hljs-keyword">await</span> cli.<span class="hljs-title function_">ask</span>(<span class="hljs-string">&#x27;Keep log file?&#x27;</span>, <span class="hljs-title class_">Boolean</span>);
+<span class="hljs-keyword">if</span> (!keepLog) here.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;events.log&#x27;</span>).<span class="hljs-title function_">delete</span>();</code></pre>
+							</div>
+						</div>
+						<div class="class-member class-method" id="equals">
+							<h4 class="class-method-signatures" title="Compares the item with another">
+								<code class="class-method-returntype"><span class="df-kind-boolean">Boolean</span></code>
+								<code class="class-method-signature"
+									>equals(<span class="class-method-signature-argument-block"><span class="df-kind-object">Item</span> <span class="class-method-argument">other</span></span
+									>)</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-boolean">
+								<div class="discussion class-method-discussion">Returns true if <span class="class-method-argument">item</span> is the same (is also a folder, and has the same path).</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-object">
+												<span class="class-method-argument">other</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The item to compare with.
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Ask for two different folders</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> sourceFolder = <span class="hljs-keyword">await</span> cli.<span class="hljs-title function_">ask</span>(<span class="hljs-string">&#x27;From?&#x27;</span>, <span class="hljs-title class_">Folder</span>);
+<span class="hljs-keyword">const</span> destinationFolder = <span class="hljs-keyword">await</span> cli.<span class="hljs-title function_">ask</span>(<span class="hljs-string">&#x27;To?&#x27;</span>, [<span class="hljs-title class_">Folder</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">value</span>) {
+		<span class="hljs-keyword">if</span> (value.<span class="hljs-title function_">equals</span>(sourceFolder)) {
+			<span class="hljs-keyword">throw</span> <span class="hljs-string">&#x27;is the same as the source&#x27;</span>;
+		}
+		<span class="hljs-keyword">return</span> value;
+	}
+]);
+
+cli.<span class="hljs-title function_">tell</span>(<span class="hljs-string">&#x27;Will copy from: &#x27;</span> + sourceFolder.<span class="hljs-property">name</span>);
+cli.<span class="hljs-title function_">tell</span>(<span class="hljs-string">&#x27;Will copy to: &#x27;</span> + destinationFolder.<span class="hljs-property">name</span>);</code></pre>
+							</div>
+						</div>
+					</div>
+					<div class="class-member-group">
+						<h3>Name and path</h3>
+						<div class="class-member class-property" id="name">
+							<h4 title="The complete name of the folder">
+								<code class="class-property-name">name</code>
+								<code class="class-property-type"><span class="df-kind-string">String</span></code>
+							</h4>
+							<div class="class-member-content df-kindborder-string">
+								<div class="discussion class-property-discussion">The complete name of the folder, including its extension.</div>
+								<h5><span class="caption">sample</span> Display the name of the first found log file</h5>
+								<pre class="sample class-property-sample hljs"><code><span class="hljs-keyword">const</span> someLog = logFolder.<span class="hljs-property">children</span>[<span class="hljs-number">0</span>];
+cli.<span class="hljs-title function_">tell</span>(someLog.<span class="hljs-property">name</span>); <span class="hljs-comment">// &quot;events.log&quot;</span></code></pre>
+							</div>
+						</div>
+						<div class="class-member class-property" id="bareName">
+							<h4 title="The name of the folder without the extension">
+								<code class="class-property-name">bareName</code>
+								<code class="class-property-type"><span class="df-kind-string">String</span></code>
+							</h4>
+							<div class="class-member-content df-kindborder-string">
+								<div class="discussion class-property-discussion">The name of the folder, without the extension.</div>
+								<h5><span class="caption">sample</span> Get the bareName of a file</h5>
+								<pre class="sample class-property-sample hljs"><code><span class="hljs-keyword">const</span> readme = here.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;README.md&#x27;</span>);
+cli.<span class="hljs-title function_">tell</span>(readme.<span class="hljs-property">bareName</span>); <span class="hljs-comment">// &quot;README&quot;</span>
+
+<span class="hljs-keyword">const</span> minifiedMomentFile = here.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;moment.min.js&#x27;</span>);
+cli.<span class="hljs-title function_">tell</span>(minifiedMomentFile.<span class="hljs-property">bareName</span>); <span class="hljs-comment">// &quot;moment.min&quot;</span></code></pre>
+								<h5><span class="caption">sample</span> Set the bareName of a file</h5>
+								<pre class="sample class-property-sample hljs"><code><span class="hljs-keyword">const</span> readme = here.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;README.md&#x27;</span>);
+readme.<span class="hljs-property">bareName</span> = <span class="hljs-string">&#x27;First steps&#x27;</span>;
+cli.<span class="hljs-title function_">tell</span>(readme.<span class="hljs-property">name</span>); <span class="hljs-comment">// &quot;First steps.md&quot;</span></code></pre>
+							</div>
+						</div>
+						<div class="class-member class-property" id="extension">
+							<h4 title="The extension of the folder">
+								<code class="class-property-name">extension</code>
+								<code class="class-property-type"><span class="df-kind-string">String</span></code>
+							</h4>
+							<div class="class-member-content df-kindborder-string">
+								<div class="discussion class-property-discussion">The extension of the folder, such as <code>"txt"</code>.</div>
+							</div>
+						</div>
+						<div class="class-member class-property" id="path">
+							<h4 title="The complete path to the folder">
+								<code class="class-property-name">path</code>
+								<code class="class-property-type"><span class="df-kind-string">String</span></code>
+							</h4>
+							<div class="class-member-content df-kindborder-string">
+								<div class="discussion class-property-discussion">The absolute path to the folder, including its name.</div>
+								<h5><span class="caption">sample</span> Read the path of a folder</h5>
+								<pre class="sample class-property-sample hljs"><code>cli.<span class="hljs-title function_">tell</span>(home.<span class="hljs-property">path</span>); <span class="hljs-comment">// something like &quot;/Users/cykelero/&quot;</span></code></pre>
+							</div>
+						</div>
+						<div class="class-member class-property" id="parent">
+							<h4 title="The parent item of the folder">
+								<code class="class-property-name">parent</code>
+								<code class="class-property-type"><span class="df-kind-object">Folder</span></code>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-property-discussion">
+									The parent <a href="Folder.html" title="Describes a folder on the file system"><code>Folder</code></a> of the folder.<br />
+									Is <code>null</code> if the item is a file system root.
+								</div>
+								<h5><span class="caption">sample</span> Get the parent of the user folder</h5>
+								<pre class="sample class-property-sample hljs"><code><span class="hljs-keyword">const</span> userFolderParent = home.<span class="hljs-property">parent</span>;
+cli.<span class="hljs-title function_">tell</span>(userFolderParent.<span class="hljs-property">path</span>);</code></pre>
+							</div>
+						</div>
+						<div class="class-member class-method" id="moveTo">
+							<h4 class="class-method-signatures" title="Moves the folder to a different folder">
+								<code class="class-method-returntype"><span class="df-kind-object">self</span></code>
+								<code class="class-method-signature"
+									>moveTo(<span class="class-method-signature-argument-block"><span class="df-kind-object">Folder</span> <span class="class-method-argument">destination</span>,</span> [<span class="class-method-signature-argument-block"><span class="df-kind-boolean">Boolean</span> <span class="class-method-argument">forgiving</span></span
+									>])</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-method-discussion">
+									Moves the folder into the <span class="class-method-argument">destination</span> folder.<br />
+									Throws if there already exists an item of the same name at the destination, or if the destination doesn't exist.
+								</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-object">
+												<span class="class-method-argument">destination</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The new parent folder.
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td class="df-kind-boolean">
+												<span class="class-method-argument">forgiving</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">If true, if <span class="class-method-argument">destination</span> doesn't exist, <code>moveTo()</code> doesn't throw and creates <span class="class-method-argument">destination</span> and any missing parent folder.</div>
+												<span class="default-value">Defaults to <code>false</code>.</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Move a file</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> folderA = here.<span class="hljs-title function_">folder</span>(<span class="hljs-string">&#x27;A/&#x27;</span>);
+<span class="hljs-keyword">const</span> folderB = here.<span class="hljs-title function_">folder</span>(<span class="hljs-string">&#x27;B/&#x27;</span>);
+<span class="hljs-keyword">let</span> file = folderA.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;file.txt&#x27;</span>);
+
+cli.<span class="hljs-title function_">tell</span>(file.<span class="hljs-property">parent</span>.<span class="hljs-property">name</span>); <span class="hljs-comment">// &quot;A&quot;</span>
+
+file.<span class="hljs-title function_">moveTo</span>(folderB);
+cli.<span class="hljs-title function_">tell</span>(file.<span class="hljs-property">parent</span>.<span class="hljs-property">name</span>); <span class="hljs-comment">// &quot;B&quot;</span></code></pre>
+							</div>
+						</div>
+					</div>
+					<div class="class-member-group">
+						<h3>Metadata</h3>
+						<div class="class-member class-property" id="dateCreated">
+							<h4 title="The creation date of the folder">
+								<code class="class-property-name">dateCreated</code>
+								<code class="class-property-type"><span class="df-kind-object">Moment</span></code>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-property-discussion">The creation date of the folder. Only supported on macOS.</div>
+							</div>
+						</div>
+						<div class="class-member class-property" id="dateModified">
+							<h4 title="The modification date of the folder">
+								<code class="class-property-name">dateModified</code>
+								<code class="class-property-type"><span class="df-kind-object">Moment</span></code>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-property-discussion">The last modification date of the folder.</div>
+							</div>
+						</div>
+						<div class="class-member class-property" id="user">
+							<h4 title="The user permissions of the folder">
+								<code class="class-property-name">user</code>
+								<code class="class-property-type"><span class="df-kind-object">ItemUserPermissions</span></code>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-property-discussion">
+									The <a href="ItemUserPermissions.html" title="The owning user permissions of an item"><code>ItemUserPermissions</code></a> object for the folder. Allows reading and modifying the owner of the folder, and the owner's permissions to the folder.
+								</div>
+								<span class="is-read-only">Read-only.</span>
+								<h5><span class="caption">sample</span> Make a file user-executable</h5>
+								<pre class="sample class-property-sample hljs"><code><span class="hljs-keyword">const</span> script = here.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;script.js&#x27;</span>);
+script.<span class="hljs-property">user</span>.<span class="hljs-property">canExecute</span> = <span class="hljs-literal">true</span>;</code></pre>
+							</div>
+						</div>
+						<div class="class-member class-property" id="group">
+							<h4 title="The group permissions of the folder">
+								<code class="class-property-name">group</code>
+								<code class="class-property-type"><span class="df-kind-object">ItemGroupPermissions</span></code>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-property-discussion">
+									The <a href="ItemGroupPermissions.html" title="The owning group permissions of an item"><code>ItemGroupPermissions</code></a> object for the folder. Allows reading and modifying the owner group of the folder, and the group's permissions to the folder.
+								</div>
+								<span class="is-read-only">Read-only.</span>
+								<h5><span class="caption">sample</span> Make a file group-writeable</h5>
+								<pre class="sample class-property-sample hljs"><code><span class="hljs-keyword">const</span> script = here.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;script.js&#x27;</span>);
+script.<span class="hljs-property">group</span>.<span class="hljs-property">canWrite</span> = <span class="hljs-literal">true</span>;</code></pre>
+							</div>
+						</div>
+						<div class="class-member class-property" id="other">
+							<h4 title="The world permissions of the folder">
+								<code class="class-property-name">other</code>
+								<code class="class-property-type"><span class="df-kind-object">ItemOtherPermissions</span></code>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-property-discussion">
+									The <a href="ItemOtherPermissions.html" title="The world permissions of an item"><code>ItemOtherPermissions</code></a> object for the folder. Allows reading and modifying world permissions to the folder.
+								</div>
+								<span class="is-read-only">Read-only.</span>
+								<h5><span class="caption">sample</span> Make a file world-readable</h5>
+								<pre class="sample class-property-sample hljs"><code><span class="hljs-keyword">const</span> script = here.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;script.js&#x27;</span>);
+script.<span class="hljs-property">other</span>.<span class="hljs-property">canRead</span> = <span class="hljs-literal">true</span>;</code></pre>
+							</div>
+						</div>
+					</div>
+					<div class="class-member-group">
+						<h3>Contents</h3>
+						<div class="class-member class-method" id="file">
+							<h4 class="class-method-signatures" title="Gets a file by path">
+								<code class="class-method-returntype"><span class="df-kind-object">File</span></code>
+								<code class="class-method-signature"
+									>file(<span class="class-method-signature-argument-block"><span class="df-kind-string">String</span> <span class="class-method-argument">relativePath</span></span
+									>)</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-method-discussion">
+									Returns a new <a href="File.html" title="Describes a file on the file system"><code>File</code></a> instance for <span class="class-method-argument">relativePath</span>.<br />
+									Throws if <span class="class-method-argument">relativePath</span> ends with a slash.
+								</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-string">
+												<span class="class-method-argument">relativePath</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The path to the file to get, relative to the path of the folder instance.
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Get a file by name</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> bashProfile = home.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;.bash_profile&#x27;</span>); <span class="hljs-comment">// returns the .bash_profile file from the user&#x27;s home folder</span></code></pre>
+								<h5><span class="caption">sample</span> Get a file by path</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> hosts = root.<span class="hljs-title function_">file</span>(<span class="hljs-string">&#x27;etc/hosts&#x27;</span>); <span class="hljs-comment">// returns the /etc/hosts file</span></code></pre>
+							</div>
+						</div>
+						<div class="class-member class-method" id="folder">
+							<h4 class="class-method-signatures" title="Gets a folder by path">
+								<code class="class-method-returntype"><span class="df-kind-object">Folder</span></code>
+								<code class="class-method-signature"
+									>folder(<span class="class-method-signature-argument-block"><span class="df-kind-string">String</span> <span class="class-method-argument">relativePath</span></span
+									>)</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-method-discussion">
+									Returns a new <code>Folder</code> instance for <span class="class-method-argument">relativePath</span>.<br />
+									Throws if <span class="class-method-argument">relativePath</span> doesn't end with a slash.
+								</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-string">
+												<span class="class-method-argument">relativePath</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The path to the folder to get, relative to the path of the folder instance.
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Get a folder by name</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> documents = home.<span class="hljs-title function_">folder</span>(<span class="hljs-string">&#x27;Documents/&#x27;</span>); <span class="hljs-comment">// returns the Documents folder from the user&#x27;s home folder</span></code></pre>
+								<h5><span class="caption">sample</span> Get a folder by path</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> preferences = home.<span class="hljs-title function_">folder</span>(<span class="hljs-string">&#x27;Library/Preferences/&#x27;</span>); <span class="hljs-comment">// returns the ~/Library/Preferences folder</span></code></pre>
+							</div>
+						</div>
+						<div class="class-member class-property" id="children">
+							<h4 title="The items inside the folder">
+								<code class="class-property-name">children</code>
+								<code class="class-property-type"><span class="df-kind-object">Item</span>[]</code>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-property-discussion">
+									The list of items contained inside the folder, as <a href="File.html" title="Describes a file on the file system"><code>File</code></a> and <code>Folder</code> objects.
+								</div>
+								<span class="is-read-only">Read-only.</span>
+								<h5><span class="caption">sample</span> Remove items without a specific extension from a folder</h5>
+								<pre class="sample class-property-sample hljs"><code><span class="hljs-keyword">const</span> buildFolder = here.<span class="hljs-title function_">folder</span>(<span class="hljs-string">&#x27;build/&#x27;</span>);
+buildFolder.<span class="hljs-property">children</span>
+	.<span class="hljs-title function_">filter</span>(<span class="hljs-function"><span class="hljs-params">child</span> =&gt;</span> child.<span class="hljs-property">extension</span> !== <span class="hljs-string">&#x27;js&#x27;</span>)
+	.<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">child</span> =&gt;</span> child.<span class="hljs-title function_">delete</span>());</code></pre>
+							</div>
+						</div>
+						<div class="class-member class-method" id="glob">
+							<h4 class="class-method-signatures" title="Gets items for a glob pattern">
+								<code class="class-method-returntype"><span class="df-kind-object">Item</span>[]</code>
+								<code class="class-method-signature"
+									>glob(<span class="class-method-signature-argument-block"><span class="df-kind-string">String</span> <span class="class-method-argument">pattern</span>,</span> [<span class="class-method-signature-argument-block"><span class="df-kind-object">Object</span> <span class="class-method-argument">options</span></span
+									>])</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-method-discussion">
+									Returns the list of items in the folder that match the glob pattern <span class="class-method-argument">pattern</span>.<br />
+									Relies on the <a href="https://github.com/isaacs/node-glob">glob</a> package.
+								</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-string">
+												<span class="class-method-argument">pattern</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The glob pattern.
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td class="df-kind-object">
+												<span class="class-method-argument">options</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													The options to pass to <code>glob</code>. See the <a href="https://github.com/isaacs/node-glob#options"><code>glob</code> documentation</a> for a list of supported options.
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Remove files with a specific extension from a folder</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">const</span> buildFolder = here.<span class="hljs-title function_">folder</span>(<span class="hljs-string">&#x27;build/&#x27;</span>);
+buildFolder.<span class="hljs-title function_">glob</span>(<span class="hljs-string">&#x27;*.js&#x27;</span>).<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">child</span> =&gt;</span> child.<span class="hljs-title function_">delete</span>());</code></pre>
+							</div>
+						</div>
+						<div class="class-member class-property" id="size">
+							<h4 title="The total size of the folder">
+								<code class="class-property-name">size</code>
+								<code class="class-property-type"><span class="df-kind-number">Number</span></code>
+							</h4>
+							<div class="class-member-content df-kindborder-number">
+								<div class="discussion class-property-discussion">The size of the folder and its children, in bytes.</div>
+								<span class="is-read-only">Read-only.</span>
+							</div>
+						</div>
+						<div class="class-member class-method" id="empty">
+							<h4 class="class-method-signatures" title="Deletes the folder's children">
+								<code class="class-method-returntype"><span class="df-kind-object">self</span></code>
+								<code class="class-method-signature"
+									>empty([<span class="class-method-signature-argument-block"><span class="df-kind-boolean">Boolean</span> <span class="class-method-argument">immediately</span></span
+									>])</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-method-discussion">
+									Deletes the folder's children by moving them to the user's trash.<br />
+									Implemented using the <a href="https://www.npmjs.com/package/trash">trash</a> package.
+								</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-boolean">
+												<span class="class-method-argument">immediately</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													If true, the children are deleted right away instead of being placed in the trash.
+												</div>
+												<span class="default-value">Defaults to <code>false</code>.</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Empty a folder</h5>
+								<pre class="sample class-method-sample hljs"><code>here.<span class="hljs-title function_">folder</span>(<span class="hljs-string">&#x27;build/&#x27;</span>).<span class="hljs-title function_">empty</span>();</code></pre>
+							</div>
+						</div>
+					</div>
+					<div class="class-member-group">
+						<h3>Setting multiple properties at once</h3>
+						<div class="class-member class-method" id="set">
+							<h4 class="class-method-signatures" title="Sets the value of multiple properties">
+								<code class="class-method-returntype"><span class="df-kind-object">self</span></code>
+								<code class="class-method-signature"
+									>set(<span class="class-method-signature-argument-block"><span class="df-kind-object">Object</span> <span class="class-method-argument">values</span></span
+									>)</code
+								>
+							</h4>
+							<div class="class-member-content df-kindborder-object">
+								<div class="discussion class-method-discussion">For each <code>key</code>-<code>value</code> couple in <span class="class-method-argument">values</span>, sets the <code>key</code> attribute of the <code>Folder</code> to <code>value</code>. This makes it easy to set multiple attributes on the object at once.</div>
+								<table class="class-method-arguments">
+									<tbody>
+										<tr>
+											<td class="df-kind-object">
+												<span class="class-method-argument">values</span>
+											</td>
+											<td>
+												<div class="class-method-argument-description ">
+													A map of property names and values.
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<h5><span class="caption">sample</span> Move and rename a folder in one call</h5>
+								<pre class="sample class-method-sample hljs"><code><span class="hljs-keyword">let</span> screenshotFolder = here.<span class="hljs-title function_">folder</span>(<span class="hljs-string">&#x27;screenshots/&#x27;</span>);
+screenshotFolder.<span class="hljs-title function_">set</span>({
+	<span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;screenshots-previous&#x27;</span>,
+	<span class="hljs-attr">parent</span>: here.<span class="hljs-title function_">folder</span>(<span class="hljs-string">&#x27;archive/&#x27;</span>)
+});
+
+<span class="hljs-keyword">return</span> screenshotFolder.<span class="hljs-property">name</span>; <span class="hljs-comment">// returns `&#x27;screenshots-previous&#x27;`</span></code></pre>
+							</div>
+						</div>
+					</div>
+				</div>
+				<h2 id="related">Related classes</h2>
+				<div class="discussion class-related">
+					<code>Folder</code> objects are a type of <a href="Item.html" title="Describes an item on the file system"><code>Item</code></a
+					>.<br />
+					See <a href="index.html" title="">the index</a> for a list of globals representing useful file system locations.
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

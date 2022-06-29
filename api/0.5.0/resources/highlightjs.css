@@ -1,0 +1,98 @@
+
+.hljs {
+	color: var(--base-code-color);
+}
+
+/* Green comments, object type */
+.df-kind-object,
+.hljs-comment {
+	color: #2fc231;
+}
+
+.df-kindborder-object {
+	border-color: #2fc231;
+}
+
+/* Orange Regexps, multiple type */
+.df-kind-multiple,
+.hljs-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-regexp,
+.ruby .hljs-constant,
+.xml .hljs-tag .hljs-title,
+.xml .hljs-pi,
+.xml .hljs-doctype,
+.html .hljs-doctype,
+.css .hljs-id,
+.css .hljs-class,
+.css .hljs-pseudo {
+	color: #f69705;
+}
+
+.df-kindborder-multiple {
+	border-color: #f69705;
+}
+
+/* Blue numbers, boolean type */
+.df-kind-number,
+.df-kind-boolean,
+.hljs-number,
+.hljs-preprocessor,
+.hljs-pragma,
+/*.hljs-built_in,*/
+.hljs-literal,
+.hljs-constant {
+	color: #219cd7;
+}
+
+.df-kindborder-number,
+.df-kindborder-boolean {
+	border-color: #219cd7;
+}
+
+/* Pink strings */
+.df-kind-string,
+.hljs-string,
+.hljs-value,
+.hljs-inheritance,
+.hljs-header,
+.ruby .hljs-symbol,
+.xml .hljs-cdata {
+	color: #e73a8b;
+}
+
+.df-kindborder-string {
+	border-color: #e73a8b;
+}
+
+/* Purple statements */
+.df-kind-function,
+.hljs-keyword {
+	color: #794ab5;
+}
+
+.df-kindborder-function {
+	border-color: #794ab5;
+}
+
+/* For docfish only: gray undefined/null */
+.df-kind-event,
+.df-kind-undefined,
+.df-kind-null {
+	color: #9a9a9a;
+}
+
+.df-kindborder-undefined {
+	border-color: #9a9a9a;
+}
+
+.coffeescript .javascript,
+.javascript .xml,
+.tex .hljs-formula,
+.xml .javascript,
+.xml .vbscript,
+.xml .css,
+.xml .hljs-cdata {
+	opacity: 0.5;
+}
