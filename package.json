@@ -32,6 +32,7 @@
   "dependencies": {
     "chokidar": "^3.4.0",
     "cross-spawn": "^6.0.5",
+    "encoding": "^0.1.13",
     "glob": "^7.1.2",
     "jsdom": "^19.0.0",
     "md5-file": "^3.2.3",
