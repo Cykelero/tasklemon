@@ -124,13 +124,17 @@ module.exports = class ScriptParser {
 		const requiredPackages = this.requiredPackages;
 		const alreadyPinnedPackages = Object.keys(this.requiredPackageVersions);
 		
-		const detectedPackageVersions = Object.entries(packageLockInfo.dependencies)
-			.map(entries => {
-				return {
-					name: entries[0],
-					version: entries[1].version
-				}
-			})
+		const allPackageLockDependencyNames = [
+			...Object.keys(packageLockInfo.packages[''].dependencies || {}),
+			...Object.keys(packageLockInfo.packages[''].optionalDependencies || {})
+		];
+		const deduplicatedPackageLockDependencyNames = Array.from(new Set(allPackageLockDependencyNames));
+		
+		const detectedPackageVersions = deduplicatedPackageLockDependencyNames
+			.map(dependencyName => ({
+				name: dependencyName,
+				version: packageLockInfo.packages['node_modules/' + dependencyName].version
+			}))
 			.filter(info => !alreadyPinnedPackages.includes(info.name))
 			.filter(info => requiredPackages.includes(info.name));
 		
