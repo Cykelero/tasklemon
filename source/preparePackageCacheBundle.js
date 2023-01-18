@@ -125,8 +125,10 @@ async function getOtherInstallationStatus() {
 
 async function generatePackageFile() {
 	// Generate content
+	const dependencyKey = packageCount === 1 ? 'dependencies' : 'optionalDependencies';
+	
 	const packageFileData = {
-		optionalDependencies: packages
+		[dependencyKey]: packages
 	};
 	
 	// Write content
@@ -210,11 +212,20 @@ const errorLogStream = require('fs').createWriteStream(__dirname + '/../prepareP
 
 const packageList = process.argv.slice(2);
 packages = parsePackageList(packageList);
+const packageCount = Object.entries(packages).length;
 
 bundlePath = PackageCache._bundlePathForList(packageList);
 
 prepareBundle()
-	.catch(error => {
+	.catch(async function(error) {
 		logError(error.message);
+		
+		// If the index file isn't created after a dedicated package failure, the PackageCache.js retry logic becomes significantly slower.
+		// Ideally the issue should be fixed in PackageCache.js; but for now, this workaround maintains the behavior we want. (e.g. requiring modules from this bundle will fail, and so the bundle will be marked for deletion)
+		if (packageCount === 1) {
+			await createIndexFile();
+		}
+		
+		// Exit
 		process.exit(1);
 	});
