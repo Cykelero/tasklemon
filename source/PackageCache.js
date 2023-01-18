@@ -21,10 +21,12 @@ module.exports = {
 			{ encoding: 'utf8' }
 		)
 		.split('\n')[0],
+	CACHE_BUNDLE_PREPARATION_ERROR_LOG_PATH: path.join(__dirname, '..', 'preparePackageCacheBundle.errors.log'),
 	
 	_loadedESMExports: {},
 	
 	_didRecentlyShowPreparingMessage: false,
+	_encounteredESMImportErrorsByImportPath: {},
 	
 	// Exposed
 	async preloadPackagesForScript(scriptParser) {
@@ -93,65 +95,126 @@ module.exports = {
 		crossSpawn.sync('node', this._nodeArgumentsForList(packageList));
 	},
 	
-	/// Returns the exports of an ESM module. Doesn't do anything with the network.
+	/// Returns the exports of an installed ESM module. Doesn't do anything with the network.
 	async _loadESMModuleExports(importPath, rawRequestedBundlePackageList, packageVersions) {
 		const requestedBundlePackageList = this._normalizePackageList(rawRequestedBundlePackageList, packageVersions);
 		const packageName = this._packageNameForImportPath(importPath);
 		const flattenedImportPath = importPath.replace(/:/g, '/');
 		
 		const bundleIndex = this._loadBundleIndex(requestedBundlePackageList, packageName);
+		if (!bundleIndex) return null;
 		
-		return await bundleIndex.importModuleAtPath(flattenedImportPath);
+		try {
+			return await bundleIndex.importModuleAtPath(flattenedImportPath);
+		} catch (error) {
+			this._encounteredESMImportErrorsByImportPath[importPath] = error;
+			return null;
+		}
 	},
 	
 	/// Returns the exports of a CommonJS module. Tries loading the requested bundle first, and fallbacks to a dedicated bundle for the package.
 	_loadCommonJSModuleExports(importPath, rawRequestedBundlePackageList, packageVersions) {
 		const requestedBundlePackageList = this._normalizePackageList(rawRequestedBundlePackageList, packageVersions);
 		const dedicatedBundlePackageList = this._dedicatedBundlePackageListFor(importPath, packageVersions);
+		
 		const packageName = this._packageNameForImportPath(importPath);
 		const flattenedImportPath = importPath.replace(/:/g, '/');
 		
 		let packageObject;
+		let commonJSError = null;
 		
 		// Try loading package from requested bundle
 		if (requestedBundlePackageList) {
-			packageObject =
-				this._loadBundleIndex(requestedBundlePackageList, packageName)
-				.requireModuleAtPath(flattenedImportPath);
+			const requestedBundleIndex = this._loadBundleIndex(requestedBundlePackageList, packageName);
+			
+			try {
+				packageObject = requestedBundleIndex.requireModuleAtPath(flattenedImportPath);
+			} catch (error) {}
 		}
 		
 		// Try loading package from dedicated bundle
 		if (!packageObject) {
-			packageObject =
-				this._loadBundleIndex(dedicatedBundlePackageList, packageName)
-				.requireModuleAtPath(flattenedImportPath);
+			const dedicatedBundleIndex = this._loadBundleIndex(dedicatedBundlePackageList, packageName);
+			
+			try {
+				packageObject = dedicatedBundleIndex.requireModuleAtPath(flattenedImportPath);
+			} catch (error) {}
 		}
 		
-		// If the dedicated bundle was present but incorrectly prepared, try again
+		// In case the dedicated bundle was already present but incorrectly prepared, try again
 		if (!packageObject) {
 			this._markBundleForDeletion(dedicatedBundlePackageList);
+			const dedicatedBundleIndex = this._loadBundleIndex(dedicatedBundlePackageList, packageName);
 			
-			packageObject =
-				this._loadBundleIndex(dedicatedBundlePackageList, packageName)
-				.requireModuleAtPath(flattenedImportPath);
+			if (dedicatedBundleIndex) {
+				try {
+					packageObject = dedicatedBundleIndex.requireModuleAtPath(flattenedImportPath);
+				} catch (error) {
+					// This was the last resort, so let's hold onto the error this time
+					commonJSError = error;
+				}
+			}
 		}
 		
 		// Couldn't load bundle
 		if (!packageObject) {
 			this._markBundleForDeletion(dedicatedBundlePackageList);
 			
+			// Since CommonJS loading is the last tried strategy, throw
+			let errorIntroText = '';
+			
+			let esmErrorText = '';
+			let commonJSErrorText = '';
+			
+			// // Error intro
 			const relativeImportPath = importPath.slice(packageName.length + 1);
 			if (relativeImportPath !== '') {
-				throw Error(`Module “${relativeImportPath}” from package “${packageName}” could not be loaded. Make sure the package name and import path are correct, and that you are connected to the Internet.`);
+				errorIntroText = `Module “${relativeImportPath}” from package “${packageName}” could not be loaded. If you are sure the name and import path are correct, and are connected to the Internet, see below for error details`;
 			} else {
-				throw Error(`Package “${packageName}” could not be loaded. Make sure its name is correct and that you are connected to the Internet.`);
+				errorIntroText = `Package “${packageName}” could not be loaded. If you are sure the name is correct and are connected to the Internet, see below for error details.`;
 			}
+			
+			// // Meaningful error while importing ESM exports?
+			const esmError = this._encounteredESMImportErrorsByImportPath[importPath];
+			if (esmError && esmError.message && !esmError.message.startsWith('Cannot find package \'')) {
+				esmErrorText =
+					'\n\n'
+					+ 'ESM import attempt\n'
+					+ '==================\n'
+					+ esmError.message;
+			}
+			
+			// // Meaningful error while requiring CommonJS module?
+			if (commonJSError && commonJSError.message && !commonJSError.message.startsWith('Cannot find module \'')) {
+				const processedErrorMessage =
+					commonJSError.message
+					.split('Require stack:')[0];
+				
+				commonJSErrorText =
+					'\n\n'
+					+ 'CommonJS require attempt\n'
+					+ '========================\n'
+					+ processedErrorMessage;
+			}
+			
+			throw Error(
+				errorIntroText
+				+ esmErrorText
+				+ commonJSErrorText
+				+ '\n\n'
+				+ 'Install process\n'
+				+ '===============\n'
+				+ 'The install log is located at: ' + this.CACHE_BUNDLE_PREPARATION_ERROR_LOG_PATH
+				+ '\n\n'
+				+ 'Callstack\n'
+				+ '========='
+			);
 		}
 		
 		return packageObject;
 	},
 	
-	/// Tries to require the bundle's index. If initially unsuccessful, tries preparing the bundle once.
+	/// Tries to require the bundle's index. If initially unsuccessful, tries preparing the bundle once and requires again.
 	/// Preparing the bundle should only happen for dedicated bundles for CommonJS packages, as ESM packages can only be loaded ahead of time.
 	_loadBundleIndex(packageList, packageName) {
 		const bundleIndexPath = this._bundlePathForList(packageList) + this.INDEX_FILE_NAME;
@@ -173,8 +236,9 @@ module.exports = {
 				delete(require.cache[bundleIndexPath]);
 				bundleIndex = require(bundleIndexPath);
 			} catch(e) {
-				// Something is very wrong: preparePackageCacheBundle.js shouldn't ever fail, as it installs all packages as optional dependencies
-				throw Error(`Package “${packageName}” could not be retrieved: the package cache bundle preparation process is failing. Make sure the names of your packages are correct and that you are connected to the Internet.`);
+				// Something is very wrong: preparePackageCacheBundle.js shouldn't ever fail, even if the `npm install` call fails
+				// An error will be shown to the user later, at the end of _loadCommonJSModuleExports
+				return null;
 			}
 		}
 		

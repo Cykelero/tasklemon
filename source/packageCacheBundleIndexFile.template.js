@@ -1,18 +1,10 @@
-// v1
+// v2
 
 module.exports = {
 	async importModuleAtPath(path) {
-		try {
-			return await import(path);
-		} catch(e) {
-			return null;
-		}
+		return await import(path);
 	},
 	requireModuleAtPath(path) {
-		try {
-			return require(path);
-		} catch(e) {
-			return null;
-		}
+		return require(path);
 	}
 };

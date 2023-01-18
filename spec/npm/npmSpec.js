@@ -92,6 +92,18 @@ describe('npm', function() {
 		
 		expect(scriptOutput).toBe('success');
 	});
+	
+	it('should fail when loading a package that can\'t be installed', async function() {
+		// Version 0.4.4 of the osx-tag package uses precompiled binaries which don't support node 19.4+ (give or take).
+		const scriptSource = `// tl:require: osx-tag@0.4.4
+			const incompatiblePackage = npm['osx-tag'];
+		`;
+		
+		const scriptRunError = await testEnv.runLemonScript(scriptSource, [], ['--no-msg'])
+			.catch(error => error);
+		
+		expect(scriptRunError.toString()).toContain('Package “osx-tag” could not be loaded');
+	}, 10000); // increase test timeout to 10 seconds
 
 	describe('(pre-0.3)', function() {
 		it('should allow require-access to sub files', async function() {
