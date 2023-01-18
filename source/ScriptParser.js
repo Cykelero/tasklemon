@@ -34,7 +34,8 @@ module.exports = class ScriptParser {
 		
 		const requestedPackages = Object.keys(this.requiredPackageVersions);
 		
-		return [...usedPackages, ...requestedPackages];
+		const deduplicatedRequiredPackages = Array.from(new Set([...usedPackages, ...requestedPackages]));
+		return deduplicatedRequiredPackages;
 	}
 	
 	get requiredPackageVersions() {
