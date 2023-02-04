@@ -44,10 +44,17 @@ function parseProgramArguments(argumentList) {
 	
 	// Separate Tasklemon args from Node args
 	const lemonArguments = ourArguments.filter(arg => validLemonArguments.includes(arg));
-	const nodeArguments = ourArguments.filter(arg => validNodeArguments.includes(arg));
+	const nodeArguments = ourArguments.filter(arg => validNodeArguments.includes(arg.split('=')[0]));
 	
 	// Check for unrecognized arguments
-	exitIfContainsInvalidArguments(ourArguments);
+	const invalidArguments = ourArguments.filter(
+		arg =>
+			!lemonArguments.includes(arg)
+			&& !nodeArguments.includes(arg)
+	)
+	if (invalidArguments.length > 0) {
+		exitBecauseOfInvalidArguments(invalidArguments);
+	}
 	
 	// Get absolute script path
 	let absoluteScriptPath;
@@ -87,25 +94,17 @@ function getActionsForForArguments(args) {
 	return actions;
 }
 
-function exitIfContainsInvalidArguments(args) {
-	const invalidArguments = args.filter(arg =>
-		!validLemonArguments.includes(arg)
-		&& !validNodeArguments.includes(arg)
-	);
+function exitBecauseOfInvalidArguments(invalidArguments) {
+	let message;
 	
+	const s = invalidArguments.length > 1 ? 's' : '';
+	message = `Argument error: invalid Tasklemon argument${s}: `;
 	
-	if (invalidArguments.length > 0) {
-		let message;
-		
-		const s = invalidArguments.length > 1 ? 's' : '';
-		message = `Argument error: invalid Tasklemon argument${s}: `;
-		
-		invalidArguments.forEach((invalidArg, index) => {
-			message += (index === 0 ? '' : ', ') + `“${invalidArg}”`;
-		});
-	
-		Tools.exitWithError(message);
-	}
+	invalidArguments.forEach((invalidArg, index) => {
+		message += (index === 0 ? '' : ', ') + `“${invalidArg}”`;
+	});
+
+	Tools.exitWithError(message);
 }
 
 // Run
