@@ -4,6 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const Constants = require('./Constants');
 const PackageCache = require('./PackageCache');
 const ScriptFile = require('./ScriptFile');
 const ScriptRunner = require('./ScriptRunner');
@@ -21,6 +22,7 @@ const validLemonArguments = [
 	'--no-pin',
 	
 	// Other
+	'--version',
 	'--no-msg'
 ];
 const validNodeArguments = ['--inspect', '--inspect-brk'];
@@ -80,10 +82,18 @@ function parseProgramArguments(argumentList) {
 function getActionsForForArguments(args) {
 	const actions = {};
 	
+	// Exclusive actions
+	if (args.includes('--version')) {
+		actions.printVersion = true;
+		return actions;
+	}
+	
+	// Explicit actions
 	actions.preloadPackages = args.includes('--preload-pkg');
 	actions.clearPackageCache = args.includes('--clear-pkg-cache');
 	actions.pinPackageVersions = args.includes('--pin-pkg');
 	
+	// Inferred actions
 	actions.runScript =
 		!actions.preloadPackages
 		&& !actions.clearPackageCache
@@ -114,6 +124,11 @@ function exitBecauseOfInvalidArguments(invalidArguments) {
 	const scriptFile = new ScriptFile(programArgs.scriptPath);
 	
 	ScriptEnvironment.muteInfoMessages = programArgs.lemonArguments.includes('--no-msg');
+	
+	// Print version
+	if (actionsToPerform.printVersion) {
+		process.stdout.write(`v${Constants.RUNTIME_VERSION}\n`);
+	}
 	
 	// Clear package cache
 	if (actionsToPerform.clearPackageCache) {
