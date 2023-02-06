@@ -190,7 +190,7 @@ I really want Tasklemon to be terrific, but here are a few ways in which it's no
 ## 👩🏿‍💻 Contributing
 
 Want to help build Tasklemon? That'd be lovely!  
-The simplest way to help is give feedback on what it's like to use Tasklemon. All comments are greatly appreciated! You can [open an issue](https://github.com/cykelero/tasklemon/issues/new) on GitHub, or maybe just drop me a note [on Twitter](https://twitter.com/cykelero).
+The simplest way to help is give feedback on what it's like to use Tasklemon. All comments are greatly appreciated! You can [open an issue](https://github.com/cykelero/tasklemon/issues/new) on GitHub, or maybe just drop me a note [on Mastodon](https://mas.to/@Cykelero).
 
 To go one step further, you can directly work on the code.  
 Clone Tasklemon from Github and run `npm install`. You can then:
