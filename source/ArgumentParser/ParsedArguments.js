@@ -99,11 +99,18 @@ module.exports = class ParsedArguments {
 		const unusedArguments = this.arguments.filter(arg =>
 			!this.argumentParser.getDefinitionFor(arg.usedIdentifier)
 		);
-		const castUnusedArguments = unusedArguments.map(
-			arg => castForDefinition(restDefinition, arg)
-		);
 		
-		result[restDefinition.name] = castUnusedArguments;
+		if (unusedArguments.length > 0) {
+			const castUnusedArguments = unusedArguments.map(
+				arg => castForDefinition(restDefinition, arg)
+			);
+			
+			result[restDefinition.name] = castUnusedArguments;
+		} else if (restDefinition.omitBehavior.type === 'defaultsTo') {
+			result[restDefinition.name] = restDefinition.omitBehavior.args.defaultValue;
+		} else {
+			result[restDefinition.name] = [];
+		}
 		
 		// Fail if required arguments are missing
 		const namedMissingRequiredDefinitions = missingRequiredDefinitions
@@ -120,14 +127,18 @@ module.exports = class ParsedArguments {
 			Tools.exitWithError(`Argument error: ${namesString} ${are} required`);
 		} else if (missingRequiredDefinitions.length > 0) {
 			// Positional definitions (only) are missing
-			const requiredPositionalDefinitionCount = this.argumentParser.requiredPositionalDefinitionCount;
-			const s = requiredPositionalDefinitionCount > 1 ? 's' : '';
+			const requiredPositionalArgumentCount =
+				this.argumentParser.requiredPositionalDefinitionCount
+				+ (this.argumentParser.restDefinitionIsRequired ? 1 : 0);
+			
+			const s = requiredPositionalArgumentCount > 1 ? 's' : '';
+			const atLeast = this.argumentParser.restDefinitionIsRequired ? ' at least' : '';
 			
 			const providedPositionalArgumentCount = this.arguments.filter(
 				arg => ArgumentDefinition.isPositionalIdentifier(arg.usedIdentifier)
 			).length;
 			
-			Tools.exitWithError(`Argument error: expected ${requiredPositionalDefinitionCount} positional argument${s}, got ${providedPositionalArgumentCount} instead`);
+			Tools.exitWithError(`Argument error: expected${atLeast} ${requiredPositionalArgumentCount} positional argument${s}, got ${providedPositionalArgumentCount} instead`);
 		}
 		
 		return result;

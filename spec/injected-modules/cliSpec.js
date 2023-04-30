@@ -409,6 +409,38 @@ describe('Argument parsing', function() {
 				expect(scriptRunError.toString()).toContain('Argument error: expected 3 positional arguments, got 2 instead');
 			});
 			
+			it('should support rest arguments', async function() {
+				const testEnv = this.getTestEnv();
+				
+				const scriptSource = `
+					cli.accept({
+						restArg: ['#+', String, required()]
+					});
+				`;
+				
+				const scriptRunError = await testEnv.runLemonScript(scriptSource)
+					.catch(error => error);
+				
+				expect(scriptRunError.toString()).toContain('Argument error: expected at least 1 positional argument, got 0 instead');
+			});
+			
+			it('should support mixing positional and rest arguments', async function() {
+				const testEnv = this.getTestEnv();
+				
+				const scriptSource = `
+					cli.accept({
+						firstArg: ['#0', String, required()],
+						secondArg: ['#1', String, required()],
+						restArg: ['#+', String, required()]
+					});
+				`;
+				
+				const scriptRunError = await testEnv.runLemonScript(scriptSource, ['value0', 'value1'])
+					.catch(error => error);
+				
+				expect(scriptRunError.toString()).toContain('Argument error: expected at least 3 positional arguments, got 2 instead');
+			});
+			
 			it('should fail when non-contiguous positional arguments are marked as required', async function() {
 				const testEnv = this.getTestEnv();
 				
@@ -426,11 +458,13 @@ describe('Argument parsing', function() {
 				expect(scriptRunError.toString()).toContain('Argument definition error: positional argument `thirdArg` is required, but the preceding arguments are not');
 			});
 			
-			it('should fail when a rest argument is marked as required', async function() {
+			it('should fail when there is an optional positional argument and a required rest argument', async function() {
 				const testEnv = this.getTestEnv();
 				
 				const scriptSource = `
 					cli.accept({
+						firstArg: ['#0', String, required()],
+						secondArg: ['#1', String],
 						restArg: ['#+', String, required()]
 					});
 				`;
@@ -438,7 +472,7 @@ describe('Argument parsing', function() {
 				const scriptRunError = await testEnv.runLemonScript(scriptSource)
 					.catch(error => error);
 				
-				expect(scriptRunError.toString()).toContain('Argument definition error: rest argument `restArg` cannot be set as required');
+				expect(scriptRunError.toString()).toContain('Argument definition error: rest argument is required, but the preceding positional arguments are not');
 			});
 			
 			it('should fail when specified without parentheses', async function() {
@@ -482,19 +516,14 @@ describe('Argument parsing', function() {
 				expect(cli.args.secondArg).toEqual('Universe');
 			});
 			
-			it('should fail when a rest argument is given a default value', async function() {
-				const testEnv = this.getTestEnv();
+			it('should support rest arguments', async function() {
+				ScriptEnvironment.rawArguments = [];
 				
-				const scriptSource = `
-					cli.accept({
-						restArg: ['#+', String, defaultsTo('Some value')]
-					});
-				`;
+				cli.accept({
+					restArg: ['#+', String, defaultsTo(['red', 'green', 'blue'])]
+				});
 				
-				const scriptRunError = await testEnv.runLemonScript(scriptSource)
-					.catch(error => error);
-				
-				expect(scriptRunError.toString()).toContain('Argument definition error: rest argument `restArg` cannot have a default value');
+				expect(cli.args.restArg).toEqual(['red', 'green', 'blue']);
 			});
 		});
 	});

@@ -50,6 +50,18 @@ module.exports = class ArgumentParser {
 				throw Error(`Argument definition error: positional argument \`${firstSubsequentRequiredDefinition.name}\` is required, but the preceding arguments are not`);
 			}
 		}
+		
+		// Required rest argument with optional positional argument
+		const optionalPositionalOnlyDefinitions = this.orderedPositionalDefinitions
+			.filter(definition => !definition.hasNameIdentifier)
+			.filter(definition => definition.omitBehavior.type !== 'required');
+		
+		if (
+			this.restDefinitionIsRequired
+			&& optionalPositionalOnlyDefinitions.length > 0
+		) {
+			throw Error(`Argument definition error: rest argument is required, but the preceding positional arguments are not`);
+		}
 	}
 	
 	// Get definitions
@@ -83,6 +95,10 @@ module.exports = class ArgumentParser {
 		const last = requiredPositionalOnlyDefinitions[requiredPositionalOnlyDefinitions.length - 1];
 		
 		return last ? last.position + 1 : 0;
+	}
+	
+	get restDefinitionIsRequired() {
+		return this.restDefinition.omitBehavior.type === 'required';
 	}
 	
 	// Parse arguments
