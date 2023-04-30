@@ -98,10 +98,9 @@ module.exports = {
 	/// Returns the exports of an installed ESM module. Doesn't do anything with the network.
 	async _loadESMModuleExports(importPath, rawRequestedBundlePackageList, packageVersions) {
 		const requestedBundlePackageList = this._normalizePackageList(rawRequestedBundlePackageList, packageVersions);
-		const packageName = this._packageNameForImportPath(importPath);
 		const flattenedImportPath = importPath.replace(/:/g, '/');
 		
-		const bundleIndex = this._loadBundleIndex(requestedBundlePackageList, packageName);
+		const bundleIndex = this._loadBundleIndex(requestedBundlePackageList);
 		if (!bundleIndex) return null;
 		
 		try {
@@ -125,7 +124,7 @@ module.exports = {
 		
 		// Try loading package from requested bundle
 		if (requestedBundlePackageList) {
-			const requestedBundleIndex = this._loadBundleIndex(requestedBundlePackageList, packageName);
+			const requestedBundleIndex = this._loadBundleIndex(requestedBundlePackageList);
 			
 			try {
 				packageObject = requestedBundleIndex.requireModuleAtPath(flattenedImportPath);
@@ -134,7 +133,7 @@ module.exports = {
 		
 		// Try loading package from dedicated bundle
 		if (!packageObject) {
-			const dedicatedBundleIndex = this._loadBundleIndex(dedicatedBundlePackageList, packageName);
+			const dedicatedBundleIndex = this._loadBundleIndex(dedicatedBundlePackageList);
 			
 			try {
 				packageObject = dedicatedBundleIndex.requireModuleAtPath(flattenedImportPath);
@@ -144,7 +143,7 @@ module.exports = {
 		// In case the dedicated bundle was already present but incorrectly prepared, try again
 		if (!packageObject) {
 			this._markBundleForDeletion(dedicatedBundlePackageList);
-			const dedicatedBundleIndex = this._loadBundleIndex(dedicatedBundlePackageList, packageName);
+			const dedicatedBundleIndex = this._loadBundleIndex(dedicatedBundlePackageList);
 			
 			if (dedicatedBundleIndex) {
 				try {
@@ -216,7 +215,7 @@ module.exports = {
 	
 	/// Tries to require the bundle's index. If initially unsuccessful, tries preparing the bundle once and requires again.
 	/// Preparing the bundle should only happen for dedicated bundles for CommonJS packages, as ESM packages can only be loaded ahead of time.
-	_loadBundleIndex(packageList, packageName) {
+	_loadBundleIndex(packageList) {
 		const bundleIndexPath = this._bundlePathForList(packageList) + this.INDEX_FILE_NAME;
 		
 		let bundleIndex;
