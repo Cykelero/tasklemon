@@ -181,9 +181,7 @@ cli.tell('Total count of unique friend names: ' + uniqueFriendNames.length);
 
 I really want Tasklemon to be terrific, but here are a few ways in which it's not.
 
-- Tasklemon is still young. It's got a (partial) test suite, sure, but it hasn't seen much real-world usage yet: expect breaking changes, and bugs. (please do [report these](https://github.com/cykelero/tasklemon/issues/new)!)
 - By design, file operations are synchronous—just like in bash scripting, for example. That's great for usability, but you're not going to write concurrent server stuff this way.
-- When importing npm packages, only CommonJS is supported. ESM, the newer standard that is becoming more popular, isn't supported yet. This means you sometimes need to [use an older version](https://cykelero.github.io/tasklemon/api/latest/npm.html#specifying-versions) of a package.
 - Symlinks aren't very well-supported yet. Just traversing them should be fine, but directly manipulating them will be weird.
 - On Windows, a few features are missing, such as permission manipulation.
 
