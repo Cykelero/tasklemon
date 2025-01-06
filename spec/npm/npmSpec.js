@@ -55,13 +55,13 @@ describe('npm', function() {
 	
 	it('should recognize pinned versions for scoped packages', async function() {
 		// The require header must be in column 0 of the script, thus the unusual formatting
-		const scriptSource = `// tl:require: @octokit/core@3.2.4
+		const scriptSource = `// tl:require: @octokit/core@6.1.3
 			process.stdout.write(String(npm['@octokit/core'].Octokit.VERSION));
 		`;
 		
 		let scriptOutput = await testEnv.runLemonScript(scriptSource, [], ['--no-msg']);
 		
-		expect(scriptOutput).toBe('3.2.4');
+		expect(scriptOutput).toBe('6.1.3');
 	});
 	
 	it('should expose nested ESM exports', async function() {
