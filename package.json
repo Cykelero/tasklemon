@@ -30,7 +30,6 @@
     "node": ">=10.10.0"
   },
   "dependencies": {
-    "chokidar": "^3.4.0",
     "cross-spawn": "^6.0.5",
     "encoding": "^0.1.13",
     "glob": "^7.1.2",
@@ -42,6 +41,7 @@
     "trash": "^4.2.1"
   },
   "devDependencies": {
+    "chokidar": "^3.4.0",
     "chokidar-cli": "^2.1.0",
     "docfish": "^1.5.1",
     "eslint": "^7.0.0",
